@@ -10,8 +10,8 @@ end
 %%%
 
 for sub = 1:numel(R.subname)
-    if exist([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_bank_' R.ipsicon '.mat']) ==0
-        [idbank frqbank stn_lb_frqbank] = find_voxel_pow_coh_050118(R.datapathr,R.subname{sub},R.condname,R.sidenm,R.pp.cont.full.fs,R.ipsicon)
+    if 1; %exist([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_bank_' R.ipsicon '.mat']) ==0
+        [idbank frqbank stn_lb_frqbank] = find_voxel_pow_coh_050118(R.datapathr,R.subname{sub},R.condname,R.siden,R.pp.cont.full.fs,R.ipsicon)
     else
         load([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_bank_' R.ipsicon])
     end
@@ -20,9 +20,9 @@ for sub = 1:numel(R.subname)
             [datafileN,pp_mark,nrep,senscheck] = data_fileguide(R.subname{sub},cond-1);
             [~,~,nrepOFF,~] = data_fileguide(R.subname{sub},cond-1);
             for nr = 1:nrepOFF
-                id = idbank(1,side,2);
-                frq = frqbank(1,side,2);
-                stn_lb_frq = frqbank(1,side,2);
+                id = idbank(1,side,cond);
+                frq = frqbank(1,side,cond);
+                stn_lb_frq = frqbank(1,side,cond);
                 load([R.datapathr R.subname{sub} '\ftdata\virtual_sources_' num2str(nr) '_ROI_' R.condname{cond}  '_' R.siden{side} '_' R.ipsicon])
                 %                 load([R.datapathr R.subname{sub} '\ftdata\r' R.subname{sub} '_LCMV_source_' R.condname{cond} 'nrep_' num2str(nr)])
                 

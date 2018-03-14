@@ -4,7 +4,7 @@ if strcmp(getenv('COMPUTERNAME'),'SFLAP-2')
     R.datapathr = 'C:\Users\Tim\Documents\Work\GIT\Cortical_Parkinsons_Networks\Data\';
 elseif strcmp(getenv('COMPUTERNAME'),'FREE')
     R.origpath = 'C:\home\data\TimExtracts190516\';
-    R.datapathr = 'C:\Users\twest\Documents\Work\GIT\Cortical_Parkinsons_Networks\Data\';
+    R.datapathr = 'C:\Users\twest\Documents\Work\GitHub\Cortical_Parkinsons_Networks\Data\';
 end
 R.subname = {'DF','DP','DS','JA','JB','JN','LN01','LN02','LN03','MC','MW','SW'};
 R.condname = {'ON','OFF'};

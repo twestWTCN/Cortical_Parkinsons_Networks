@@ -23,7 +23,7 @@ elseif strcmp(getenv('COMPUTERNAME'),'FREE')
     pathCell = regexp(path, pathsep, 'split'); onPath = any(strcmpi('C:\spm12', pathCell));
     
     if ~onPath; addpath('C:\spm12'); spm eeg; close all; end
-    addpath('C:\Users\twest\Documents\Work\MATLAB ADDONS\Circular_Statistics_Toolbox')
+    Circular_Statistics_Toolbox')
     addpath('C:\Users\twest\Documents\Work\MATLAB ADDONS\SplitVec')
     addpath('C:\Users\twest\Documents\Work\MATLAB ADDONS\aboxplot')
     addpath('C:\Users\twest\Documents\Work\MATLAB ADDONS\ATvDFA-package')
