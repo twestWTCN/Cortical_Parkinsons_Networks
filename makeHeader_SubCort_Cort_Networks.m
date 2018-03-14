@@ -1,0 +1,34 @@
+function R = makeHeader_SubCort_Cort_Networks()
+
+R.datapathr = 'C:\Users\Tim\Documents\Work\Cortical_Networks\Data\';
+R.subname = {'DF','DP','DS','JA','JB','JN','LN01','LN02','LN03','MC','MW','SW'};
+R.condname = {'ON','OFF'};
+R.condnamelc = {'on','off'};
+R.ref_list = {'STN_L01','STN_L12','STN_L23','STN_R01','STN_R12','STN_R23'};
+R.ipsicon = 'ipsi';
+R.siden = {'Left','Right'};
+R.titular = {'CTX','STN'};
+R.condcmap = linspecer(2);
+% Preprocessing
+% Cont
+R.pp.cont.full.bp = [4 400];
+R.pp.cont.full.fs = 1024;
+R.pp.cont.thin.fs = 256;
+R.pp.cont.thin.bp = [4 98];
+
+% Beamforming
+% DICs
+R.dics.bp = [24 34 29 3];
+
+R.ROI.maskrho_dic = 2;
+R.ROI.maskrho_vc = 1;
+
+% NPD
+R.NPD.multitaper = 'M2';
+R.NPD.windowlength = 10;
+
+% Phase Analy
+R.PA.WPLIscreen = 0.055;
+R.PA.bwid = 0.5;
+R.PA.mwid = 12;
+R.PA.PLVeps = 0.32;
