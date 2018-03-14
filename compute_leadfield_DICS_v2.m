@@ -3,7 +3,7 @@ for sub = 1:numel(R.subname)
     mkdir([R.datapathr R.subname{sub} '\images\sourcespace'])
     for cond = 1:2
         [datafileN,pp_mark,nrep,senscheck] = data_fileguide(R.subname{sub},cond-1);
-        for nr = nrep % Use the later trial
+        for nr = 1:nrep % Use the later trial
             datafilen = [pp_mark datafileN{nr}];
             %         if senscheck{nr} == 1
             %             nr = nr+1;
@@ -45,11 +45,11 @@ for sub = 1:numel(R.subname)
             freqdata = ft_freqanalysis(cfg, megdata);
             
             
-            cfg        = [];
-            cfg.layout = 'CTF275_helmet.mat';
-            cfg.ylim   = R.dics.bp(1:2);
-            cfg.parameter = 'powspctrm';
-            ft_topoplotER(cfg, freqdata);
+%             cfg        = [];
+% %             cfg.layout = [R.datapathr 'template_MRI\CTF275_helmet.mat'];
+%             cfg.ylim   = R.dics.bp(1:2);
+%             cfg.parameter = 'powspctrm';
+%             ft_topoplotER(cfg, freqdata);
             
             save([R.datapathr R.subname{sub} '\ftdata\freqdata_' num2str(nr) '_' R.condname{cond}],'freqdata')
             %                 load([R.datapathr R.subname{i} '\ftdata\STN_ref_list'],'ref_list')
@@ -148,26 +148,27 @@ for sub = 1:numel(R.subname)
                             ft_sourceplot(cfg, sourceInt);
                             
                             sourceInt.coordsys = 'ctf';
-                            cfg = [];
-                            cfg.nonlinear     = 'no';
-                            sourceIntNorm = ft_volumenormalise(cfg, sourceInt);
-                            %                         volumewrite_spm([R.datapathr R.subname{i} '\MRI\sourcespace\r' R.subname{i} '_' num2str(nr) '_DICS_sourcecoh_int_' ref_chan '.nii'], sourceIntNorm.coh, sourceIntNorm.transform, 'SPM12');
-                            
-                            cfg = [];
-                            cfg.method         = 'surface';
-                            cfg.funparameter   = 'avg.coh';
-                            cfg.maskparameter  = cfg.funparameter;
-%                             cfg.funcolorlim    = [0 .8];
-                            cfg.funcolormap    = 'jet';
-                            %                         cfg.opacitylim     = [0. 0.05];
-                            cfg.opacitymap     = 'auto';
-                            cfg.projmethod     = 'nearest';
-                            %                         cfg.downsample      = 2
-                            cfg.surffile       = 'surface_white_both.mat';
-                            %                         cfg.surfinflated   = 'surface_inflated_both_caret.mat';
-                            ft_sourceplot(cfg, sourceIntNorm);
-                            view ([0 90]);
-                            a = gca; a.Children(3).FaceAlpha = 0;
+%                             cfg = [];
+%                             cfg.nonlinear     = 'no';
+%                             cfg.spmversion  = 'spm12';
+%                             sourceIntNorm = ft_volumenormalise(cfg, sourceInt);
+%                             %                         volumewrite_spm([R.datapathr R.subname{i} '\MRI\sourcespace\r' R.subname{i} '_' num2str(nr) '_DICS_sourcecoh_int_' ref_chan '.nii'], sourceIntNorm.coh, sourceIntNorm.transform, 'SPM12');
+%                             
+%                             cfg = [];
+%                             cfg.method         = 'surface';
+%                             cfg.funparameter   = 'avg.coh';
+%                             cfg.maskparameter  = cfg.funparameter;
+% %                             cfg.funcolorlim    = [0 .8];
+%                             cfg.funcolormap    = 'jet';
+%                             %                         cfg.opacitylim     = [0. 0.05];
+%                             cfg.opacitymap     = 'auto';
+%                             cfg.projmethod     = 'nearest';
+%                             %                         cfg.downsample      = 2
+%                         cfg.surffile       = [R.datapathr 'template_MRI\surface_white_both.mat'];
+%                             %                         cfg.surfinflated   = 'surface_inflated_both_caret.mat';
+%                             ft_sourceplot(cfg, sourceIntNorm);
+%                             view ([0 90]);
+%                             a = gca; a.Children(3).FaceAlpha = 0;
                             savefigure_v2([R.datapathr R.subname{sub} '\images\sourcespace\'],['r' R.subname{sub} '_rep_' num2str(nr) '_DICSv2_sourcecoh_' ref_chan R.condname{cond}],[],[],[]);
                             %                         savefig(gcf,[R.R.datapathr R.R.subname{i} '\images\sourcespace\r' R.R.subname{i} '_rep_' num2str(nr) '_surf_avg_DICS_coh_' ref_chan R.R.R.condname{cond}])
                             close all

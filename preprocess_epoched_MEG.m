@@ -1,7 +1,7 @@
 function preprocess_epoched_MEG(R)
-for sub = 1:numel(R.subnames)
+for sub = 1:numel(R.subname)
     for cond = 1:2
-        [datafileN,pp_mark,nrep,senscheck] = data_fileguide(R.subnames{sub},cond-1);
+        [datafileN,pp_mark,nrep,senscheck] = data_fileguide(R.subname{sub},cond-1);
         for nr = 1:nrep
             %         datafilen = [pp_mark datafileN{nr}];
             %             % Epoch those fuckers

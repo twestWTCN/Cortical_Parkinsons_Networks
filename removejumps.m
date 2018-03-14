@@ -49,7 +49,7 @@ for seg = consecY
         Xrep = interp1(T([seg{1}(end)+1:seg{1}(end)+(spt+bksmp)]),...
             X([seg{1}(end)+1:seg{1}(end)+(spt+bksmp)]),...
             T([seg{1}(1):seg{1}(end)+1]),'spline');
-         Tind = T([seg{1}(1):seg{1}(end)]);
+         Tind = T([seg{1}(1):seg{1}(end)+1]);
 
     elseif length(T([seg{1}(1)-(bksmp-1):seg{1}(1)-1, seg{1}(end)+1:seg{1}(end)+1]))<2
         Xrep = nanmean(X);

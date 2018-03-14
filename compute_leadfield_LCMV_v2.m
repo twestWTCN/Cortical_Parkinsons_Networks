@@ -4,7 +4,7 @@ for sub = 1:numel(R.subname)
     for cond = 1:2
         mriname = ['r' R.subname{sub} '.nii'];
         [datafileN,pp_mark,nrep,senscheck] = data_fileguide(R.subname{sub},cond-1);
-        for nr = nrep
+        for nr = 1:nrep
             datafilen = [pp_mark datafileN{nr}];
             if fresh == 1
                 which_dir =  [R.datapathr R.subname{sub} '\ftdata'];
@@ -99,7 +99,7 @@ for sub = 1:numel(R.subname)
                         %                         load([datapathr subname{sub} '\ftdata\r' subname{sub} '_LCMV_source' '_' condname{cond} 'nrep_' num2str(nr)])
                         %                         Tmri = ft_read_mri([datapathr subname{sub} '\MRI\orig\r' subname{sub} '.nii'],'dataformat','nifti_spm');
                         %                         Tmri = ft_convert_units(Tmri,'cm');
-                        Tmri = ft_read_mri('C:\Users\Tim\Documents\spm12\external\fieldtrip\template\anatomy\single_subj_T1.nii','dataformat','nifti_spm');
+                        Tmri = ft_read_mri([R.datapathr 'template_MRI\single_subj_T1_1mm.nii'],'dataformat','nifti_spm');
                         Tmri = ft_convert_units(Tmri,'cm');
                         %                 cfg = [];
                         %                 cfg.parameter = 'avg.pow';
@@ -156,7 +156,7 @@ for sub = 1:numel(R.subname)
                         cfg.opacitymap     = 'auto';
                         cfg.projmethod     = 'nearest';
                         %                         cfg.downsample      = 2
-                        cfg.surffile       = 'surface_white_both.mat';
+                        cfg.surffile       = [R.datapathr 'template_MRI\surface_white_both.mat'];
                         %                         cfg.surfinflated   = 'surface_inflated_both_caret.mat';
                         ft_sourceplot(cfg, sourceIntNorm);
                         view ([0 90])

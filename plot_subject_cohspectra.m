@@ -5,12 +5,13 @@ function plot_subject_cohspectra(R)
 % plot on a subject level and the distribution of cortical locations are
 % plot last. Barplots are also computed for differences in these measures
 % and UPDRS correlations can also be done here.
-%
+% TO DO:
+% SElect trial repeat with max WPLI
 %%%
 load([R.datapathr '\UPDRS_Scores.mat'])
 for sub = 1:numel(R.subname)
-%     delete([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_bank_' R.ipsicon '.mat']);
-%     eval(['!del /q ' R.datapathr R.subname{sub} '\ftdata\ROI_analy\'])
+    delete([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_bank_' R.ipsicon '.mat']);
+    eval(['!del /q ' R.datapathr R.subname{sub} '\ftdata\ROI_analy\'])
     if exist([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_bank_' R.ipsicon '.mat']) ==0
         [idbank frqbank stn_lb_frqbank] = find_voxel_pow_coh_050118(R.datapathr,R.subname{sub},R.condname,R.siden,R.pp.cont.full.fs,R.ipsicon);
         load([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_power_' R.ipsicon],'powsave')
@@ -33,13 +34,15 @@ for sub = 1:numel(R.subname)
         locbank(:,2,side,sub) = vchansave(id(2)).loc; vchansave_OFF = vchansave;
         
         [npdspctrm, Hz] = NPD_cortical_STN(vchansave_ON,vchansave_OFF,R,1);
-        savefigure_v2([R.datapathr R.subname{sub} '\images\spectral\'],['NPD_STN_Source_analysis_' R.subname{sub} '_' R.siden{side}],[],[],[]);
+%         savefigure_v2([R.datapathr R.subname{sub} '\images\spectral\'],['NPD_STN_Source_analysis_' R.subname{sub} '_' R.siden{side}],[],[],[]);
         close all
         for cond =1:2
             npdspctrm_group{cond,side,1}(:,sub) = npdspctrm{cond,1,1}(:,1);
             npdspctrm_group{cond,side,2}(:,sub) = npdspctrm{cond,1,2}(:,1);
             npdspctrm_group{cond,side,3}(:,sub) = npdspctrm{cond,1,3}(:,1);
             npdspctrm_group{cond,side,4}(:,sub) = npdspctrm{cond,1,4}(:,1);
+            x = npdspctrm{cond,1,4}(:,1);
+            subject_hbcohscreen(cond,side,sub) = max(x(Hz>=24 & Hz<=34));
         end
         figure('Name',[R.subname{sub} ' ' R.siden{side}])
         
@@ -77,18 +80,12 @@ for sub = 1:numel(R.subname)
         
         subplot(1,3,3)
         frq = frqsave{nrep(1),side,1}(:,1)';
-        x = mean(ON,2);
-        subject_hbcohscreen(1,side,sub) = max(x(frq>=24 & frq<=34));
-        
         ax(1) = boundedline(frq,mean(ON,2),std(ON,0,2)/sqrt(size(ON,2)),'cmap',cmap(1,:),'alpha','transparency',0.45);
         xlim([4 45]);
         hold on
         %         [xCalc,yCalc] = linregress(frq',mean(ON,2));
         %         plot(xCalc(:,2),yCalc,'--','color',cmap(1,:),'linewidth',2);
         frq = frqsave{nrep(2),side,2}(:,2)';
-        x = mean(OFF,2);
-       subject_hbcohscreen(2,side,sub) = max(x(frq>=24 & frq<=34));
-
         ax(2) = boundedline(frq',mean(OFF,2),std(OFF,0,2)/sqrt(size(OFF,2)),'cmap',cmap(2,:),'alpha','transparency',0.45);
         xlim([6 45]); xlabel('Frequency (Hz)');ylabel('WPLI'); title('STN/CTX WPLI')
         legend(ax,{'ON','OFF'})
@@ -114,7 +111,6 @@ for sub = 1:numel(R.subname)
         close all
     end
 end
-save([R.datapathr 'subject_hbWPLI075'],'subject_hbcohscreen')
 figure
 load('source_template.mat')
 A = min(source.pos); B = max(source.pos);
@@ -134,19 +130,30 @@ xyz = squeeze(locbank(:,2,2,:));
 a(4) = scatter3(xyz(2,:),xyz(1,:),xyz(3,:),100,'r','o','LineWidth',2);
 legend(a,{'Left ON','Right ON','Left OFF','Right OFF'})
 
-figure
-barplot_coh_groups(R.datapathr,highbetacoh)
-savefigure_v2([R.datapathr 'results\spectral\'],['STN_Source_Power_analysis_GroupAverage_boxplots'],[],[],[]); close all
+% figure
+% barplot_coh_groups(R.datapathr,highbetacoh)
+% savefigure_v2([R.datapathr 'results\spectral\'],['STN_Source_Power_analysis_GroupAverage_boxplots'],[],[],[]); close all
 
 spectralplots_groups(R.datapathr,powsubgrand,cohsubgrand,frq,R.titular)
 
 
 a = vertcat(updrsSave{2,:,:});
 b = vertcat(highbetacoh{2,:,:}); b = b(:,1);
-a(b<0.075) = []; b(b<0.075) = [];
-figure; scatter(a,b,75,'ro','filled')
-xlabel('OFF Hemi Aknesia Score'); ylabel('Maximum High Beta Coherence')
+% a(b<0.075) = []; b(b<0.075) = [];
+[r p] = corrcoef(a,b)
+figure; scatter(a,b,75,'ro','filled');
+[yCalc ba Rsq] = linregress(a,b);
+hold on; plot(a,yCalc,'k-','LineWidth',2)
+xlabel('OFF Hemi Aknesia Score'); ylabel('Maximum High Beta WPLI')
+annotation(gcf,'textbox',...
+    [0.16975 0.703571428571429 0.268642857142857 0.165476190476191],...
+    'String',{sprintf('y = %0.3f + %0.3fx',ba),sprintf('R^2 = %0.2f',Rsq),sprintf('P = %0.3f',p(2))},...
+    'LineStyle','none',...
+    'FontWeight','bold',...
+    'FontSize',12,...
+    'FitBoxToText','off'); grid on
+savefigure_v2([R.datapathr 'results\spectral\'],['STN_WPLI_H_UPDRS_Corr'],[],[],[]); close all
 
 figure
 plotNPD(Hz,npdspctrm_group,R)
- set(gcf,'Position',[314         551        1208         307])
+savefigure_v2([R.datapathr 'results\spectral\'],['STN_CTX_NPD'],[],[],'-r200'); close all

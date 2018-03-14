@@ -1,24 +1,24 @@
 function preprocess_cont_MEG(R)
-for sub = 2:numel(R.subname)
+for sub = 1:numel(R.subname) %problems with 7(JB 8(KB
     for cond = 1:2 
         [datafileN,pp_mark,nrep,senscheck] = data_fileguide(R.subname{sub},cond-1);
         for nr = 1:nrep
             %         datafilen = [pp_mark datafileN{nr}];
             % Load in data
             cfg = [];
-            cfg.datafile = ['C:\data\TimExtracts190516\' R.subname{sub} '\' R.subname{sub} '_R_' num2str(nr) '_' R.condnamelc{cond} '.mat'];
+            cfg.datafile = [R.origpath R.subname{sub} '\' R.subname{sub} '_R_' num2str(nr) '_' R.condnamelc{cond} '.mat'];
             
-            if sub == 3
+            if sub == 3 || sub == 7
                 cfg.channel         = {'MEG','STN_*'};
             else
                 cfg.channel         = {'MEG','STN_*','HLC*','EOG'};
             end
             fulldata = ft_preprocessing(cfg);
             ref_list = find(strncmp(fulldata.label,'STN_',4));
-            save([datapathr subname{sub} '\ftdata\STN_ref_list' R.condname{cond}],'ref_list')
+            save([R.datapathr R.subname{sub} '\ftdata\STN_ref_list' R.condname{cond}],'ref_list')
 
             % decide where to truncate
-            if exist([datapathr subname{sub} '\ftdata\meg_clean_DEDGE_' num2str(nr) '_' R.condname{cond} '.mat'])==0
+            if exist([R.datapathr R.subname{sub} '\ftdata\meg_clean_DEDGE_' num2str(nr) '_' R.condname{cond} '.mat'])==0
                 figure
                 plot(repmat(fulldata.time{1},32,1)',fulldata.trial{1}(1:32,:)'); shg
                 figure(100); close 100

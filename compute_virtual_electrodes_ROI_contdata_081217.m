@@ -7,11 +7,11 @@ function compute_virtual_electrodes_ROI_contdata_081217(R)
 %%%
 normv = @(x) (x-mean(x)); %./std(x);
 scatleg = {'bo','bx';'ro','rx'};
-for sub = 12:numel(R.subname)
+for sub = 1:numel(R.subname)
     for cond = 1:2
         [datafileN,pp_mark,nrep,senscheck] = data_fileguide(R.subname{sub},cond-1);
-        [~,~,nrepOFF,~] = data_fileguide(R.subname{sub},cond-1);
-        for nr = 1:nrepOFF
+        [~,~,nrepOFF,~] = data_fileguide(R.subname{sub},1);
+        for nr = 1:nrep
             if nrepOFF<nrep
                 nroff = 1;
             else

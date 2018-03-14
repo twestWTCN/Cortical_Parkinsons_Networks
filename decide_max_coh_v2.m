@@ -1,10 +1,15 @@
 function decide_max_coh_v2(R,suborthoplot)
 % suborthoplot = 0;
-for sub = 1:numel(R.subname)
-clear source_avg_dics peak_loc peak_ind contra_peak_mag ipsi_peak_mag contra_peak_loc ipsi_peak_loc source_cohmag source_cohloc 
+for sub = 8:numel(R.subname)
+    clear source_avg_dics peak_loc peak_ind contra_peak_mag ipsi_peak_mag contra_peak_loc ipsi_peak_loc source_cohmag source_cohloc
     for cond = 1:2
         [datafileN,pp_mark,nrep,senscheck] = data_fileguide(R.subname{sub},cond-1);
-        for nr = nrep
+        for nr = 1:nrep
+%             load([R.datapathr R.subname{sub} '\ftdata\megdata_' num2str(nr) '_' R.condname{cond}],'megdata')
+%             R.ref_list = {megdata.label{strmatch('STN',megdata.label)}};
+%             clear megdata
+% you need to set indices for left and right to do LM which is missing two
+% channels left i.e. 4 now becomes 2
             for refN = 1:numel(R.ref_list)
                 ref_chan = R.ref_list{refN};
                 premotor_R = [-20 -6 84]./10;
@@ -12,12 +17,12 @@ clear source_avg_dics peak_loc peak_ind contra_peak_mag ipsi_peak_mag contra_pea
                 load([R.datapathr R.subname{sub} '\ftdata\r' R.subname{sub} '_DICSv2_peakinfo_source' R.condname{cond} 'nrep_' num2str(nr) '_' ref_chan])
                 load([R.datapathr R.subname{sub} '\ftdata\r' R.subname{sub} '_DICSv2_source' R.condname{cond} 'nrep_' num2str(nr) '_' ref_chan],'source')
                 source_avg_dics(:,refN,nr,cond) = source.avg.coh;
-                         figure(400)
+                figure(400)
                 mask =  reshape(source.avg.coh,source.dim)>0;
                 hold on
                 fv = isosurface(mask,0);
                 patch(fv,'FaceColor',[.1 .1 .1],'EdgeColor',[0 0 0],'FaceAlpha',0.1);
-       
+                
                 dm = pdist2(source.pos,repmat(premotor_L,size(source.pos,1),1));
                 [x i] =min(dm(:,2));
                 [max_xyz(1) max_xyz(2) max_xyz(3)] = ind2sub(source.dim,i);
@@ -78,7 +83,7 @@ clear source_avg_dics peak_loc peak_ind contra_peak_mag ipsi_peak_mag contra_pea
     % %     Tmri = ft_transform_geometry(T,mri);
     % %     Tmri = ft_convert_units(Tmri,'cm');
     
-%     load([R.datapathr R.subname{sub} '\ftdata\r' R.subname{sub} '_DICSv2_source' R.condname{cond} 'nrep_' num2str(nr) '_' ref_chan])
+    %     load([R.datapathr R.subname{sub} '\ftdata\r' R.subname{sub} '_DICSv2_source' R.condname{cond} 'nrep_' num2str(nr) '_' ref_chan])
     
     Tmri = ft_read_mri([R.datapathr R.subname{sub} '\MRI\orig\r' R.subname{sub} '.nii'],'dataformat','nifti_spm');
     Tmri = ft_convert_units(Tmri,'cm');
@@ -88,22 +93,22 @@ clear source_avg_dics peak_loc peak_ind contra_peak_mag ipsi_peak_mag contra_pea
         0   0   1    2.2
         0   0   0    1];
     source = ft_transform_geometry(T,source);
-%                             cfg = [];
-%                             cfg.method = 'glassbrain';
-%                             cfg.funparameter = 'avg.coh';
-%                             ft_sourceplot(cfg,Tmri)
-%     close all
+    %                             cfg = [];
+    %                             cfg.method = 'glassbrain';
+    %                             cfg.funparameter = 'avg.coh';
+    %                             ft_sourceplot(cfg,Tmri)
+    %     close all
     GA_sourceDICS_L = source;
     LR = source_avg_dics;
     LR(source.pos(:,1)>=0,:,:,:) = 0; % set all left to zero
-%     LR = LR.*PM_mask_R(:);
+    %     LR = LR.*PM_mask_R(:);
     GA_sourceDICS_L.avg.coh = reshape(nanmean(nanmean(nanmean(LR(:,1:3,:,:),4),2),3),source.dim);
     if suborthoplot == 1; generic_source_plot(R.datapathr,R.subname,GA_sourceDICS_L,Tmri,'avg.coh','left_DICSv2','mni'); end
     close all
     GA_sourceDICS_R = source;
     LR = source_avg_dics;
     LR(source.pos(:,1)<=0,:,:,:) = 0; % set all right to zero
-%     LR = LR.*PM_mask_L(:);
+    %     LR = LR.*PM_mask_L(:);
     GA_sourceDICS_R.avg.coh = reshape(nanmean(nanmean(nanmean(LR(:,4:6,:,:),4),2),3),source.dim);
     if suborthoplot == 1; generic_source_plot(R.datapathr,R.subname,GA_sourceDICS_R,Tmri,'avg.coh','right_DICSv2','mni'); end
     
@@ -159,7 +164,7 @@ clear source_avg_dics peak_loc peak_ind contra_peak_mag ipsi_peak_mag contra_pea
     % within the    bounded sphere defined by the global maximum
     for cond = 1:2
         [datafileN,pp_mark,nrep,senscheck] = data_fileguide(R.subname{sub},cond-1);
-        for nr = nrep
+        for nr = 1:nrep
             for refN = 1:numel(R.ref_list)
                 ref_chan = R.ref_list{refN};
                 load([R.datapathr R.subname{sub} '\ftdata\r' R.subname{sub} '_DICSv2_source' R.condname{cond} 'nrep_' num2str(nr) '_' ref_chan],'source')
@@ -170,7 +175,7 @@ clear source_avg_dics peak_loc peak_ind contra_peak_mag ipsi_peak_mag contra_pea
                 hold on
                 fv = isosurface(mask,0);
                 patch(fv,'FaceColor',[.1 .1 .1],'EdgeColor',[0 0 0],'FaceAlpha',0.1);
-
+                
                 %% source_cohmag(LM1/RM1,refn,nr,cond)
                 cohvol = reshape(source.avg.coh,source.dim); cohvol = cohvol.*maskL;
                 cohvol = cohvol(:); cohvol(source.pos(:,1)>=0) = NaN; %reshape(cohvol,source.dim)
@@ -197,13 +202,13 @@ clear source_avg_dics peak_loc peak_ind contra_peak_mag ipsi_peak_mag contra_pea
                 patch(fv,'FaceColor',[0.7 0 0],'EdgeColor',[1 0 0],'FaceAlpha',0.4);
                 view(45,45);
                 axis equal;
-                drawnow; shg 
+                drawnow; shg
             end
         end
     end
     for cond = 1:2
         [datafileN,pp_mark,nrep,senscheck] = data_fileguide(R.subname{sub},cond-1);
-        for nr = nrep
+        for nr = 1:nrep
             %% STNselection{Right/Left,Ipsi/Contra,nr,cond}
             %% = {Cond, set, cohmax, ref_ind,refname,sourceind,sourcesub,sourcepos
             % Contra -Right STN, Left M1
@@ -240,7 +245,7 @@ clear source_avg_dics peak_loc peak_ind contra_peak_mag ipsi_peak_mag contra_pea
         end
     end
     save([R.datapathr R.subname{sub} '\ftdata\r' R.subname{sub} '_DICSv2_source_channelselectioninfo'],'STNselection')
-   
+    
     
     % Subject Effects
     % source_cohmag(left/rightM1,refn,nr,cond)
@@ -286,6 +291,6 @@ clear source_avg_dics peak_loc peak_ind contra_peak_mag ipsi_peak_mag contra_pea
     savefigure_v2([R.datapathr R.subname{sub} '\images\sourcespace\'],['r' R.subname{sub} '_DICsv2_grandaverage_ON_OFF'],[],[],[]); close all
 end
 barplot_coh_groups_nocell(R.datapathr,cohmax)
-savefigure_v2([R.datapathr 'results\images\'],['groupDICs_barplots'],[],[],[]); close all
+savefigure_v2([R.datapathr 'results\images\'],['groupDICs_barplots'],[],[],[]); %close all
 
 
