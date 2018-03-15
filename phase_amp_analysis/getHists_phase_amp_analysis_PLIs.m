@@ -8,7 +8,7 @@ close all
 QX = 6 ; QY = 8;
 load([R.datapathr 'subject_hbWPLI075'])
 subscreen = squeeze(sum(subject_hbcohscreen>R.PA.WPLIscreen)==2);
-a = logspace(0.5,log10(150),4); logscalez = -60:20:60; %linspace(-50,50,QY); %logscalez = [-3.^(4:-1:2) 3.^(2:4)];
+a = logspace(0.5,log10(150),4); logscalez = -80:20:80; %linspace(-50,50,QY); %logscalez = [-3.^(4:-1:2) 3.^(2:4)];
 condcr = {'r','b'};
 for sub = 1:numel(R.subname)
     for side =1:2
@@ -47,7 +47,7 @@ for sub = 1:numel(R.subname)
                          subplot(1,2,cond)
                         histogram(amp,linspace(-75,75,12),'FaceColor',condcr{cond},'FaceAlpha',0.1,'Normalization','Probability'); hold on
                         xlabel(ampname{i});ylabel('P(X)'); ylim([0 0.7]); grid on; title(R.condname{cond})
-                        [N B] = histcounts(amp,linspace(-100,100,12));
+                        [N B] = histcounts(amp,linspace(-100,100,14));
                         amp_dist(i,nr,cond,sub).N  = N;
                         amp_dist(i,nr,cond,sub).B  = B;
                     end
@@ -57,7 +57,7 @@ for sub = 1:numel(R.subname)
                      subplot(1,2,cond)
                     histogram(H,linspace(0,1,12),'FaceColor',condcr{cond},'FaceAlpha',0.1,'Normalization','Probability'); hold on
                      xlabel('Amp Env Correlation');ylabel('P(X)'); ylim([0 0.3]); grid on; title(R.condname{cond})
-                    [N B] = histcounts(segL,linspace(0,1,12));
+                    [N B] = histcounts(segL,linspace(0,1,14));
                     H_dist(nr,cond,sub).N = N;
                  H_dist(nr,cond,sub).B = B;                       
                     Hcorr(nr,cond,sub) = mean(H(1,:))

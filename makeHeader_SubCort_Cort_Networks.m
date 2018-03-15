@@ -8,6 +8,7 @@ elseif strcmp(getenv('COMPUTERNAME'),'FREE')
 end
 R.subname = {'DF','DP','DS','JA','JB','JN','LN01','LN02','LN03','MC','MW','SW'};
 R.condname = {'ON','OFF'};
+R.bandname = {'High Beta','Alpha'}
 R.condnamelc = {'on','off'};
 R.ref_list = {'STN_L01','STN_L12','STN_L23','STN_R01','STN_R12','STN_R23'};
 R.ipsicon = 'ipsi';
@@ -23,7 +24,8 @@ R.pp.cont.thin.bp = [4 98];
 
 % Beamforming
 % DICs
-R.dics.bp = [24 34 29 3];
+R.dics.bp = [24 34 29 5;
+              8 12  10 2];
 
 R.ROI.maskrho_dic = 2;
 R.ROI.maskrho_vc = 1;

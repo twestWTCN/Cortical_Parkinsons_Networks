@@ -1,8 +1,11 @@
 % MASTER
 clear; close all
 % Curr list subname = {'JN','MC','SW','DF','JB','MW','DP','DS','JA'};
-% CONSIDER THRESHOLDING SEGMENTS ON BETA POWER - WITHIN UPPER 75% percent -
-% removes crap!
+%% TO DO:
+% 1) Theshold segments as ratio of amplitude of envelope of bandpass vs total
+% to yield an SNR
+% 2) Look at Alpha networks - how do they coincide with beta frames? 
+% 3)...
 add_corticalnetworks_paths()
 R = makeHeader_SubCort_Cort_Networks();
 %% Compute Forward
@@ -28,7 +31,8 @@ compute_leadfield_LCMV_v2(R,steps,0)
 R.subname = {'JN','MC','SW','DF','JB','MW','DP','DS','JA','LN01','LN02','LN03'};
 % compute_leadfield_DICS(datapathr,subname,steps,0,[24 30 27 3])
 steps = {'leadfield','plotsourcepow'};
-compute_leadfield_DICS_v2(R,steps,0)
+% compute_leadfield_DICS_v2(R,steps,0)
+compute_leadfield_DICS_v3(R,steps,0)
 
 % subname = {'DF'};
 % decide_max_coh(datapathr,subname)
