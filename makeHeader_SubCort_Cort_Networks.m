@@ -35,7 +35,12 @@ R.NPD.multitaper = 'M2';
 R.NPD.windowlength = 10;
 
 % Phase Analy
-R.PA.WPLIscreen = 0.055;
-R.PA.bwid = 0.5;
+R.PA.bwid = 0.75;
+R.PA.slidingwindow = 2.5;
+R.PA.PLVeps =  0.35;
 R.PA.mwid = 12;
-R.PA.PLVeps = 0.32;
+R.PA.WinOver = 0.95;
+R.PA.stn_lb_frq = 14;
+R.PA.frqrange{1} = 24:0.5:34;
+R.PA.frqrange{2} = 8:0.5:12;
+R.PA.SNR = -1;

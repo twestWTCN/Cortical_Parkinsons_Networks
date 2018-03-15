@@ -6,8 +6,8 @@ end
 % peak? Or the mean of the ON and OFF together?
 close all
 QX = 6 ; QY = 8;
-load([R.datapathr 'subject_hbWPLI075'])
-subscreen = squeeze(sum(subject_hbcohscreen>R.PA.WPLIscreen)==2);
+% load([R.datapathr 'subject_hbWPLI075'])
+% subscreen = squeeze(sum(subject_hbcohscreen>R.PA.WPLIscreen)==2);
 a = logspace(0.5,log10(150),4); logscalez = -80:20:80; %linspace(-50,50,QY); %logscalez = [-3.^(4:-1:2) 3.^(2:4)];
 condcr = {'r','b'};
 for sub = 1:numel(R.subname)
@@ -30,10 +30,10 @@ for sub = 1:numel(R.subname)
                     phaseang_dist(nr,cond,sub).B = B;
                     
                     segL = segL_pli_dist_save{cond,nr};
-                    
+                    x = [segL_pli_dist_save{1,:}]; y = [segL_pli_dist_save{2,:}];[h pseg(nr,sub)] = ttest2(x,y)
                     figure(20)
                      subplot(1,2,cond)
-                    histogram(segL,logspace(log10(0.1),log10(4),12),'FaceColor',condcr{cond},'FaceAlpha',0.1,'Normalization','count'); hold on
+                    histogram(segL,logspace(log10(0.1),log10(3.5),12),'FaceColor',condcr{cond},'FaceAlpha',0.1,'Normalization','Probability'); hold on
                     set(gca,'xscale','log')
                     xlabel('Segment Length');ylabel('P(X)');  grid on; title(R.condname{cond}); %ylim([0 0.5]);
                     [N B] = histcounts(segL,linspace(0,3.5,12));
@@ -43,6 +43,8 @@ for sub = 1:numel(R.subname)
                     ampname = {'HB CTX','HB STN','LB STN'};
                     for i = 1:3
                         amp = amp_pli_dist_save{cond,nr}(i,:);
+                        x =  amp_pli_dist_save{1,1}(i,:); y =  amp_pli_dist_save{2,1}(i,:); [h pamp(i,nr,sub)] = ttest2(x,y)
+
                         figure(30+i)
                          subplot(1,2,cond)
                         histogram(amp,linspace(-75,75,12),'FaceColor',condcr{cond},'FaceAlpha',0.1,'Normalization','Probability'); hold on
@@ -101,42 +103,42 @@ y = (squeeze(Hcorr(:,2,:))); y(y==0) = [];
 
 figure(2)
 subplot(1,2,1)
-histogram(x,linspace(0,1,12),'FaceColor',condcr{1},'Normalization','Probability'); xlim([0 1])
-xlabel('Dwell/Escape'); ylabel('P(X)'); grid on; ylim([0 0.7])
+histogram(x,linspace(0.5,0.8,5),'FaceColor',condcr{1},'Normalization','Probability'); xlim([0 1])
+xlabel('STN/M1 Amp Corr'); ylabel('P(X)'); grid on; ylim([0 0.7])
 subplot(1,2,2);
-histogram(y,linspace(0,1,12),'FaceColor',condcr{2},'Normalization','Probability'); xlim([0 1]);
-xlabel('Dwell/Escape'); ylabel('P(X)'); grid on; ylim([0 0.7])
+histogram(y,linspace(0.5,0.8,5),'FaceColor',condcr{2},'Normalization','Probability'); xlim([0 1]);
+xlabel('STN/M1 Amp Corr'); ylabel('P(X)'); grid on; ylim([0 0.7])
 [h p] = ttest2(x,y)
 title(num2str(p))
 dwell = {x,y,p};
-% savefigure_v2([R.datapathr '\results\seganalysis\PLI\partests\'],[ num2str(idd) '_PLI_surrogate_bwid_' num2str(R.PA.bwid) '_PLVeps_' num2str(R.PA.PLVeps)],[],[],[]); close all                  
+savefigure_v2([R.datapathr '\results\seganalysis\PLI\partests\'],[ num2str(idd) '_PLI_surrogate_bwid_' num2str(R.PA.bwid) '_PLVeps_' num2str(R.PA.PLVeps)],[],[],[]); close all                  
 
-figure(3)
-x = sum(squeeze(length_amp_corr(1,1,:,:)),3);x(x==0) = [];
-y = sum(squeeze(length_amp_corr(1,2,:,:)),3);y(y==0) = [];
-subplot(1,2,1)
-histogram(x,linspace(-1,1,12),'FaceColor',condcr{1},'Normalization','Probability');% xlim([0 1])
-xlabel('Frame Length'); ylabel('Amplitude Correlation'); grid on;% ylim([0 0.7])
-subplot(1,2,2);
-histogram(y,linspace(-1,1,12),'FaceColor',condcr{2},'Normalization','Probability'); %xlim([0 1]);
-xlabel('Frame Length'); ylabel('Amplitude Correlation'); grid on; %ylim([0 0.7])
-[h p] = ttest2(x,y)
-title(num2str(p))
+% figure(3)
+% x = sum(squeeze(length_amp_corr(1,1,:,:)),3);x(x==0) = [];
+% y = sum(squeeze(length_amp_corr(1,2,:,:)),3);y(y==0) = [];
+% subplot(1,2,1)
+% histogram(x,linspace(-1,1,12),'FaceColor',condcr{1},'Normalization','Probability');% xlim([0 1])
+% xlabel('Frame Length'); ylabel('Amplitude Correlation'); grid on;% ylim([0 0.7])
+% subplot(1,2,2);
+% histogram(y,linspace(-1,1,12),'FaceColor',condcr{2},'Normalization','Probability'); %xlim([0 1]);
+% xlabel('Frame Length'); ylabel('Amplitude Correlation'); grid on; %ylim([0 0.7])
+% [h p] = ttest2(x,y)
+% title(num2str(p))
 
-
-for i = 1:3
-figure(400+i)
-x = sum(squeeze(amp_amp_corr(1,i,1,:,:)),3);x(x==0) = [];
-    y = sum(squeeze(amp_amp_corr(1,i,2,:,:)),3);y(y==0) = [];
-    subplot(1,2,1)
-    histogram(x,linspace(-1,1,12),'FaceColor',condcr{1},'Normalization','Probability');% xlim([0 1])
-    xlabel(ampname{i}); ylabel('Amplitude Correlation'); grid on;% ylim([0 0.7])
-    subplot(1,2,2);
-    histogram(y,linspace(-1,1,12),'FaceColor',condcr{2},'Normalization','Probability'); %xlim([0 1]);
-    xlabel(ampname{i}); ylabel('Amplitude Correlation'); grid on; %ylim([0 0.7])
-    [h p] = ttest2(x,y)
-    title(num2str(p))
-end
-savefigure_v2([R.datapathr '\results\seganalysis\PLI\partests\'],[ num2str(idd) '_PLI_surrogate_.tiff'],[],[],[]); close all                  
+% 
+% for i = 1:3
+% figure(400+i)
+% x = sum(squeeze(amp_amp_corr(1,i,1,:,:)),3);x(x==0) = [];
+%     y = sum(squeeze(amp_amp_corr(1,i,2,:,:)),3);y(y==0) = [];
+%     subplot(1,2,1)
+%     histogram(x,linspace(-1,1,12),'FaceColor',condcr{1},'Normalization','Probability');% xlim([0 1])
+%     xlabel(ampname{i}); ylabel('Amplitude Correlation'); grid on;% ylim([0 0.7])
+%     subplot(1,2,2);
+%     histogram(y,linspace(-1,1,12),'FaceColor',condcr{2},'Normalization','Probability'); %xlim([0 1]);
+%     xlabel(ampname{i}); ylabel('Amplitude Correlation'); grid on; %ylim([0 0.7])
+%     [h p] = ttest2(x,y)
+%     title(num2str(p))
+% end
+% savefigure_v2([R.datapathr '\results\seganalysis\PLI\partests\'],[ num2str(idd) '_PLI_surrogate_.tiff'],[],[],[]); close all                  
 
 a = 1;

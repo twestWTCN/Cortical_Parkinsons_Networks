@@ -4,9 +4,9 @@ function plot_phase_amp_analysis_PLIs(R)
 % peak? Or the mean of the ON and OFF together?
 close all
 QX = 6 ; QY = 8;
-load([R.datapathr 'subject_hbWPLI075'])
-subscreen = squeeze(sum(subject_hbcohscreen>R.PA.WPLIscreen)==2);
-a = logspace(0.5,log10(150),4); logscalez = -60:20:60; %linspace(-50,50,QY); %logscalez = [-3.^(4:-1:2) 3.^(2:4)];
+% load([R.datapathr 'subject_hbWPLI075'])
+% subscreen = squeeze(sum(subject_hbcohscreen>R.PA.WPLIscreen)==2);
+a = logspace(0.5,log10(150),4); logscalez = -40:20:40; %linspace(-50,50,QY); %logscalez = [-3.^(4:-1:2) 3.^(2:4)];
 for sub = 1:numel(R.subname)
     for side =1:2
         if 1==1 %subscreen(side,sub)
@@ -23,7 +23,7 @@ for sub = 1:numel(R.subname)
                     tend = timevec{cond,nr}(end)-timevec{cond,nr}(1);
                     
                     [L4(cond) segLbin(:,nr,cond) binmid pdense(1,nr,cond)] = plot_PA_Dep_relation(cond,pA_pli_dist_save{cond,nr},segL_pli_dist_save{cond,nr},...
-                        'Segment Length',QX,logspace(log10(0.5),log10(1.2),6),f,tend); %linspace(0,1.5,8)
+                        'Segment Length',QX,linspace(0.5,1.5,8),f,tend); %linspace(0,1.5,8) ,logspace(log10(0.5),log10(1.2),6)
                     xlim([-3.5 3.5]); %ylim([0 1.75]);
                     figure(f(2)); set(gcf,'Position',[263 517 1403 352]);  if cond>0; colorbar; end; title(R.condname{cond})
                     caxis([0 0.04]);
@@ -205,7 +205,7 @@ for sub = 1:numel(R.subname)
         clear segLbin ampbin pdense hdist phaseAng_dist gc_dist_c gc_dist_cd
     end
 end
-save([R.datapathr '\results\seganalysis\groupseganaly'],'segLsave','ampsave','densesave','hdistsave','phaseAng_dist_save'); %,'gc_dist_sub_save','GC_stat_table')
+save([R.datapathr '\results\seganalysis\groupseganaly'],'segLsave','amp_pli_dist_save','densesave','hdistsave','phaseAng_dist_save'); %,'gc_dist_sub_save','GC_stat_table')
 
 ON = sum(squeeze(length_amp_corr(:,1,:,:)),3);
 OFF = sum(squeeze(length_amp_corr(:,2,:,:)),3);

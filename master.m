@@ -48,6 +48,8 @@ plot_subject_cohspectra(R)
 compute_phase_amp_analysis_120318(R)
 getHists_phase_amp_analysis_PLIs(R)
 plot_phase_amp_analysis(R)
+plot_phase_amp_analysis_PLIs(R)
+
 plot_group_level_phaseamp(R)
 
 

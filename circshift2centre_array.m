@@ -1,5 +1,6 @@
 function [xshift,yshift] = circshift2centre_array(Xarray,Yarray)
 % %% Do both rows seperately
+if ~isempty(Xarray)
 x =sum(Xarray,2);
 % x =max(Xarray,[],2);
 p = find(x==max(x));
@@ -9,7 +10,10 @@ else
     pshift = ((length(x))/2)-p;
 end
 xshift = circshift(Xarray,pshift);
-
+else
+    xshift = Xarray;
+end
+if ~isempty(Yarray)
 x =sum(Yarray,2);
 % x =max(Yarray,[],2);
 p = find(x==max(x));
@@ -19,6 +23,9 @@ else
     pshift = ((length(x))/2)-p;
 end
 yshift = circshift(Yarray,pshift);
+else
+    yshift = Yarray;
+end
 %% Do both rows to off
 % x =sum(Xarray,2);
 % % % x =max(Xarray,[],2);

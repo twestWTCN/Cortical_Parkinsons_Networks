@@ -3,8 +3,8 @@ load([R.datapathr '\results\seganalysis\groupseganaly'])
 % CORRELATION BETWEEN BETA POWER AND DURATION OF SEGMENTS
 cmap = [0 0 1; 1 0 0];
 analynames = {'Segment Length','CTX High Beta Amp','STN High Beta Amp','STN Low Beta Amp','STN/CTX High Beta Amp Correlation','Causal Density'};
-load([R.datapathr 'subject_hbWPLI075'])
-subscreen = squeeze(sum(subject_hbcohscreen>R.PA.WPLIscreen)==2);
+% load([R.datapathr 'subject_hbWPLI075'])
+% subscreen = squeeze(sum(subject_hbcohscreen>R.PA.WPLIscreen)==2);
 % subscreen_dif =squeeze(subject_hbcohscreen(1,:,:)-subject_hbcohscreen(2,:,:))
 % subscreen_dif(subscreen_dif<-0.01)
 %Phase Amp Analy
@@ -14,7 +14,7 @@ for k = 1:5 %5 for granger
         for side = 1:2
 %             if subscreen(side,sub)
                 for cond = 1:2
-                    denseav(:,:,cond,side,sub) = densesave{sub,side}(k,cond).shiftN;
+                    denseav(:,:,cond,side,sub) = densesave{sub,side}(k,1,cond).shiftN;
                 end
 %             else
 %                 denseav(:,:,cond,side,sub) = NaN;

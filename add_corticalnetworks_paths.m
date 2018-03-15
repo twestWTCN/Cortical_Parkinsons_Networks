@@ -4,10 +4,10 @@ if strcmp(getenv('COMPUTERNAME'),'SFLAP-2')
     addpath(genpath('C:\Users\Tim\Documents\Work\GIT\Cortical_Parkinsons_Networks\phase_amp_analysis'))
     addpath(genpath('C:\Users\Tim\Documents\Work\GIT\Cortical_Parkinsons_Networks\statistics'))
     addpath(genpath('C:\Users\Tim\Documents\Work\GIT\Cortical_Parkinsons_Networks\plotting'))
+    pathCell = regexp(path, pathsep, 'split'); onPath = any(strcmpi('C:\Users\Tim\Documents\MATLAB_ADDONS\mvgc_v1.0', pathCell));
     
     % Grangerpath
-    addpath('C:\Users\Tim\Documents\MATLAB_ADDONS\mvgc_v1.0')
-    run startup.m
+    if ~onPath; addpath('C:\Users\Tim\Documents\MATLAB_ADDONS\mvgc_v1.0'); run startup.m; end
     addpath('C:\Users\Tim\Documents\MATLAB_ADDONS\gramm-master\@gramm')
     
 elseif strcmp(getenv('COMPUTERNAME'),'FREE')
