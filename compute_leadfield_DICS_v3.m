@@ -4,7 +4,7 @@ for sub = 1:numel(R.subname)
     for cond = 1:2
         [datafileN,pp_mark,nrep,senscheck] = data_fileguide(R.subname{sub},cond-1);
         for nr = 1:nrep % Use the later trial
-            for band = 2; %1:2
+            for band = 1:2
                 datafilen = [pp_mark datafileN{nr}];
                 %         if senscheck{nr} == 1
                 %             nr = nr+1;

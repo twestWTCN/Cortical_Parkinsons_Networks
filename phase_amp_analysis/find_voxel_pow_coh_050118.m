@@ -21,7 +21,7 @@ for  cond = 1:2 % USE just OFF to identify ROI for now
             N = numel(vchansave);
             progressStepSize = 1;
             %             if ~is_in_parallel; parpool; end
-            ppm = ParforProgMon('Power Estimation: ', N, progressStepSize, 800, 300);
+%             ppm = ParforProgMon('Power Estimation: ', N, progressStepSize, 800, 300);
             parfor x = 1:numel(vchansave)
                 cfg = [];
                 cfg.length = 1.5;
@@ -80,10 +80,10 @@ for  cond = 1:2 % USE just OFF to identify ROI for now
                 [dum fi] = max(icoh(coh.freq>13 & coh.freq<24));
                 stn_lb_frq(x) = 13+fi;
                 frqsave_vox(:,x) = coh.freq;
-                ppm.increment();
+%                 ppm.increment();
                 %                 close all
             end
-            ppm.delete()
+%             ppm.delete()
             powsave{nr,side,cond} = powsave_vox;
             cohsave{nr,side,cond} = cohsave_vox;
             frqsave{nr,side,cond} = frqsave_vox;

@@ -5,6 +5,7 @@ for sub = 8:numel(R.subname)
     for cond = 1:2
         [datafileN,pp_mark,nrep,senscheck] = data_fileguide(R.subname{sub},cond-1);
         for nr = 1:nrep
+            for band = 1:numel(R.bandname)
 %             load([R.datapathr R.subname{sub} '\ftdata\megdata_' num2str(nr) '_' R.condname{cond}],'megdata')
 %             R.ref_list = {megdata.label{strmatch('STN',megdata.label)}};
 %             clear megdata
@@ -15,7 +16,7 @@ for sub = 8:numel(R.subname)
                 premotor_R = [-20 -6 84]./10;
                 premotor_L = [20 -6 84]./10;
                 load([R.datapathr R.subname{sub} '\ftdata\r' R.subname{sub} '_DICSv2_peakinfo_source' R.condname{cond} 'nrep_' num2str(nr) '_' ref_chan])
-                load([R.datapathr R.subname{sub} '\ftdata\r' R.subname{sub} '_DICSv2_source' R.condname{cond} 'nrep_' num2str(nr) '_' ref_chan],'source')
+                load([R.datapathr R.subname{sub} '\ftdata\r' R.subname{sub} '_DICSv2_source' R.condname{cond} 'nrep_' num2str(nr) '_' ref_chanz],'source')
                 source_avg_dics(:,refN,nr,cond) = source.avg.coh;
                 figure(400)
                 mask =  reshape(source.avg.coh,source.dim)>0;
