@@ -1,9 +1,10 @@
-function [L Depbinned binmid pdense] = plot_PA_Dep_relation(cond,pA_dist,Dep,Depname,nsplit,Yedge,f,tend)
+function [L Depbinned binmid pdense] = plot_PA_Dep_relation(cond,pA_dist,Dep,Depname,Xedge,Yedge,f,tend)
 condname = {'ON','OFF'};
 Dep(isnan(pA_dist)) = []; pA_dist(isnan(pA_dist)) = [];
 pA_dist(isnan(Dep)) = []; Dep(isnan(Dep)) = [];
 cmap = [0 0 1; 1 0 0];
-bedge = linspace(-pi,pi,nsplit);  clear segLbinned
+bedge = Xedge; %linspace(-pi,pi,nsplit);  
+clear segLbinned
 figure(f(2))
 pA_dist(isnan(Dep)) = [];  Dep(isnan(Dep)) = [];
 % KS_2D_DensityEst(pA_dist,Dep,bedge,Yedge)

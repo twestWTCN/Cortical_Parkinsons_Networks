@@ -1,4 +1,4 @@
-function plot_group_level_phaseamp(R)
+function plot_group_level_phaseamp_v3(R)
 close all
 load([R.datapathr '\results\seganalysis\groupseganaly'])
 % CORRELATION BETWEEN BETA POWER AND DURATION OF SEGMENTS
@@ -10,35 +10,40 @@ analynames = {'Segment Length','CTX High Beta Amp','STN High Beta Amp','STN Low 
 % subscreen_dif(subscreen_dif<-0.01)
 %Phase Amp Analy
 for k = 1:5 %5 for granger
-    i = 0;
+    i = 0; Ai = 0; Bi = 0; A = []; B = []; Ag = []; Bg = [];
     for sub = 1:numel(R.subname)
         for side = 1:2
-%             if subscreen(side,sub)
-                for cond = 1:2
-                    denseav(:,:,cond,side,sub) = densesave{sub,side}(k,1,cond).shiftN;
+            for cond = 1:2
+                for nr = 1:size(densesave{sub,side},2)
+                    if any(densesave{sub,side}(k,nr,cond).shiftN(:)) & cond == 1
+                        Ai = Ai+1;
+                        A(:,:,Ai) = densesave{sub,side}(k,nr,cond).shiftN;
+                        Ag(Ai) = sub;
+                    elseif any(densesave{sub,side}(k,nr,cond).shiftN(:)) & cond == 2
+                        Bi = Bi+1;
+                        B(:,:,Bi) = densesave{sub,side}(k,nr,cond).shiftN;
+                        Bg(Bi) = sub;
+                    end
                 end
-%             else
-%                 denseav(:,:,cond,side,sub) = NaN;
-%             end
+            end
         end
     end
-    dimz = [size(densesave{1,side}(k,cond).N) numel(R.subname)];
     x = densesave{1,side}(k,cond).Xedges;
     y = densesave{1,side}(k,cond).Yedges;
-
-    A = reshape(squeeze(denseav(:,:,1,:,:)),dimz(1),dimz(2),2*numel(R.subname));
-    B = reshape(squeeze(denseav(:,:,2,:,:)),dimz(1),dimz(2),2*numel(R.subname));
+% 
+%     A = reshape(squeeze(denseav(:,:,1,:,:)),dimz(1),dimz(2),2*numel(R.subname));
+%     B = reshape(squeeze(denseav(:,:,2,:,:)),dimz(1),dimz(2),2*numel(R.subname));
     % for i = 1:size(A,1)
     %     for j = 1:size(B,2)
     %         [dum pmat(i,j)] = ttest2(squeeze(A(i,j,:)),squeeze(B(i,j,:)));
     %     end
     % end
-    % Change plotting to run through clusters instead of simply masking!!
-    stat = clusterstat_matrix(B,A,500,dimz);
+    design = [[Ag; repmat(1,1,length(Ag))] [Bg;repmat(2,1,length(Bg))]];
+    stat = clusterstat_matrix_v3(B,A,500,design);
     statmat = squeeze(stat.stat).*squeeze(stat.mask);
         
-    av1 = squeeze(nanmean(nanmean(denseav(:,:,1,:,:),4),5));
-    av2 = squeeze(nanmean(nanmean(denseav(:,:,2,:,:),4),5));
+    av1 = squeeze(mean(A,3)); %squeeze(nanmean(nanmean(denseav(:,:,1,:,:),4),5));
+    av2 = squeeze(mean(B,3)); %squeeze(nanmean(nanmean(denseav(:,:,2,:,:),4),5));
     avdiff = av1-av2;
     
     figure(k); set(gcf,'Position',[263 517 1403 352])

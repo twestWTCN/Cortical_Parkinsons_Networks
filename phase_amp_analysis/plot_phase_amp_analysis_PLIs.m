@@ -3,14 +3,16 @@ function plot_phase_amp_analysis_PLIs(R)
 % consider saving the difference of ON and OFF - recentre that to some
 % peak? Or the mean of the ON and OFF together?
 close all
-QX = 6 ; QY = 8;
+QX = 6 ; QY = 6;
+% QX = [-pi -pi/8 pi/8 pi]';
+QX = linspace(-pi,pi,QX);
 % load([R.datapathr 'subject_hbWPLI075'])
 % subscreen = squeeze(sum(subject_hbcohscreen>R.PA.WPLIscreen)==2);
-a = logspace(0.5,log10(150),4); logscalez = -40:20:40; %linspace(-50,50,QY); %logscalez = [-3.^(4:-1:2) 3.^(2:4)];
+a = logspace(0.5,log10(150),4); logscalez = [-100 -50 -15 15 50 100]; %-40:10:40; %linspace(-50,50,QY); %logscalez = [-3.^(4:-1:2) 3.^(2:4)];
 for sub = 1:numel(R.subname)
     for side =1:2
         if 1==1 %subscreen(side,sub)
-            load([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_phaseamp_PLI_' R.ipsicon '_' R.siden{side}])
+            load([R.datapathr R.subname{sub} '\ftdata\ROI_analy\_ROIvoxel_phaseamp_PLI_' R.ipsicon '_' R.siden{side}])
             for cond = 1:2
                 [datafileN,pp_mark,nrep,senscheck] = data_fileguide(R.subname{sub},cond-1);
                 for nr = 1:nrep
@@ -22,8 +24,8 @@ for sub = 1:numel(R.subname)
                     subplot(1,3,cond);
                     tend = timevec{cond,nr}(end)-timevec{cond,nr}(1);
                     
-                    [L4(cond) segLbin(:,nr,cond) binmid pdense(1,nr,cond)] = plot_PA_Dep_relation(cond,pA_pli_dist_save{cond,nr},segL_pli_dist_save{cond,nr},...
-                        'Segment Length',QX,linspace(0.5,1.5,8),f,tend); %linspace(0,1.5,8) ,logspace(log10(0.5),log10(1.2),6)
+                    [L4(cond) segLbin(:,nr,cond) binmid pdense(1,nr,cond)] = plot_PA_Dep_relation(cond,pA_pli_dist_save{cond,nr}-circ_mean(pA_pli_dist_save{cond,nr}'),median(segL_pli_dist_save{cond,nr})-segL_pli_dist_save{cond,nr},...
+                        'Segment Length',QX,linspace(-1.5,1.5,QY),f,tend); % ,logspace(log10(0.5),log10(1.2),6)
                     xlim([-3.5 3.5]); %ylim([0 1.75]);
                     figure(f(2)); set(gcf,'Position',[263 517 1403 352]);  if cond>0; colorbar; end; title(R.condname{cond})
                     caxis([0 0.04]);
@@ -31,8 +33,8 @@ for sub = 1:numel(R.subname)
                     f(1) = figure(1*10 + 5); % PA vs M1 Amp
                     f(2) = figure((2)*10 +2);
                     subplot(1,3,cond);
-                    [L5(cond) ampbin(:,nr,cond,1) binmid pdense(2,nr,cond)] = plot_PA_Dep_relation(cond,pA_pli_dist_save{cond,nr},amp_pli_dist_save{cond,nr}(1,:),...
-                        'M1 High Beta Amp',QX,logscalez,f,tend); %linspace(0,7,8) ,linspace(-100,200,QY)
+                    [L5(cond) ampbin(:,nr,cond,1) binmid pdense(2,nr,cond)] = plot_PA_Dep_relation(cond,pA_pli_dist_save{cond,nr}-circ_mean(pA_pli_dist_save{cond,nr}'),amp_pli_dist_save{cond,nr}(1,:),...
+                        'M1 High Beta Amp',QX,linspace(-50,50,QY),f,tend); %linspace(0,7,8) ,linspace(-100,200,QY)
                     xlim([-3.5 3.5]); %ylim([0 8])
                     figure(f(2)); set(gcf,'Position',[263 517 1403 352]); if cond>0; colorbar; end; title(R.condname{cond})
                      caxis([0 0.04]);
@@ -40,8 +42,8 @@ for sub = 1:numel(R.subname)
                     f(1) = figure(1*10 + 6); % PA vs SegL
                     f(2) = figure((2)*10 +3);
                     subplot(1,3,cond)
-                    [L6(cond) ampbin(:,nr,cond,2) binmid pdense(3,nr,cond)] = plot_PA_Dep_relation(cond,pA_pli_dist_save{cond,nr},amp_pli_dist_save{cond,nr}(2,:),...
-                        'STN High Beta Amp',QX,logscalez,f,tend); %linspace(0,7,8) linspace(-100,200,QY)
+                    [L6(cond) ampbin(:,nr,cond,2) binmid pdense(3,nr,cond)] = plot_PA_Dep_relation(cond,pA_pli_dist_save{cond,nr}-circ_mean(pA_pli_dist_save{cond,nr}'),amp_pli_dist_save{cond,nr}(2,:),...
+                        'STN High Beta Amp',QX,linspace(-75,75,QY),f,tend); %linspace(0,7,8) linspace(-100,200,QY)
                     xlim([-3.5 3.5]); %ylim([0 8]);
                     figure(f(2)); set(gcf,'Position',[263 517 1403 352]);  if cond>0; colorbar; end; title(R.condname{cond})
                     caxis([0 0.04]);
@@ -49,8 +51,8 @@ for sub = 1:numel(R.subname)
                     f(1) = figure(1*10 + 7); % PA vs SegL
                     f(2) = figure((2)*10 +4); set(gcf,'Position',[263 517 1403 352])
                     subplot(1,3,cond)
-                    [L7(cond) ampbin(:,nr,cond,3) binmid pdense(4,nr,cond)] = plot_PA_Dep_relation(cond,pA_pli_dist_save{cond,nr},amp_pli_dist_save{cond,nr}(3,:),...
-                    'STN Low Beta Amp',QX,logscalez,f,tend); % linspace(0,4,8) linspace(-100,200,QY)
+                    [L7(cond) ampbin(:,nr,cond,3) binmid pdense(4,nr,cond)] = plot_PA_Dep_relation(cond,pA_pli_dist_save{cond,nr}-circ_mean(pA_pli_dist_save{cond,nr}'),amp_pli_dist_save{cond,nr}(3,:),...
+                    'STN Low Beta Amp',QX,linspace(-20,20,QY),f,tend); % linspace(0,4,8) linspace(-100,200,QY)
                     xlim([-3.5 3.5]); %ylim([0 5]);
                     figure(f(2)); set(gcf,'Position',[263 517 1403 352]);  if cond>0; colorbar; end; title(R.condname{cond})
                     caxis([0 0.0]);
@@ -65,8 +67,9 @@ for sub = 1:numel(R.subname)
                     phaseAng_dist(cond).circ_mean_std = [circ_mean(pA_dist') circ_var(pA_dist')];
                     [h mu] =circ_mtest(pA_dist',circ_mean(pA_dist'));
                     phaseAng_dist(cond).circ_meantest = [h mu];
-                    [pval, z] = circ_rtest(pA_dist');
-                    phaseAng_dist(cond).circ_RayTest = [pval, z];
+%                     [pval, z] = circ_rtest(pA_dist');
+                    
+                    phaseAng_dist(cond).circ_RayTest = [1 1]; %[pval, z];
                     
                     ON = pA_pli_dist_save{1};  OFF = pA_pli_dist_save{2}; OFF(isnan(OFF)) = []; ON(isnan(ON)) = [];
                     sampsz = min([length(ON) length(OFF)]);
@@ -90,7 +93,7 @@ for sub = 1:numel(R.subname)
                     subplot(1,3,cond)
                     set(gcf,'Position',[263 517 1403 352])
                     %                 [H2(cond) hdist(:,cond,2)] = plot_segL_histogram(pA_pli_dist_save{cond,nr},segL_pli_dist_save{cond,nr},'PLI Segment Length',cond);
-                    [L6(cond) hbin(:,nr,cond,1) binmid pdense(5,nr,cond)] = plot_PA_Dep_relation(cond,pA_pli_dist_save{cond,nr},H_dist_save{cond,nr}(1,:),...
+                    [L6(cond) hbin(:,nr,cond,1) binmid pdense(5,nr,cond)] = plot_PA_Dep_relation(cond,pA_pli_dist_save{cond,nr}-circ_mean(pA_pli_dist_save{cond,nr}'),H_dist_save{cond,nr}(1,:),...
                         'STN CTX H Beta Amp Corr',QX,linspace(0.25,1,QY),f,tend); % linspace(0,4,8)
                     caxis([0 0.08]);
                     %% Phase Angle Rose - PLI
@@ -188,7 +191,7 @@ for sub = 1:numel(R.subname)
 %             ampsave{sub,side} = ampbin;
             for i = 1:5 % 6 for granger
                 for nr = 1:size(pdense,2)
-                    if i<6
+                    if i>6
                         [pdense(i,nr,2).shiftN, pdense(i,nr,1).shiftN] = circshift2centre_array(pdense(i,nr,2).N,pdense(i,nr,1).N);
                     else
                         pdense(i,nr,2).shiftN = pdense(i,nr,2).N;

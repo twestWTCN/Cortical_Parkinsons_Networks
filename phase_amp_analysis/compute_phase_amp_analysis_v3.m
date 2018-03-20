@@ -1,4 +1,4 @@
-function compute_phase_amp_analysis_120318(R,idd)
+function compute_phase_amp_analysis_v3(R,idd)
 if nargin<2
     idd = '';
 end
@@ -8,19 +8,18 @@ end
 % etc within frames. DFA is also computed PS/AE versions. Barplots for DFA
 % at end of script.
 %%%
-
-for sub = 1:numel(R.subname)
-    if 1; %exist([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_bank_' R.ipsicon '.mat']) ==0
-        [idbank frqbank stn_lb_frqbank] = find_voxel_pow_coh_v3(R,sub,band)
-    else
-        load([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_bank_' R.ipsicon])
-    end
-    for side = 1:2
-        for cond = 1:2
-            [datafileN,pp_mark,nrep,senscheck] = data_fileguide(R.subname{sub},cond-1);
-            [~,~,nrepOFF,~] = data_fileguide(R.subname{sub},cond-1);
-            for nr = 1:nrepOFF
-                for band =1;%
+for band = 1:numel(R.bandnames)
+    for sub = 1:numel(R.subname)
+        if 1; %exist([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_bank_' R.ipsicon '.mat']) ==0
+            [idbank frqbank stn_lb_frqbank] = find_voxel_pow_coh_v3(R,sub,band)
+        else
+            load([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_bank_' R.ipsicon])
+        end
+        for side = 1:2
+            for cond = 1:2
+                [datafileN,pp_mark,nrep,senscheck] = data_fileguide(R.subname{sub},cond-1);
+                [~,~,nrepOFF,~] = data_fileguide(R.subname{sub},cond-1);
+                for nr = 1:nrepOFF
                     id = idbank(1,side,cond);
                     frq = frqbank(1,side,cond);
                     stn_lb_frq = stn_lb_frqbank(1,side,cond);
@@ -39,12 +38,12 @@ for sub = 1:numel(R.subname)
                     end
                     signalEnvAmp = median(abs(hilbert(Xdata.trial{1})),2);
                     if 1; %exist([R.datapathr R.subname{sub} '\ftdata\ROI_analy\' R.bandname{band} '_' R.condname{cond} '_nr_' num2str(nr) '_' R.siden{side} '_optfreq.mat']) ==0
-                    [maxfrq maxPLV] = PLV_compute_optimalFrq(Xdata,R.PA.frqrange{band},R);
-                     save([R.datapathr R.subname{sub} '\ftdata\ROI_analy\' R.bandname{band} '_' R.condname{cond} '_nr_' num2str(nr) '_' R.siden{side} '_optfreq'],'maxfrq','maxPLV')
+                        [maxfrq maxPLV] = PLV_compute_optimalFrq(Xdata,R.PA.frqrange{band},R);
+                        save([R.datapathr R.subname{sub} '\ftdata\ROI_analy\' R.bandname{band} '_' R.condname{cond} '_nr_' num2str(nr) '_' R.siden{side} '_optfreq'],'maxfrq','maxPLV')
                     else
-                     load([R.datapathr R.subname{sub} '\ftdata\ROI_analy\' R.bandname{band} '_' R.condname{cond} '_nr_' num2str(nr) '_' R.siden{side} '_optfreq'],'maxfrq','maxPLV')
+                        load([R.datapathr R.subname{sub} '\ftdata\ROI_analy\' R.bandname{band} '_' R.condname{cond} '_nr_' num2str(nr) '_' R.siden{side} '_optfreq'],'maxfrq','maxPLV')
                     end
-                     % Compute data transforms (Hilbert)
+                    % Compute data transforms (Hilbert)
                     [amp phi dphi_12 dphi_12_dt betaS] = comp_instant_angle_phase(Xdata,maxfrq,R.PA.stn_lb_frq,R.PA.bwid,Xdata.fsample);
                     WinSize = R.PA.slidingwindow*R.pp.cont.full.fs;
                     [PLV PLV_tvec] = slidingwindowPLV(WinSize,phi,R.PA.WinOver);
@@ -69,16 +68,16 @@ for sub = 1:numel(R.subname)
                     amp_pli_dist_save{cond,nr} = amp_dist;
                     segL_pli_dist_save{cond,nr} = segL_ddt;
                     timevec{cond,nr} = vchansave(id).time; %{1}
-%                     figure
+                    %                     figure
                     PLV_sw_plot(Xdata,betaS,amp,phi,snr_sw,seg_ddt,PLV,PLV_tvec,consecSegs,R)
                     %                 plot_example_phaseanalysis_trace(betaS,amp,phi,dphi_12_dt,seg_ddt1,0.005,PLI_tvec,PLI,consecSegs);
                     %                 savefigure_v2([R.datapathr 'results\images\seganalysis\'],['example_seg_subject1_ON'],[],[],[]);
-%                     close all
+                    %                     close all
                 end
             end
+            save([R.datapathr R.subname{sub} '\ftdata\ROI_analy\' idd '_ROIvoxel_phaseamp_PLI_' R.ipsicon '_' R.siden{side} '_' R.bandnames{band}],...
+                'pA_pli_dist_save','amp_pli_dist_save','segL_pli_dist_save','H_dist_save','timevec','gc_dist_save') %
         end
-        save([R.datapathr R.subname{sub} '\ftdata\ROI_analy\' idd '_ROIvoxel_phaseamp_PLI_' R.ipsicon '_' R.siden{side}],...
-            'pA_pli_dist_save','amp_pli_dist_save','segL_pli_dist_save','H_dist_save','timevec','gc_dist_save') %
     end
 end
 % ! shutdown /h
