@@ -27,7 +27,7 @@ R.pp.cont.thin.bp = [4 98];
 R.dics.bp = [24 34 29 5;
               8 12  10 2];
 
-R.ROI.maskrho_dic = 2;
+R.ROI.maskrho_dic = 5;
 R.ROI.maskrho_vc = 1;
 R.ROI.bandROI(:,1,1) = [-20 -6 84]./10; % premotor_R
 R.ROI.bandROI(:,1,2) = [20 -6 84]./10; % premotor_L

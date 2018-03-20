@@ -1,4 +1,4 @@
-function compute_virtual_electrodes_ROI_contdata_081217(R)
+function compute_virtual_electrodes_ROI_contdata_v3(R)
 %%%
 % This function computes virtual electrodes at the list of voxels given by
 % decide_coh script. We compute all and pass to vchansave structure for
@@ -20,9 +20,9 @@ for sub = 1:numel(R.subname)
             end
 %                         eval(['!del /q ' R.datapathr R.subname{sub} '\ftdata\ROI_analy\'])
 %                         delete([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_bank_' R.ipsicon]);
-            load([R.datapathr R.subname{sub} '\ftdata\meg_clean_fullsampdata_cont_' num2str(nr) '_' R.condname{cond} '_' R.bandname{band}])
+            load([R.datapathr R.subname{sub} '\ftdata\meg_clean_fullsampdata_cont_' num2str(nr) '_' R.condname{cond}])
             %             load([R.datapathr R.subname{i} '\ftdata\meg_clean_data_cont_' num2str(nr) '_' R.condname{cond}])
-            load([R.datapathr R.subname{sub} '\ftdata\r' R.subname{sub} '_DICSv2_source_channelselectioninfo_' bandname{band}])
+            load([R.datapathr R.subname{sub} '\ftdata\r' R.subname{sub} '_DICSv2_source_channelselectioninfo_' R.bandname{band}])
             load([R.datapathr R.subname{sub} '\ftdata\r' R.subname{sub} '_LCMV_source_' R.condname{cond} 'nrep_' num2str(nr)])
             for side = 1:2
                 switch R.ipsicon
@@ -121,11 +121,11 @@ for sub = 1:numel(R.subname)
                     vtime = vchan.time;
                 end
                 
-                save([R.datapathr R.subname{sub} '\ftdata\virtual_sources_' num2str(nr) '_ROI_' R.condname{cond} '_' R.siden{side} '_' R.ipsicon],'vchansave','vtime','ROI_list')
+                save([R.datapathr R.subname{sub} '\ftdata\virtual_sources_' num2str(nr) '_ROI_' R.condname{cond} '_' R.siden{side} '_' R.ipsicon  '_' R.bandname{band}],'vchansave','vtime','ROI_list')
                 disp([side nr cond sub])
             end
         end
     end
 end
-
+end
 a = 1;

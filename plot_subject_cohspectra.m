@@ -9,18 +9,20 @@ function plot_subject_cohspectra(R)
 % SElect trial repeat with max WPLI
 %%%
 load([R.datapathr '\UPDRS_Scores.mat'])
+for band = 2:numel(R.bandname)
+ 
 for sub = 1:numel(R.subname)
-    delete([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_bank_' R.ipsicon '.mat']);
-    eval(['!del /q ' R.datapathr R.subname{sub} '\ftdata\ROI_analy\'])
-    if exist([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_bank_' R.ipsicon '.mat']) ==0
-        [idbank frqbank stn_lb_frqbank] = find_voxel_pow_coh_050118(R.datapathr,R.subname{sub},R.condname,R.siden,R.pp.cont.full.fs,R.ipsicon);
-        load([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_power_' R.ipsicon],'powsave')
-        load([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_coh_' R.ipsicon],'cohsave','frqsave')
-        load([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_bank_' R.ipsicon],'frqbank','idbank','stn_lb_frqbank')
+%     delete([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_bank_' R.ipsicon '.mat']);
+%     eval(['!del /q ' R.datapathr R.subname{sub} '\ftdata\ROI_analy\'])
+    if 1;%exist([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_bank_' R.ipsicon '.mat']) ==0
+        [idbank frqbank stn_lb_frqbank] = find_voxel_pow_coh_v3(R.datapathr,R.subname{sub},R.condname,R.siden,R.pp.cont.full.fs,R.ipsicon,R.bandname{band});
+        load([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_power_' R.ipsicon '_'  R.bandname{band}],'powsave')
+        load([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_coh_' R.ipsicon '_'  R.bandname{band}],'cohsave','frqsave')
+        load([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_bank_' R.ipsicon '_'  R.bandname{band}],'frqbank','idbank','stn_lb_frqbank')
     else
-        load([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_power_' R.ipsicon],'powsave')
-        load([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_coh_' R.ipsicon],'cohsave','frqsave')
-        load([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_bank_' R.ipsicon],'frqbank','idbank','stn_lb_frqbank')
+        load([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_power_' R.ipsicon '_'  R.bandname{band}],'powsave')
+        load([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_coh_' R.ipsicon '_'  R.bandname{band}],'cohsave','frqsave')
+        load([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_bank_' R.ipsicon '_'  R.bandname{band}],'frqbank','idbank','stn_lb_frqbank')
     end
     [~,~,nrep(1),~] = data_fileguide(R.subname{sub},0);
     [~,~,nrep(2),~] = data_fileguide(R.subname{sub},1);
@@ -28,13 +30,13 @@ for sub = 1:numel(R.subname)
         id(1) = idbank(nrep(1),side,1);
         id(2) = idbank(nrep(2),side,2);
         
-        load([R.datapathr R.subname{sub} '\ftdata\virtual_sources_' num2str(nrep(1)) '_ROI_' R.condname{1} '_' R.siden{side} '_' R.ipsicon]);
+        load([R.datapathr R.subname{sub} '\ftdata\virtual_sources_' num2str(nrep(1)) '_ROI_' R.condname{1} '_' R.siden{side} '_' R.ipsicon '_'  R.bandname{band}]);
         locbank(:,1,side,sub) = vchansave(id(1)).loc; vchansave_ON = vchansave;
-        load([R.datapathr R.subname{sub} '\ftdata\virtual_sources_' num2str(nrep(2)) '_ROI_' R.condname{2} '_' R.siden{side} '_' R.ipsicon]);
+        load([R.datapathr R.subname{sub} '\ftdata\virtual_sources_' num2str(nrep(2)) '_ROI_' R.condname{2} '_' R.siden{side} '_' R.ipsicon '_'  R.bandname{band}]);
         locbank(:,2,side,sub) = vchansave(id(2)).loc; vchansave_OFF = vchansave;
         
         [npdspctrm, Hz] = NPD_cortical_STN(vchansave_ON,vchansave_OFF,R,1);
-%         savefigure_v2([R.datapathr R.subname{sub} '\images\spectral\'],['NPD_STN_Source_analysis_' R.subname{sub} '_' R.siden{side}],[],[],[]);
+        savefigure_v2([R.datapathr R.subname{sub} '\images\spectral\'],['NPD_STN_Source_analysis_' R.subname{sub} '_' R.siden{side} '_'  R.bandname{band}],[],[],[]);
         close all
         for cond =1:2
             npdspctrm_group{cond,side,1}(:,sub) = npdspctrm{cond,1,1}(:,1);
@@ -107,7 +109,7 @@ for sub = 1:numel(R.subname)
         highbetacoh{2,side,sub} = [maxcoh2 ind maxcoh2>0.05];
         highbetacoh{3,side,sub} = maxcoh1>0.05 && maxcoh2>0.05;
         
-        savefigure_v2([R.datapathr R.subname{sub} '\images\spectral\'],['STN_Source_Power_analysis_' R.subname{sub} '_' R.siden{side}],[],[],[]);
+        savefigure_v2([R.datapathr R.subname{sub} '\images\spectral\'],['STN_Source_Power_analysis_' R.subname{sub} '_' R.siden{side}  '_'  R.bandname{band}],[],[],'-r200');
         close all
     end
 end
@@ -131,8 +133,8 @@ a(4) = scatter3(xyz(2,:),xyz(1,:),xyz(3,:),100,'r','o','LineWidth',2);
 legend(a,{'Left ON','Right ON','Left OFF','Right OFF'})
 
 % figure
-% barplot_coh_groups(R.datapathr,highbetacoh)
-% savefigure_v2([R.datapathr 'results\spectral\'],['STN_Source_Power_analysis_GroupAverage_boxplots'],[],[],[]); close all
+barplot_coh_groups(R.datapathr,highbetacoh)
+savefigure_v2([R.datapathr 'results\spectral\'],['STN_Source_Power_analysis_GroupAverage_boxplots_'  R.bandname{band}],[],[],'-r200'); close all
 
 spectralplots_groups(R.datapathr,powsubgrand,cohsubgrand,frq,R.titular)
 
@@ -152,8 +154,9 @@ annotation(gcf,'textbox',...
     'FontWeight','bold',...
     'FontSize',12,...
     'FitBoxToText','off'); grid on
-savefigure_v2([R.datapathr 'results\spectral\'],['STN_WPLI_H_UPDRS_Corr'],[],[],[]); close all
+savefigure_v2([R.datapathr 'results\spectral\'],['STN_WPLI_H_UPDRS_Corr_'  R.bandname{band}],[],[],'-r200'); close all
 
 figure
 plotNPD(Hz,npdspctrm_group,R)
-savefigure_v2([R.datapathr 'results\spectral\'],['STN_CTX_NPD'],[],[],'-r200'); close all
+savefigure_v2([R.datapathr 'results\spectral\'],['STN_CTX_NPD_'  R.bandname{band}],[],[],'-r200'); close all
+end

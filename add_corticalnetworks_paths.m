@@ -16,7 +16,6 @@ elseif strcmp(getenv('COMPUTERNAME'),'FREE')
     addpath(genpath('C:\Users\twest\Documents\Work\Github\Cortical_Parkinsons_Networks\statistics'))
     addpath(genpath('C:\Users\twest\Documents\Work\Github\Cortical_Parkinsons_Networks\plotting'))
     
-    
     addpath('C:\Users\twest\Documents\Work\MATLAB ADDONS\mvgc_v1.0')
     run startup.m
     addpath('C:\Users\twest\Documents\Work\MATLAB ADDONS\gramm-master\@gramm')
@@ -34,5 +33,5 @@ elseif strcmp(getenv('COMPUTERNAME'),'FREE')
     addpath('C:\Users\twest\Documents\Work\MATLAB ADDONS\linspecer')
     addpath('C:\Users\twest\Documents\Work\MATLAB ADDONS\TWtools')
     addpath('C:\Users\twest\Documents\Work\MATLAB ADDONS\sigstar-master')
-    
+    addpath('C:\Users\twest\Documents\Work\MATLAB ADDONS\Neurospec\neurospec21')
 end

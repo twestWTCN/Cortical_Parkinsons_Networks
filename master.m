@@ -41,7 +41,9 @@ R.subname = {'JN','MC','SW','DF','JB','MW','DP','DS','JA','LN01','LN02','LN03'};
 group_DICS_imagemean(R)
 % group_DICs_imageanalyse % not sure what this does
 decide_max_coh_v2(R,0)
-compute_virtual_electrodes_ROI_contdata_081217(R)
+decide_max_coh_v3(R,0)
+
+compute_virtual_electrodes_ROI_contdata_v3(R)
 plot_subject_cohspectra(R)
 
 % compute_phase_amp_analysis_050118(R)
