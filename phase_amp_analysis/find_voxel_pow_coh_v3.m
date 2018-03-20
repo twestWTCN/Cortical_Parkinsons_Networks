@@ -1,20 +1,20 @@
-function [idbank frqbank stn_lb_frqbank] = find_voxel_pow_coh_v3(R,subname,band)
+function [idbank frqbank stn_lb_frqbank] = find_voxel_pow_coh_v3(R,subname,band,nr)
 for  cond = 1:2 % USE just OFF to identify ROI for now
-    [datafileN,pp_mark,nrep,senscheck] = data_fileguide(subname,cond-1);
+    [datafileN,pp_mark,nrep,senscheck] = data_fileguide(R.subname{subname},cond-1);
     for side = 1:2
         for nr = 1:nrep
             vchansave = [];
-            load([datapathr subname '\ftdata\virtual_sources_' num2str(nr) '_ROI_' R.condname{cond} '_' R.sidenm{side} '_' R.ipsicon]); % '_' R.bandnames{band}])
+            load([R.datapathr R.subname{subname} '\ftdata\virtual_sources_' num2str(nr) '_ROI_' R.condname{cond} '_' R.siden{side} '_' R.ipsicon]); % '_' R.bandnames{band}])
             for x = 1:numel(vchansave)
-                Xdata(x).fsample = fsamp;
+                Xdata(x).fsample = R.pp.cont.full.fs;
                 Xdata(x).label = vchansave(x).label;
                 Xdata(x).trial = vchansave(x).trial; %{1};
                 Xdata(x).time = {vchansave(x).time};
-                Xdata(x).trial{1} = Xdata(x).trial{1}(:,2*fsamp:(end-2*fsamp));
-                Xdata(x).time{1} = linspace(0,size( Xdata(x).trial{1},2)/fsamp, size( Xdata(x).trial{1},2));  %Xdata(x).time{1}(:,2*fsamp:(end-2*fsamp));
+                Xdata(x).trial{1} = Xdata(x).trial{1}(:,2*R.pp.cont.full.fs:(end-2*R.pp.cont.full.fs));
+                Xdata(x).time{1} = linspace(0,size( Xdata(x).trial{1},2)/R.pp.cont.full.fs, size( Xdata(x).trial{1},2));  %Xdata(x).time{1}(:,2*fsamp:(end-2*fsamp));
                 Xdata(x).cfg = [];
                 cfg = [];
-                cfg.resamplefs = 256;
+                cfg.resamplefs = R.pp.cont.thin.fs;
                 X = ft_resampledata(cfg,Xdata(x));
                 Xdata(x) = X;
             end
@@ -45,7 +45,7 @@ for  cond = 1:2 % USE just OFF to identify ROI for now
                 % Normalisation
                 for i = 1:2
                     %                     tpx(i,:) = tpx(i,:)./max(tpx(i,freq.freq>4 & freq.freq<46));
-                    tpx(i,:) = tpx(i,:)./sum(tpx(i,freq.freq>6 & freq.freq<45));
+                    tpx(i,:) = tpx(i,:)./sum(tpx(i,freq.freq>4 & freq.freq<45));
                 end
                 powsave_vox(:,:,x) = tpx;
                 %                                 figure(1+10*cond)
@@ -59,7 +59,7 @@ for  cond = 1:2 % USE just OFF to identify ROI for now
                 cfg.output    = 'fourier';
                 %                 cfg.foilim = [4 48];
                 % cfg.pad       = 128;
-                cfg.tapsmofrq  = 2.5;
+                cfg.tapsmofrq  = 2;
                 cfg.pad         =  'nextpow2';
                 freq         = ft_freqanalysis(cfg, Xseg);
                 cfg           = [];
@@ -71,19 +71,22 @@ for  cond = 1:2 % USE just OFF to identify ROI for now
                 cohsave_vox(:,x) = icoh;
                 % MaxCohs
                 % Alpha
-                [maxcoh(x) fi] = max(icoh(coh.freq>=R.bandef(3,1) & coh.freq<=R.bandef(3,2)));
-                frq(1,x) = R.bandef(3,1)+(fi.*min(diff(freq.freq)));
-                % Low Beta
-                [maxcoh(x) fi] = max(icoh(coh.freq>=R.bandef(3,1) & coh.freq<=R.bandef(3,2)));
-                frq(2,x) = R.bandef(3,1)+(fi.*min(diff(freq.freq)));
-                % High Beta
-                [maxcoh(x) fi] = max(icoh(coh.freq>=R.bandef(3,1) & coh.freq<=R.bandef(3,2)));
-                frq(3,x) = R.bandef(3,1)+(fi.*min(diff(freq.freq)));
                 
+                [maxcoha fi] = max(icoh(coh.freq>=R.bandef(1,1) & coh.freq<=R.bandef(1,2)));
+                frqa = R.bandef(1,1)+(fi.*min(diff(freq.freq)));
+                % Low Beta
+                [maxcohb fi] = max(icoh(coh.freq>=R.bandef(2,1) & coh.freq<=R.bandef(2,2)));
+                frqb = R.bandef(2,1)+(fi.*min(diff(freq.freq)));
+                % High Beta
+                [maxcohc fi] = max(icoh(coh.freq>=R.bandef(3,1) & coh.freq<=R.bandef(3,2)));
+                frqc = R.bandef(3,1)+(fi.*min(diff(freq.freq)));
+                maxcoh(:,x) = [maxcoha maxcohb maxcohc];
+                
+                frq(:,x) = [frqa frqb frqc];
                 %MaxPows
                 stn_pow = squeeze(mean(abs(freq.fourierspctrm(:,2,:)),1));
-                [dum fi] = max(stn_pow(freq.freq>12 & freq.freq<24));
-                stn_lb_frq(x) = 12+(fi.*min(diff(freq.freq)));
+                [dum fi] = max(stn_pow(freq.freq> R.bandef(2,1) & freq.freq< R.bandef(2,2)));
+                stn_lb_frq(x) =  R.bandef(2,1)+(fi.*min(diff(freq.freq)));
                 frqsave_vox(:,x) = coh.freq;
 %                 ppm.increment();
                 %                 close all
@@ -93,16 +96,16 @@ for  cond = 1:2 % USE just OFF to identify ROI for now
             cohsave{nr,side,cond} = cohsave_vox;
             frqsave{nr,side,cond} = frqsave_vox;
             maxcoh(maxcoh>0.8) = NaN;
-            [dum id] = max(maxcoh);
+            [dum id] = max(maxcoh(3,:));
             idbank(:,nr,side,cond) = id;
-            frqbank(:,nr,side,cond) = frq(id);
+            frqbank(:,nr,side,cond) = frq(:,id);
             stn_lb_frqbank(nr,side,cond) = stn_lb_frq(id);
             clear maxcoh frq
             
         end
     end
 end
-mkdir([datapathr subname '\ftdata\ROI_analy\'])
-save([datapathr subname '\ftdata\ROI_analy\ROIvoxel_power_' ipsicon '_' R.bandnames{band}],'powsave','frqsave')
-save([datapathr subname '\ftdata\ROI_analy\ROIvoxel_coh_' ipsicon '_' R.bandnames{band}],'cohsave','frqsave')
-save([datapathr subname '\ftdata\ROI_analy\ROIvoxel_bank_' ipsicon '_' R.bandnames{band}],'frqbank','idbank','stn_lb_frqbank')
+mkdir([R.datapathr R.subname{subname} '\ftdata\ROI_analy\'])
+save([R.datapathr R.subname{subname} '\ftdata\ROI_analy\ROIvoxel_power_' R.ipsicon '_' R.bandname{band}],'powsave','frqsave')
+save([R.datapathr R.subname{subname} '\ftdata\ROI_analy\ROIvoxel_coh_' R.ipsicon '_' R.bandname{band}],'cohsave','frqsave')
+save([R.datapathr R.subname{subname} '\ftdata\ROI_analy\ROIvoxel_bank_' R.ipsicon '_' R.bandname{band}],'frqbank','idbank','stn_lb_frqbank')

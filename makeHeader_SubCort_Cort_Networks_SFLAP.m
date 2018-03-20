@@ -8,7 +8,7 @@ elseif strcmp(getenv('COMPUTERNAME'),'FREE')
 end
 R.subname = {'DF','DP','DS','JA','JB','JN','LN01','LN02','LN03','MC','MW','SW'};
 R.condname = {'ON','OFF'};
-R.bandname = {'High Beta','Alpha'}
+R.bandname = {'High Beta','Alpha'};
 R.condnamelc = {'on','off'};
 R.ref_list = {'STN_L01','STN_L12','STN_L23','STN_R01','STN_R12','STN_R23'};
 R.ipsicon = 'ipsi';
@@ -57,6 +57,9 @@ R.PA.PLVeps =  0.3;
 R.PA.mwid = 16;
 R.PA.WinOver = 0.95;
 R.PA.stn_lb_frq = 14;
-R.PA.frqrange{1} = 24:0.5:34;
-R.PA.frqrange{2} = 8:0.5:12;
-R.PA.SNR = -1;
+
+R.PA.frqrange{1} = R.bandef(1,1):0.5: R.bandef(1,2);
+R.PA.frqrange{2} =  R.bandef(2,1):0.5: R.bandef(2,2);
+R.PA.frqrange{3} =  R.bandef(3,1):0.5: R.bandef(3,2);
+
+R.PA.SNR = -1.5;

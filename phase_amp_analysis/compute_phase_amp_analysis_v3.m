@@ -8,12 +8,12 @@ end
 % etc within frames. DFA is also computed PS/AE versions. Barplots for DFA
 % at end of script.
 %%%
-for band = 1:numel(R.bandnames)
+for band = 1:numel(R.bandname)
     for sub = 1:numel(R.subname)
         if 1; %exist([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_bank_' R.ipsicon '.mat']) ==0
             [idbank frqbank stn_lb_frqbank] = find_voxel_pow_coh_v3(R,sub,band)
         else
-            load([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_bank_' R.ipsicon])
+            load([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_bank_' R.ipsicon '_' R.bandname{band}])
         end
         for side = 1:2
             for cond = 1:2
@@ -21,7 +21,7 @@ for band = 1:numel(R.bandnames)
                 [~,~,nrepOFF,~] = data_fileguide(R.subname{sub},cond-1);
                 for nr = 1:nrepOFF
                     id = idbank(1,side,cond);
-                    frq = frqbank(1,side,cond);
+                    frq = frqbank(3,side,cond);
                     stn_lb_frq = stn_lb_frqbank(1,side,cond);
                     load([R.datapathr R.subname{sub} '\ftdata\virtual_sources_' num2str(nr) '_ROI_' R.condname{cond}  '_' R.siden{side} '_' R.ipsicon])
                     %                 load([R.datapathr R.subname{sub} '\ftdata\r' R.subname{sub} '_LCMV_source_' R.condname{cond} 'nrep_' num2str(nr)])
@@ -38,10 +38,10 @@ for band = 1:numel(R.bandnames)
                     end
                     signalEnvAmp = median(abs(hilbert(Xdata.trial{1})),2);
                     if 1; %exist([R.datapathr R.subname{sub} '\ftdata\ROI_analy\' R.bandname{band} '_' R.condname{cond} '_nr_' num2str(nr) '_' R.siden{side} '_optfreq.mat']) ==0
-                        [maxfrq maxPLV] = PLV_compute_optimalFrq(Xdata,R.PA.frqrange{band},R);
-                        save([R.datapathr R.subname{sub} '\ftdata\ROI_analy\' R.bandname{band} '_' R.condname{cond} '_nr_' num2str(nr) '_' R.siden{side} '_optfreq'],'maxfrq','maxPLV')
+                        [maxfrq maxPLV] = PLV_compute_optimalFrq(Xdata,R.PA.frqrange{1},R); % THIS USES THE HIGH BETA BAND FOR OPTIMIZATION
+                        save([R.datapathr R.subname{sub} '\ftdata\ROI_analy\' R.bandname{1} '_' R.condname{cond} '_nr_' num2str(nr) '_' R.siden{side} '_optfreq'],'maxfrq','maxPLV')
                     else
-                        load([R.datapathr R.subname{sub} '\ftdata\ROI_analy\' R.bandname{band} '_' R.condname{cond} '_nr_' num2str(nr) '_' R.siden{side} '_optfreq'],'maxfrq','maxPLV')
+                        load([R.datapathr R.subname{sub} '\ftdata\ROI_analy\' R.bandname{1} '_' R.condname{cond} '_nr_' num2str(nr) '_' R.siden{side} '_optfreq'],'maxfrq','maxPLV')
                     end
                     % Compute data transforms (Hilbert)
                     [amp phi dphi_12 dphi_12_dt betaS] = comp_instant_angle_phase(Xdata,maxfrq,R.PA.stn_lb_frq,R.PA.bwid,Xdata.fsample);
@@ -69,7 +69,7 @@ for band = 1:numel(R.bandnames)
                     segL_pli_dist_save{cond,nr} = segL_ddt;
                     timevec{cond,nr} = vchansave(id).time; %{1}
                     %                     figure
-                    PLV_sw_plot(Xdata,betaS,amp,phi,snr_sw,seg_ddt,PLV,PLV_tvec,consecSegs,R)
+%                     PLV_sw_plot(Xdata,betaS,amp,phi,snr_sw,seg_ddt,PLV,PLV_tvec,consecSegs,R)
                     %                 plot_example_phaseanalysis_trace(betaS,amp,phi,dphi_12_dt,seg_ddt1,0.005,PLI_tvec,PLI,consecSegs);
                     %                 savefigure_v2([R.datapathr 'results\images\seganalysis\'],['example_seg_subject1_ON'],[],[],[]);
                     %                     close all
