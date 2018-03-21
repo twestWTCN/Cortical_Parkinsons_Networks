@@ -8,6 +8,7 @@ clear; close all
 % 3)...
 add_corticalnetworks_paths()
 R = makeHeader_SubCort_Cort_Networks();
+R = makeHeader_SubCort_Cort_Networks_SFLAP();
 %% Compute Forward
 % subname = {'DF'};
 % % steps = {'loadmri','realign_coords','skullstrip','segment','reslice','headmodel','coregister'}; 

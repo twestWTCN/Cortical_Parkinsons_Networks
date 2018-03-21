@@ -17,7 +17,7 @@ ABdata(2).powspctrm = D; %rand(12,1,7,7); %D;
 
 cfg = [];
 cfg.latency          = 'all';
-% cfg.frequency        = 20;
+cfg.frequency        = 'all';
 cfg.method           = 'montecarlo';
 cfg.statistic        =  'ft_statfun_indepsamplesT'; %'ft_statfun_depsamplesT';  % ft_statfun_indepsamplesT
 cfg.correctm         = 'cluster';
@@ -26,7 +26,7 @@ cfg.clusterstatistic = 'maxsum';
 cfg.minnbchan        = 0;
 cfg.tail             = 0;
 cfg.clustertail      = 0;
-cfg.alpha            = 0.05;
+cfg.alpha            = 0.2;
 cfg.numrandomization = N;
 
 % if ndims(dimz)<2

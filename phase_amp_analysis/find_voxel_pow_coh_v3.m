@@ -96,8 +96,8 @@ for  cond = 1:2 % USE just OFF to identify ROI for now
             cohsave{nr,side,cond} = cohsave_vox;
             frqsave{nr,side,cond} = frqsave_vox;
             maxcoh(maxcoh>0.8) = NaN;
-            [dum id] = max(maxcoh(3,:));
-            idbank(:,nr,side,cond) = id;
+            [dum id] = max(maxcoh(3,:)); % THIS NEEDS TO BE CHANGED FOR THE BAND OF INTEREST!
+            idbank(nr,side,cond) = id;
             frqbank(:,nr,side,cond) = frq(:,id);
             stn_lb_frqbank(nr,side,cond) = stn_lb_frq(id);
             clear maxcoh frq
