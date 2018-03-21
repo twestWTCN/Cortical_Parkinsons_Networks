@@ -10,9 +10,10 @@ QX = 6 ; QY = 8;
 % subscreen = squeeze(sum(subject_hbcohscreen>R.PA.WPLIscreen)==2);
 a = logspace(0.5,log10(150),4); logscalez = -80:20:80; %linspace(-50,50,QY); %logscalez = [-3.^(4:-1:2) 3.^(2:4)];
 condcr = {'r','b'};
+for band = 2%; %1:numel(R.bandname)
 for sub = 1:numel(R.subname)
     for side =1:2
-            load([R.datapathr R.subname{sub} '\ftdata\ROI_analy\' idd '_ROIvoxel_phaseamp_PLI_' R.ipsicon '_' R.siden{side}])
+            load([R.datapathr R.subname{sub} '\ftdata\ROI_analy\' idd '_ROIvoxel_phaseamp_PLI_' R.ipsicon '_' R.siden{side} '_' R.bandname{band}])
             for cond = 1:2
                 [datafileN,pp_mark,nrep,senscheck] = data_fileguide(R.subname{sub},cond-1);
                 for nr = 1:nrep
@@ -141,4 +142,5 @@ savefigure_v2([R.datapathr '\results\seganalysis\PLI\partests\'],[ num2str(idd) 
 % end
 % savefigure_v2([R.datapathr '\results\seganalysis\PLI\partests\'],[ num2str(idd) '_PLI_surrogate_.tiff'],[],[],[]); close all                  
 
-a = 1;
+a = 1
+end
