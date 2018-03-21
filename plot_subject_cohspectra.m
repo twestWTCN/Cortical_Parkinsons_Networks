@@ -9,13 +9,13 @@ function plot_subject_cohspectra(R)
 % SElect trial repeat with max WPLI
 %%%
 load([R.datapathr '\UPDRS_Scores.mat'])
-for band = 2:numel(R.bandname)
+for band = 1:numel(R.bandname)
  
 for sub = 1:numel(R.subname)
 %     delete([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_bank_' R.ipsicon '.mat']);
 %     eval(['!del /q ' R.datapathr R.subname{sub} '\ftdata\ROI_analy\'])
     if 1;%exist([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_bank_' R.ipsicon '.mat']) ==0
-        [idbank frqbank stn_lb_frqbank] = find_voxel_pow_coh_v3(R.datapathr,R.subname{sub},R.condname,R.siden,R.pp.cont.full.fs,R.ipsicon,R.bandname{band});
+        [idbank frqbank stn_lb_frqbank] = find_voxel_pow_coh_v3(R,sub,band);
         load([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_power_' R.ipsicon '_'  R.bandname{band}],'powsave')
         load([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_coh_' R.ipsicon '_'  R.bandname{band}],'cohsave','frqsave')
         load([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_bank_' R.ipsicon '_'  R.bandname{band}],'frqbank','idbank','stn_lb_frqbank')
@@ -44,7 +44,6 @@ for sub = 1:numel(R.subname)
             npdspctrm_group{cond,side,3}(:,sub) = npdspctrm{cond,1,3}(:,1);
             npdspctrm_group{cond,side,4}(:,sub) = npdspctrm{cond,1,4}(:,1);
             x = npdspctrm{cond,1,4}(:,1);
-            subject_hbcohscreen(cond,side,sub) = max(x(Hz>=24 & Hz<=34));
         end
         figure('Name',[R.subname{sub} ' ' R.siden{side}])
         
@@ -103,9 +102,9 @@ for sub = 1:numel(R.subname)
 %         if side == 1; hemiI = 2; elseif side == 2; hemiI = 1; end
         updrsSave{1,side,sub} = eval([R.siden{side}(1) '_akinesia_' R.condname{2} '(' num2str(pind) ')']);
         updrsSave{2,side,sub} = eval(['total_' R.condname{2} '(' num2str(pind) ')']);
-        [maxcoh1 ind] = max(mean(ON(frq>23 & frq<35,:),1));
+        [maxcoh1 ind] = max(mean(ON(frq>R.bandef(band,1) & frq<R.bandef(band,2),:),1));
         highbetacoh{1,side,sub} = [maxcoh1 ind maxcoh1>0.05];
-        [maxcoh2 ind] = max(mean(OFF(frq>23 & frq<35,:),1));
+        [maxcoh2 ind] = max(mean(OFF(frq>R.bandef(band,1) & frq<R.bandef(band,2),:),1));
         highbetacoh{2,side,sub} = [maxcoh2 ind maxcoh2>0.05];
         highbetacoh{3,side,sub} = maxcoh1>0.05 && maxcoh2>0.05;
         
@@ -134,9 +133,9 @@ legend(a,{'Left ON','Right ON','Left OFF','Right OFF'})
 
 % figure
 barplot_coh_groups(R.datapathr,highbetacoh)
-savefigure_v2([R.datapathr 'results\spectral\'],['STN_Source_Power_analysis_GroupAverage_boxplots_'  R.bandname{band}],[],[],'-r200'); close all
+savefigure_v2([R.datapathr 'results\spectral\'],['STN_Source_Power_analysis_GroupAverage_boxplots_'  R.bandname{band}],[],[],'-r100'); close all
 
-spectralplots_groups(R.datapathr,powsubgrand,cohsubgrand,frq,R.titular)
+spectralplots_groups(R.datapathr,powsubgrand,cohsubgrand,frq,R.titular,R.bandname{band})
 
 
 a = vertcat(updrsSave{2,:,:});
@@ -154,9 +153,9 @@ annotation(gcf,'textbox',...
     'FontWeight','bold',...
     'FontSize',12,...
     'FitBoxToText','off'); grid on
-savefigure_v2([R.datapathr 'results\spectral\'],['STN_WPLI_H_UPDRS_Corr_'  R.bandname{band}],[],[],'-r200'); close all
+savefigure_v2([R.datapathr 'results\spectral\'],['STN_WPLI_H_UPDRS_Corr_'  R.bandname{band}],[],[],'-r100'); close all
 
 figure
 plotNPD(Hz,npdspctrm_group,R)
-savefigure_v2([R.datapathr 'results\spectral\'],['STN_CTX_NPD_'  R.bandname{band}],[],[],'-r200'); close all
+savefigure_v2([R.datapathr 'results\spectral\'],['STN_CTX_NPD_'  R.bandname{band}],[],[],'-r100'); close all
 end

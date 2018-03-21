@@ -8,7 +8,7 @@ elseif strcmp(getenv('COMPUTERNAME'),'FREE')
 end
 R.subname = {'DF','DP','DS','JA','JB','JN','LN01','LN02','LN03','MC','MW','SW'};
 R.condname = {'ON','OFF'};
-R.bandname = {'High Beta','Alpha'};
+R.bandname = {'Alpha','High Beta'};
 R.condnamelc = {'on','off'};
 R.ref_list = {'STN_L01','STN_L12','STN_L23','STN_R01','STN_R12','STN_R23'};
 R.ipsicon = 'ipsi';
@@ -29,15 +29,15 @@ R.dics.bp = [24 34 29 5;
               8 12  10 2];
 
 R.ROI.maskrho_dic = 5;
-R.ROI.maskrho_vc = 1;
+R.ROI.maskrho_vc = 1.5;
 R.ROI.bandROI(:,1,1) = [-20 -6 84]./10; % premotor_R
 R.ROI.bandROI(:,1,2) = [20 -6 84]./10; % premotor_L
 R.ROI.bandROI(:,2,1) = [-46 -30 2]./10; % R_STG
 R.ROI.bandROI(:,2,2) = [46 -30 2]./10; % R_STG
 
 % NPD
-R.NPD.multitaper = 'M2';
-R.NPD.windowlength = 10;
+R.NPD.multitaper = 'M1.5';
+R.NPD.windowlength = 9;
 
 % Phase Analy
 R.PA.bwid = 0.75;

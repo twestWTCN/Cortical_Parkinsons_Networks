@@ -1,4 +1,4 @@
-function [] = spectralplots_groups(datapathr,powsubgrand,cohsubgrand,frq,titular)
+function [] = spectralplots_groups(datapathr,powsubgrand,cohsubgrand,frq,titular,bandname)
 grouperN = {'Left','Right','Both'};
 grouperI = {1,2,1:2}
         cmap = linspecer(2);
@@ -41,6 +41,6 @@ legend(ax,{'ON','OFF'})
 % set(gca,'xscale','log')
 grid on
 set(gcf,'Position',[314         551        1208         307])
-savefigure_v2([datapathr 'results\spectral\'],['STN_Source_Power_analysis_GroupAverage_' grouperN{i}],[],[],[]);
+savefigure_v2([datapathr 'results\spectral\'],[bandname '_STN_Source_Power_analysis_GroupAverage_' grouperN{i}],[],[],[]);
 close all
 end

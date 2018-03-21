@@ -10,7 +10,6 @@ block = [block x]; grouping = [grouping repmat(3,1,size(x))];
 x = squeeze(cohmax(2,:,:,2));  x(x==0) = [];%sideCoh(:,1,2,2) = x(:); % Right OFF
 block = [block x]; grouping = [grouping repmat(4,1,size(x))];
 
-x = squeeze(cohmax(1,:,:,2)); x(x==0) = []; sideCoh(:,1,2,1) = x(:); % Left OFF
 boxplot(block,grouping,'labels',{'Left ON','Left OFF','Right ON','Right OFF'},...
     'BoxStyle','filled','Widths',0.8)
 %%
