@@ -10,7 +10,7 @@ end
 %%%
 for band = 2%:numel(R.bandname)
     for sub = 1:numel(R.subname)
-        if exist([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_bank_' R.ipsicon '.mat']) ==0
+        if exist([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_bank_' R.ipsicon '_' R.bandname{band} '.mat']) ==0
             [idbank frqbank stn_lb_frqbank] = find_voxel_pow_coh_v3(R,sub,band)
         else
             load([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_bank_' R.ipsicon '_' R.bandname{band}])
@@ -21,7 +21,7 @@ for band = 2%:numel(R.bandname)
                 [~,~,nrepOFF,~] = data_fileguide(R.subname{sub},cond-1);
                 for nr = 1:nrepOFF
                     id = idbank(nr,side,cond);
-                    frq = frqbank(3,nr,side,cond);
+                    frq = frqbank(3,nr,side,cond); %% THIS USES THE 3rd Band (HB)
                     stn_lb_frq = stn_lb_frqbank(nr,side,cond);
                     load([R.datapathr R.subname{sub} '\ftdata\virtual_sources_' num2str(nr) '_ROI_' R.condname{cond}  '_' R.siden{side} '_' R.ipsicon])
                     %                 load([R.datapathr R.subname{sub} '\ftdata\r' R.subname{sub} '_LCMV_source_' R.condname{cond} 'nrep_' num2str(nr)])
@@ -32,10 +32,10 @@ for band = 2%:numel(R.bandname)
                     Xdata.trial{1} = vchansave(id).trial{1};
                     Xdata.time{1} = vchansave(id).time; %{1}
                     
-                    for ch = 1:2
-                        X = Xdata.trial{1}(ch,:);
-                        Xdata.trial{1}(ch,:) = (X-mean(X))./std(X);
-                    end
+%                     for ch = 1:2
+%                         X = Xdata.trial{1}(ch,:);
+%                         Xdata.trial{1}(ch,:) = (X-mean(X))./std(X);
+%                     end
                     signalEnvAmp = median(abs(hilbert(Xdata.trial{1})),2);
                     if 1; %exist([R.datapathr R.subname{sub} '\ftdata\ROI_analy\' R.bandname{band} '_' R.condname{cond} '_nr_' num2str(nr) '_' R.siden{side} '_optfreq.mat']) ==0
                         [maxfrq maxPLV] = PLV_compute_optimalFrq(Xdata,R.PA.frqrange{3},R); % THIS USES THE HIGH BETA BAND FOR OPTIMIZATION

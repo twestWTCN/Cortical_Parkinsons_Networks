@@ -1,6 +1,11 @@
 function plot_group_level_phaseamp_v3(R)
+if nargin<1;
+    R = makeHeader_SubCort_Cort_Networks_SFLAP();
+end
 close all
-load([R.datapathr '\results\seganalysis\groupseganaly'])
+band = 2;
+
+load([R.datapathr '\results\seganalysis\groupseganaly_' R.bandname{band}])
 % CORRELATION BETWEEN BETA POWER AND DURATION OF SEGMENTS
 cmap = [0 0 1; 1 0 0];
 analynames = {'Segment Length','CTX High Beta Amp','STN High Beta Amp','STN Low Beta Amp','STN/CTX High Beta Amp Correlation','Causal Density'};
@@ -11,28 +16,70 @@ analynames = {'Segment Length','CTX High Beta Amp','STN High Beta Amp','STN Low 
 %Phase Amp Analy
 for k = 1:5 %5 for granger
     i = 0; Ai = 0; Bi = 0; A = []; B = []; Ag = []; Bg = [];
-    for sub = 1:numel(R.subname)
-        for side = 1:2
-            for cond = 1:2
-                for nr = 1:size(densesave{sub,side},2)
-                    if any(densesave{sub,side}(k,nr,cond).shiftN(:)) & cond == 1
-                        Ai = Ai+1;
-                        A(:,:,Ai) = densesave{sub,side}(k,nr,cond).shiftN;
-                        Ag(Ai) = sub;
-                    elseif any(densesave{sub,side}(k,nr,cond).shiftN(:)) & cond == 2
-                        Bi = Bi+1;
-                        B(:,:,Bi) = densesave{sub,side}(k,nr,cond).shiftN;
-                        Bg(Bi) = sub;
-                    end
+% % % WITH NR AND SIDE SEPERATE
+% % %         for sub = 1:numel(R.subname)
+% % %             for side = 1:2
+% % %                 for cond = 1:2
+% % %                     for nr = 1:size(densesave{sub,side},2)
+% % %                         if any(densesave{sub,side}(k,nr,cond).shiftN(:)) & cond == 1
+% % %                             Ai = Ai+1;
+% % %                             A(:,:,Ai) = densesave{sub,side}(k,nr,cond).shiftN;
+% % %                             Ag(Ai) = sub;
+% % %                         elseif any(densesave{sub,side}(k,nr,cond).shiftN(:)) & cond == 2
+% % %                             Bi = Bi+1;
+% % %                             B(:,:,Bi) = densesave{sub,side}(k,nr,cond).shiftN;
+% % %                             Bg(Bi) = sub;
+% % %                         end
+% % %                     end
+% % %                 end
+% % %             end
+% % %         end
+% % %         x = densesave{1,side}(k,cond).Xedges;
+% % %     y = densesave{1,side}(k,cond).Yedges;
+
+% WITH NR COLLATED
+for sub = 1:numel(R.subname)
+    for side = 1:2
+        for cond = 1:2
+            for nr = 1:size(densesave{sub,side},2)
+                if any(densesave{sub,side}(k,cond).shiftN(:)) & cond == 1
+                    Ai = Ai+1;
+                    A(:,:,Ai) = densesave{sub,side}(k,cond).shiftN;
+                    Ag(Ai) = sub;
+                elseif any(densesave{sub,side}(k,cond).shiftN(:)) & cond == 2
+                    Bi = Bi+1;
+                    B(:,:,Bi) = densesave{sub,side}(k,cond).shiftN;
+                    Bg(Bi) = sub;
                 end
             end
         end
     end
-    x = densesave{1,side}(k,cond).Xedges;
-    y = densesave{1,side}(k,cond).Yedges;
-% 
-%     A = reshape(squeeze(denseav(:,:,1,:,:)),dimz(1),dimz(2),2*numel(R.subname));
-%     B = reshape(squeeze(denseav(:,:,2,:,:)),dimz(1),dimz(2),2*numel(R.subname));
+end
+x = densesave{1,side}(k,cond).Xedges;
+y = densesave{1,side}(k,cond).Yedges;
+        
+% % % wITH nr AND side COLLATED
+% % %         x = densesave{1,side}(k,cond).Xedges;
+% % %     y = densesave{1,side}(k,cond).Yedges;
+% % %     for sub = 1:numel(R.subname)
+% % %         for cond = 1:2
+% % %             if any(densesave{sub}(k,cond).shiftN(:)) & cond == 1
+% % %                 Ai = Ai+1;
+% % %                 A(:,:,Ai) = densesave{sub}(k,cond).shiftN;
+% % %                 Ag(Ai) = sub;
+% % %             elseif any(densesave{sub}(k,cond).shiftN(:)) & cond == 2
+% % %                 Bi = Bi+1;
+% % %                 B(:,:,Bi) = densesave{sub}(k,cond).shiftN;
+% % %                 Bg(Bi) = sub;
+% % %             end
+% % %         end
+% % %     end
+% % %     x = densesave{1}(k,cond).Xedges;
+% % %     y = densesave{1}(k,cond).Yedges;
+
+    %
+    %     A = reshape(squeeze(denseav(:,:,1,:,:)),dimz(1),dimz(2),2*numel(R.subname));
+    %     B = reshape(squeeze(denseav(:,:,2,:,:)),dimz(1),dimz(2),2*numel(R.subname));
     % for i = 1:size(A,1)
     %     for j = 1:size(B,2)
     %         [dum pmat(i,j)] = ttest2(squeeze(A(i,j,:)),squeeze(B(i,j,:)));
@@ -41,7 +88,7 @@ for k = 1:5 %5 for granger
     design = [[Ag; repmat(1,1,length(Ag))] [Bg;repmat(2,1,length(Bg))]];
     stat = clusterstat_matrix_v3(B,A,500,design);
     statmat = squeeze(stat.stat).*squeeze(stat.mask);
-        
+    
     av1 = squeeze(mean(A,3)); %squeeze(nanmean(nanmean(denseav(:,:,1,:,:),4),5));
     av2 = squeeze(mean(B,3)); %squeeze(nanmean(nanmean(denseav(:,:,2,:,:),4),5));
     avdiff = av1-av2;
@@ -53,7 +100,7 @@ for k = 1:5 %5 for granger
     N = av1;
     Nbed = zeros(size(N)+1);
     Nbed(1:end-1,1:end-1) = N;
-    Nbed(Nbed==0) = NaN;
+%     Nbed(Nbed==0) = NaN;
     pcolor(x,y,Nbed');
     % imagesc(x,y,av1');
     caxis([0 0.02]); title(R.condname{1});
@@ -65,7 +112,7 @@ for k = 1:5 %5 for granger
     N = av2;
     Nbed = zeros(size(N)+1);
     Nbed(1:end-1,1:end-1) = N;
-    Nbed(Nbed==0) = NaN;
+%     Nbed(Nbed==0) = NaN;
     pcolor(x,y,Nbed');
     % imagesc(x,y,av2');
     caxis([0 0.02]); title(R.condname{2});
@@ -82,7 +129,7 @@ for k = 1:5 %5 for granger
     caxis([-3 3]); title('OFF-ON t-stat'); xlabel('Phi_1 - Phi_2'); ylabel(analynames{k}); h = colorbar; a = ylabel(h, 't-stat');
     set(a,'rotation',270); set(a,'Position',get(a,'Position') + [0.8 0 0]);
     set(gca,'YDir','normal');
-    pcolor_text(squeeze(stat.prob),0.05)
+    %     pcolor_text(squeeze(stat.prob),0.05)
     clear denseav
     % figure(k); subplot(1,3,1); imagesc(x,y,av1'); caxis([0 0.1]); subplot(1,3,2); imagesc(x,y,av2'); caxis([0 0.1]); subplot(1,3,3); imagesc(x,y,avdiff'); caxis([-0.2 0.2])
 end
@@ -93,7 +140,7 @@ x = logspace(-1.7,0.3,50);
 for sub = [1:9]
     for side = 1:2
         for cond = 1:2
-            distpar = hdistsave{sub,side}(:,cond,1);
+            distpar = hdistsave{sub,side}(:,1,1);
             distparsave(:,side,sub,cond) = distpar;
             y = lognpdf(x,distpar(1),distpar(2));
             plot(x,y,'color',cmap(cond,:)); hold on

@@ -8,7 +8,7 @@ clear segLbinned
 figure(f(2))
 pA_dist(isnan(Dep)) = [];  Dep(isnan(Dep)) = [];
 % KS_2D_DensityEst(pA_dist,Dep,bedge,Yedge)
-[N,Xedges,Yedges] = histcounts2(pA_dist,Dep,bedge,Yedge);
+[N,Xedges,Yedges] = histcounts2(pA_dist,Dep,bedge,Yedge); %,'Normalization','probability');
 N = N./tend;
 pdense.N = N; pdense.Xedges = Xedges; pdense.Yedges = Yedges;
 % Xmidges =Xedges(1:end-1)+(diff(Xedges)/2)
