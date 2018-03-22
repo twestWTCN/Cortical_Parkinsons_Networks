@@ -4,13 +4,14 @@ function plot_phase_amp_analysis(R)
 % peak? Or the mean of the ON and OFF together?
 close all
 QX = 6 ; QY = 8;
-load([R.datapathr 'subject_hbWPLI075'])
-subscreen = squeeze(sum(subject_hbcohscreen>R.PA.WPLIscreen)==2);
+% load([R.datapathr 'subject_hbWPLI075'])
+% subscreen = squeeze(sum(subject_hbcohscreen>R.PA.WPLIscreen)==2);
 a = logspace(0.5,log10(150),4); logscalez = linspace(-100,150,QY); %[-a(end:-1:1) a];
+for band = 1%:2
 for sub = 1:numel(R.subname)
     for side =1:2
         if 1==1 %subscreen(side,sub)
-            load([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_phaseamp_' R.ipsicon '_' R.siden{side}])
+            load([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_phaseamp_' R.ipsicon '_' R.siden{side} '_' R.bandname{band}])
             for cond = 1:2
                 [datafileN,pp_mark,nrep,senscheck] = data_fileguide(R.subname{sub},cond-1);
                 for nr = nrep
@@ -210,3 +211,5 @@ OFF = sum(squeeze(length_amp_corr(:,2,:,:)),3);
 [h p] = ttest2(ON(1,:),OFF(1,:))
 mean(ON(1,:))
 mean(OFF(1,:))
+
+end

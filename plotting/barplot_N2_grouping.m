@@ -19,7 +19,7 @@ set(whisker,'LineWidth',2); % Set width
 grid on; ylabel(ylab); title(tit);  
 % tests
 % ON vs OFF
-[h pv(1)] = ttest2(A(B==0),A(B==1));
+[h pv(1)] = ttest2(A(B==1),A(B==2));
 % [h pv(1)] = vartest2(A,B)
 H=sigstar({{'ON','OFF'}},pv);
 ylim(get(gca,'YLim').*[1 1.05])

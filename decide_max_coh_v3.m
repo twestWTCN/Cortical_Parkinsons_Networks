@@ -1,6 +1,6 @@
 function decide_max_coh_v3(R,suborthoplot)
 % suborthoplot = 0;
-for band = 2:numel(R.bandname)
+for band = 1:numel(R.bandname)
     
     for sub = 1:numel(R.subname)
         clear source_avg_dics peak_loc peak_ind contra_peak_mag ipsi_peak_mag contra_peak_loc ipsi_peak_loc source_cohmag source_cohloc
@@ -279,7 +279,6 @@ for band = 2:numel(R.bandname)
         save([R.datapathr R.subname{sub} '\stats\DICS_ONvOFF_' R.bandname{band}],'dics_cohstattable')
         savefigure_v2([R.datapathr R.subname{sub} '\images\sourcespace\'],['r' R.subname{sub} '_DICsv2_grandaverage_ON_OFF_' R.bandname{band}],[],[],[]); close all
     end
-    
     barplot_coh_groups_nocell(R.datapathr,cohmax)
     savefigure_v2([R.datapathr 'results\images\'],['groupDICs_barplots_' R.bandname{band}],[],[],[]); %close all
 end

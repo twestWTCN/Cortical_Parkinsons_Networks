@@ -7,9 +7,11 @@ function [amp phi dphi_12 dphi_12_dt betaS] = comp_instant_angle_phase(Odata,frq
 %         Xdata = ft_preprocessing(cfg,Xdata);
 %         fsamp = Xdata.fsample;
         
-        
+        if size(Odata.trial{1},1)>size(Odata.trial{1},2)
         Xdata.trial{1} = filterEEG(Odata.trial{1}',fsamp,frq-bwid,frq+bwid,floor(6*(frq-bwid)))';
-        
+        else
+        Xdata.trial{1} = filterEEG(Odata.trial{1},fsamp,frq-bwid,frq+bwid,floor(6*(frq-bwid)));
+        end
         amp(:,1) = abs(hilbert(Xdata.trial{1}(1,:)));
         amp(:,2) = abs(hilbert(Xdata.trial{1}(2,:)));
         
@@ -21,15 +23,22 @@ function [amp phi dphi_12 dphi_12_dt betaS] = comp_instant_angle_phase(Odata,frq
 %         ampw = unwrap((amp(:,1).*amp(:,2))./(max(amp(:,1))*max(amp(:,2))));  %%
 %         dphi_12 = angle(ampw.*exp(i.*(phi(:,1)-phi(:,2))));%%
 %         dphi_12 = (dphi_12-(1/sqrt(length(phi(:,1)))))./(1-(1/sqrt(length(phi(:,1))))); %%
-        dphi_12_dt = diff(dphi_12);
-        
-        % lb_stn_bandpass
+dphi_12_dt = diff(dphi_12);
+
+% lb_stn_bandpass
 %         cfg = [];
 %         cfg.bpfilter = 'yes';
 %         cfg.bpfilttype    = 'fir';
 %         cfg.bpfreq = [stn_lb_frq-bwid stn_lb_frq+bwid];
 %         stn_lb_data = ft_preprocessing(cfg,Xdata);
-        Xadata.trial{1} = filterEEG(Odata.trial{1}',1024,stn_lb_frq-bwid,stn_lb_frq+bwid,floor(6*(stn_lb_frq-bwid)))';
-        amp(:,3) = abs(hilbert(Xadata.trial{1}(2,:)));
-    
+if size(Odata.trial{1},1)>size(Odata.trial{1},2)
+    Xdata.trial{1} = filterEEG(Odata.trial{1}',fsamp,stn_lb_frq-bwid,stn_lb_frq+bwidfloor(6*(frq-bwid)))';
+else
+    Xdata.trial{1} = filterEEG(Odata.trial{1},fsamp,stn_lb_frq-bwid,stn_lb_frq+bwid,floor(6*(frq-bwid)));
+end
+
+
+
+amp(:,3) = abs(hilbert(Xdata.trial{1}(2,:)));
+
         betaS = Xdata;
