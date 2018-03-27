@@ -54,9 +54,9 @@ for i = 2:numel(WinN)
                     plot(PLV_tvec/1024,repmat(mean(PLV),1,length(PLV)),'b--')
             
             Phishuff = Phi1(randperm(length(Phi1)));
-            phasescm1 = randn(1,length(Phishuff)); %real(ifft(Amp1.*exp(sqrt(-1)*Phishuff)));
+            phasescm1 = abs(ifft(Amp1.*exp(sqrt(-1)*Phishuff))); %randn(1,length(Phishuff)); %
             Phishuff = Phi2(randperm(length(Phi2)));
-            phasescm2 = randn(1,length(Phishuff)); %real(ifft(Amp2.*exp(sqrt(-1)*Phishuff)));
+            phasescm2 = abs(ifft(Amp2.*exp(sqrt(-1)*Phishuff)));
             Rdata = [];
             Rdata.trial{1} = [phasescm1; phasescm2];
             

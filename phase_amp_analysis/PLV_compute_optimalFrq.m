@@ -13,9 +13,9 @@ parfor frqn = 1:numel(frqlist)
     
     phasescm =[];
     Phishuff = Phi(randperm(length(Phi(1,:))));
-    phasescm(1,:) = real(ifft(Amp(1,:).*exp(sqrt(-1)*Phishuff)));
+    phasescm(1,:) = abs(ifft(Amp(1,:).*exp(sqrt(-1)*Phishuff)));
     Phishuff = Phi(randperm(length(Phi(2,:))));
-    phasescm(2,:) = real(ifft(Amp(2,:).*exp(sqrt(-1)*Phishuff)));
+    phasescm(2,:) = abs(ifft(Amp(2,:).*exp(sqrt(-1)*Phishuff)));
     
     Rdata = [];
     Rdata.trial{1} = phasescm;

@@ -48,7 +48,7 @@ compute_virtual_electrodes_ROI_contdata_v3(R)
 plot_subject_cohspectra(R)
 
 % compute_phase_amp_analysis_050118(R)
-compute_phase_amp_analysis_120318(R)
+compute_phase_amp_analysis_v3(R)
 getHists_phase_amp_analysis_PLIs(R)
 plot_phase_amp_analysis(R)
 plot_phase_amp_analysis_PLIs(R)
