@@ -4,6 +4,7 @@ if strcmp(getenv('COMPUTERNAME'),'SFLAP-2')
     addpath(genpath('C:\Users\Tim\Documents\Work\GIT\Cortical_Parkinsons_Networks\phase_amp_analysis'))
     addpath(genpath('C:\Users\Tim\Documents\Work\GIT\Cortical_Parkinsons_Networks\statistics'))
     addpath(genpath('C:\Users\Tim\Documents\Work\GIT\Cortical_Parkinsons_Networks\plotting'))
+    addpath(genpath('C:\Users\Tim\Documents\Work\GIT\Cortical_Parkinsons_Networks\segregate_networks'))
     pathCell = regexp(path, pathsep, 'split'); onPath = any(strcmpi('C:\Users\Tim\Documents\MATLAB_ADDONS\mvgc_v1.0', pathCell));
     
     % Grangerpath
@@ -15,7 +16,7 @@ elseif strcmp(getenv('COMPUTERNAME'),'FREE')
     addpath(genpath('C:\Users\twest\Documents\Work\Github\Cortical_Parkinsons_Networks\phase_amp_analysis'))
     addpath(genpath('C:\Users\twest\Documents\Work\Github\Cortical_Parkinsons_Networks\statistics'))
     addpath(genpath('C:\Users\twest\Documents\Work\Github\Cortical_Parkinsons_Networks\plotting'))
-    
+    addpath(genpath('C:\Users\twest\Documents\Work\Github\Cortical_Parkinsons_Networks\segregate_networks'))
     addpath('C:\Users\twest\Documents\Work\MATLAB ADDONS\mvgc_v1.0')
     run startup.m
     addpath('C:\Users\twest\Documents\Work\MATLAB ADDONS\gramm-master\@gramm')

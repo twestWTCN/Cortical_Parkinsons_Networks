@@ -9,7 +9,7 @@ end
 % at end of script.
 %%%
 for band = [1 3]; %1:numel(R.bandname)
-    for sub = 1:numel(R.subname)
+    for sub = 2:numel(R.subname)
         if 1 %exist([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_bank_' R.ipsicon '_' R.bandname{band} '.mat']) ==0
             [idbank frqbank stn_lb_frqbank] = find_voxel_pow_coh_v3(R,sub,band)
         else

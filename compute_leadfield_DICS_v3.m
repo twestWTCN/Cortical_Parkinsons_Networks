@@ -1,5 +1,5 @@
 function compute_leadfield_DICS_v3(R,steps,fresh)
-for sub = 1:numel(R.subname)
+for sub = 2:numel(R.subname)
     mkdir([R.datapathr R.subname{sub} '\images\sourcespace'])
     for cond = 1:2
         [datafileN,pp_mark,nrep,senscheck] = data_fileguide(R.subname{sub},cond-1);

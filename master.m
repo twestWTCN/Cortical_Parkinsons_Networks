@@ -31,7 +31,7 @@ compute_leadfield_LCMV_v2(R,steps,0)
 
 R.subname = {'JN','MC','SW','DF','JB','MW','DP','DS','JA','LN01','LN02','LN03'};
 % compute_leadfield_DICS(datapathr,subname,steps,0,[24 30 27 3])
-steps = {'leadfield','plotsourcepow'};
+steps = {'leadfield'}; %,'plotsourcepow'};
 % compute_leadfield_DICS_v2(R,steps,0)
 compute_leadfield_DICS_v3(R,steps,0)
 
@@ -41,18 +41,20 @@ compute_leadfield_DICS_v3(R,steps,0)
 R.subname = {'JN','MC','SW','DF','JB','MW','DP','DS','JA','LN01','LN02','LN03'};
 group_DICS_imagemean(R)
 % group_DICs_imageanalyse % not sure what this does
-decide_max_coh_v2(R,0)
 decide_max_coh_v3(R,0)
 
 compute_virtual_electrodes_ROI_contdata_v3(R)
 plot_subject_cohspectra(R)
 
-% compute_phase_amp_analysis_050118(R)
-compute_phase_amp_analysis_v3(R)
+compute_phase_amp_analysis_v3
 getHists_phase_amp_analysis_PLIs(R)
-plot_phase_amp_analysis(R)
-plot_phase_amp_analysis_PLIs(R)
-
-plot_group_level_phaseamp(R)
-
-
+plot_phase_amp_analysis_PLIs_V3_2side
+plot_group_level_phaseamp_v3(R)
+network_plot_270317
+% LEGACY:
+% decide_max_coh_v2(R,0)
+% compute_phase_amp_analysis_050118(R)
+% compute_phase_amp_analysis_120318(R)
+% plot_phase_amp_analysis(R)
+% plot_phase_amp_analysis_PLIs(R)
+% plot_group_level_phaseamp
