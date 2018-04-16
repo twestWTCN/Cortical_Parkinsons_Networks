@@ -25,15 +25,13 @@ preprocess_epoched_MEG(R)
 % subname = {'DF','DP','DS','JA','JB','JN','JP','KB','LM','MC','MW','SW','WB'}; 
 % subname = {'LM'};
 % compute_leadfield_LCMV(datapathr,subname,steps,0,[6 40 NaN NaN])
-R.subname = {'LN02'}; %,'LN_02','LN_03'};
 steps = {'leadfield','plotsourcepow'}; %,'leadfield',};
-compute_leadfield_LCMV_v2(R,steps,0)
+compute_leadfield_LCMV_v4(R,steps,0)
 
-R.subname = {'JN','MC','SW','DF','JB','MW','DP','DS','JA','LN01','LN02','LN03'};
 % compute_leadfield_DICS(datapathr,subname,steps,0,[24 30 27 3])
 steps = {'leadfield','plotsourcepow'};
 % compute_leadfield_DICS_v2(R,steps,0)
-compute_leadfield_DICS_v3(R,steps,0)
+compute_leadfield_DICS_v4(R,steps,0)
 
 % subname = {'DF'};
 % decide_max_coh(datapathr,subname)
