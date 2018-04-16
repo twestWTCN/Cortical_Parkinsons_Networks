@@ -31,7 +31,7 @@ compute_leadfield_LCMV_v2(R,steps,0)
 
 R.subname = {'JN','MC','SW','DF','JB','MW','DP','DS','JA','LN01','LN02','LN03'};
 % compute_leadfield_DICS(datapathr,subname,steps,0,[24 30 27 3])
-steps = {'leadfield'}; %,'plotsourcepow'};
+steps = {'leadfield','plotsourcepow'};
 % compute_leadfield_DICS_v2(R,steps,0)
 compute_leadfield_DICS_v3(R,steps,0)
 
@@ -39,7 +39,7 @@ compute_leadfield_DICS_v3(R,steps,0)
 % decide_max_coh(datapathr,subname)
 %%% subname = {'JN','MC','SW','DF','JB','MW','DP','DS','JA'}; %%%
 R.subname = {'JN','MC','SW','DF','JB','MW','DP','DS','JA','LN01','LN02','LN03'};
-group_DICS_imagemean(R)
+% group_DICS_imagemean(R)
 % group_DICs_imageanalyse % not sure what this does
 decide_max_coh_v3(R,0)
 

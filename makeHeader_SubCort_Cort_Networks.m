@@ -14,7 +14,7 @@ R.ref_list = {'STN_L01','STN_L12','STN_L23','STN_R01','STN_R12','STN_R23'};
 R.ipsicon = 'ipsi';
 R.siden = {'Left','Right'};
 R.titular = {'CTX','STN'};
-R.bandef = [8 12; 14 21; 24 36];
+R.bandef = [8 12; 14 21; 22 34];
 R.condcmap = linspecer(2);
 % Preprocessing
 % Cont
@@ -25,8 +25,10 @@ R.pp.cont.thin.bp = [4 98];
 
 % Beamforming
 % DICs
-R.dics.bp = [24 34 29 5;
-              8 12  10 2];
+R.dics.bp = [8 12  10 2;
+             NaN NaN NaN NaN;
+             24 34 29 5;
+              ];
 
 R.ROI.maskrho_dic = 3;
 R.ROI.maskrho_vc = 1.5;
@@ -49,15 +51,17 @@ R.NPD.windowlength = 9;
 % R.PA.frqrange{1} = 24:0.5:34;
 % R.PA.frqrange{2} = 8:0.5:12;
 % R.PA.SNR = -1;
+R.PA.SType = 2; % 1 = sliding window PLI and 2 = SRP
+R.PA.bwid = [0.75 0.75 0.75];
+R.PA.mwid = 3; % minimum SRP length (cycles)
+R.PA.SRPeps = 0.0075; %0.006;
 
-R.PA.bwid = [0.5 0.75 1];
 R.PA.slidingwindow = 1;
 R.PA.PLVeps =  0.50;
-R.PA.mwid = 0;
 R.PA.WinOver = 0.98;
 R.PA.stn_lb_frq = 14;
-R.PA.frqrange{1} = 24:0.5:34;
-R.PA.frqrange{2} = 8:0.5:12;
+R.PA.SNR_eps = -1;
+
 R.PA.frqrange{1} = R.bandef(1,1):0.5: R.bandef(1,2);
 R.PA.frqrange{2} =  R.bandef(2,1):0.5: R.bandef(2,2);
 R.PA.frqrange{3} =  R.bandef(3,1):0.5: R.bandef(3,2);

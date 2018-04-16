@@ -1,7 +1,6 @@
 function decide_max_coh_v3(R,suborthoplot)
 % suborthoplot = 0;
-for band = 1:numel(R.bandname)
-    
+for band = [1 3];% 1:numel(R.bandname)
     for sub = 1:numel(R.subname)
         clear source_avg_dics peak_loc peak_ind contra_peak_mag ipsi_peak_mag contra_peak_loc ipsi_peak_loc source_cohmag source_cohloc
         for cond = 1:2
@@ -15,10 +14,11 @@ for band = 1:numel(R.bandname)
                 % channels left i.e. 4 now becomes 2
                 for refN = 1:numel(R.ref_list)
                     ref_chan = R.ref_list{refN};
-                    bandROI_R = R.ROI.bandROI(:,band,1)'; %[-20 -6 84]./10;
-                    bandROI_L = R.ROI.bandROI(:,band,2)';%[20 -6 84]./10;
+                    bandROI_R = 10*R.ROI.bandROI(:,band,1)'; %[-20 -6 84]./10;
+                    bandROI_L = 10*R.ROI.bandROI(:,band,2)';%[20 -6 84]./10;
                     load([R.datapathr R.subname{sub} '\ftdata\r' R.subname{sub} '_DICSv2_peakinfo_source' R.condname{cond} 'nrep_' num2str(nr) '_' ref_chan '_' R.bandname{band}])
-                    load([R.datapathr R.subname{sub} '\ftdata\r' R.subname{sub} '_DICSv2_source' R.condname{cond} 'nrep_' num2str(nr) '_' ref_chan '_' R.bandname{band}],'source')
+                    load([R.datapathr R.subname{sub} '\ftdata\r' R.subname{sub} '_DICSv2_source' R.condname{cond} 'nrep_' num2str(nr) '_' ref_chan '_' R.bandname{band}])
+%                     source = sourceTrans;
                     source_avg_dics(:,refN,nr,cond) = source.avg.coh;
                     figure(400)
                     mask =  reshape(source.avg.coh,source.dim)>0;

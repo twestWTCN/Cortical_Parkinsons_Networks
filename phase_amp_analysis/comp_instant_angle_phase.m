@@ -10,7 +10,7 @@ function [amp phi dphi_12 dphi_12_dt betaS] = comp_instant_angle_phase(Odata,frq
         if size(Odata.trial{1},1)>size(Odata.trial{1},2)
         Xdata.trial{1} = filterEEG(Odata.trial{1},fsamp,frq-bwid,frq+bwid,floor(8*(frq+bwid)))';
         else
-        Xdata.trial{1} = filterEEG(Odata.trial{1}',fsamp,frq-bwid,frq+bwid,floor(8*(frq+bwid)));
+        Xdata.trial{1} = filterEEG(Odata.trial{1},fsamp,frq-bwid,frq+bwid,floor(8*(frq+bwid)))';
         Xdata.trial{1} = Xdata.trial{1}';
         end
         betaS.trial{1}(1:2,:) = Xdata.trial{1} ;
@@ -37,12 +37,12 @@ dphi_12_dt = diff(dphi_12);
 if size(Odata.trial{1},1)>size(Odata.trial{1},2)
     Xdata.trial{1} = filterEEG(Odata.trial{1},fsamp,stn_lb_frq-bwid,stn_lb_frq+bwidfloor(6*(frq-bwid)))';
 else
-    Xdata.trial{1} = filterEEG(Odata.trial{1}',fsamp,stn_lb_frq-bwid,stn_lb_frq+bwid,floor(6*(frq-bwid)));
+    Xdata.trial{1} = filterEEG(Odata.trial{1},fsamp,stn_lb_frq-bwid,stn_lb_frq+bwid,floor(6*(frq-bwid)))';
      Xdata.trial{1} =  Xdata.trial{1}';
 end
 
 betaS.trial{1}(3,:) = Xdata.trial{1}(2,:) ;
-
+betaS.time = Odata.time;
 amp(:,3) = abs(hilbert(Xdata.trial{1}(2,:)));
 
 %         betaS = Xdata;
