@@ -34,7 +34,9 @@ for sub = 1:numel(R.subname)
                 chansel = ft_channelselection('MEG', fullsampdata.label); % find MEG sensor names
                 chansel = match_str(fullsampdata.label, chansel);         % find MEG sensor indices
                 
-                refsel = match_str(fullsampdata.label,seldet{5});         % find STN ref indice
+                refsel = find(strncmp(fullsampdata.label,seldet{5}(1:5),5));  % find STN ref indice
+                
+                %find(strcmp(seldet{5}(1:4),fullsampdata.label));        
                 
                 cnt = 0;
                 %                 figure(200)
@@ -94,7 +96,7 @@ for sub = 1:numel(R.subname)
                     for trln = 1:numel(mx)
                         if ~isempty(sfilter)
                             A = normv(u(:,1)' * sfilter * mx{trln}(chansel,:));
-                            B = normv(mx{trln}(refsel,:));fc
+                            B = normv(mx{trln}(refsel,:));
                             trial{trln} = [A; B];
                         else
                             trial{trln} = [NaN; NaN];
@@ -103,7 +105,7 @@ for sub = 1:numel(R.subname)
                     end
 %                     ppm.delete()
                     vchan.trial = {[trial{:}]};
-                    vchan.label = {'src','ref'};
+                    vchan.label = {'source','STN1','STN2','STN3'};
                     vchan.loc = loc;
                     vchan.pos = POS_list(p,:);
                     vchansave(p) = vchan;

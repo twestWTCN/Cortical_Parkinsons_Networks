@@ -12,23 +12,23 @@ for  cond = 1:2 % USE just OFF to identify ROI for now
                 Xdata(x).time = vc_clean(x).time;
                 %                 Xdata(x).trial{1} = Xdata(x).trial{1}(:,2*R.pp.cont.full.fs:(end-2*R.pp.cont.full.fs));
                 if R.VC.normalize == 1
-                Xdata(x).trial{1} = ((Xdata(x).trial{1}'-mean(Xdata(x).trial{1}'))./std(Xdata(x).trial{1}'))';
+                    Xdata(x).trial{1} = ((Xdata(x).trial{1}'-mean(Xdata(x).trial{1}'))./std(Xdata(x).trial{1}'))';
                 end
-%                 Xdata(x).time{1} = linspace(0,size( Xdata(x).trial{1},2)/R.pp.cont.full.fs, size( Xdata(x).trial{1},2));  %Xdata(x).time{1}(:,2*fsamp:(end-2*fsamp));
-%                 Xdata(x).cfg = [];
-%                 cfg = [];
-%                 cfg.resamplefs = R.pp.cont.thin.fs;
-%                 X = ft_resampledata(cfg,Xdata(x));
-%                 Xdata(x) = X;
+                %                 Xdata(x).time{1} = linspace(0,size( Xdata(x).trial{1},2)/R.pp.cont.full.fs, size( Xdata(x).trial{1},2));  %Xdata(x).time{1}(:,2*fsamp:(end-2*fsamp));
+                %                 Xdata(x).cfg = [];
+                %                 cfg = [];
+                %                 cfg.resamplefs = R.pp.cont.thin.fs;
+                %                 X = ft_resampledata(cfg,Xdata(x));
+                %                 Xdata(x) = X;
             end
-%             N = numel(vc_clean);
+            %             N = numel(vc_clean);
             %             progressStepSize = 1;
             %             if ~is_in_parallel; parpool; end
             %             ppm = ParforProgMon('Power Estimation: ', N, progressStepSize, 800, 300);
             for x = 1:numel(vc_clean)
-%                 cfg = [];
-%                 cfg.length = 0.5;
-%                 Xseg = ft_redefinetrial(cfg,Xdata(x));
+                %                 cfg = [];
+                %                 cfg.length = 0.5;
+                %                 Xseg = ft_redefinetrial(cfg,Xdata(x));
                 Xseg = Xdata(x);
                 % cfg = [];
                 % cfg.viewmode = 'vertical';  % you can also specify 'butterfly'
@@ -41,32 +41,32 @@ for  cond = 1:2 % USE just OFF to identify ROI for now
                 %                 cfg.foilim = [4 48];
                 % cfg.pad       = 128;
                 cfg.pad         =  'nextpow2';
-%                 cfg.tapsmofrq  = 1.5;
+                %                 cfg.tapsmofrq  = 1.5;
                 freq         = ft_freqanalysis(cfg, Xseg);
                 
                 tpx = squeeze(mean(abs(freq.fourierspctrm(:,:,:)),1));
                 % Normalisation
-                for i = 1:2
+                for i = 1:numel(Xseg.label)
                     %                     tpx(i,:) = tpx(i,:)./max(tpx(i,freq.freq>4 & freq.freq<46));
                     tpx(i,:) = tpx(i,:)./sum(tpx(i,freq.freq>4 & freq.freq<45));
                 end
-                powsave_vox(:,:,x) = tpx;
-% %                                                 figure(1)
-% %                                                 subplot(1,2,cond)
-% %                                                 title(R.condname{cond})
-% %                                                 xlabel('Freq'); ylabel('Norm. Power')
-% %                                                 plot(freq.freq',tpx(1,:)','b')
-% %                                                 hold on
-% %                                                 plot(freq.freq',tpx(2,:)','r')
-% %                                                 legend({'CTX','STN'}); grid on
-                                                
-                cfg = [];
-                cfg.length = 1;
-                Xseg = ft_redefinetrial(cfg,Xdata(x));
-                                                
+                
+                figure(1)
+                subplot(1,2,cond)
+                title(R.condname{cond})
+                xlabel('Freq'); ylabel('Norm. Power')
+                plot(freq.freq',tpx(1,:)','b')
+                hold on
+                plot(repmat(freq.freq,3,1)',tpx(2:end,:)','r')
+                legend({'CTX','STN'}); grid on
+                
+%                 cfg = [];
+%                 cfg.length = 1;
+%                 Xseg = ft_redefinetrial(cfg,Xdata(x));
+                
                 cfg           = [];
                 cfg.method    = 'mtmfft';
-%                 cfg.taper     = 'hanning';
+                %                 cfg.taper     = 'hanning';
                 cfg.output    = 'fourier';
                 %                 cfg.foilim = [4 48];
                 % cfg.pad       = 128;
@@ -78,32 +78,35 @@ for  cond = 1:2 % USE just OFF to identify ROI for now
                 %                         cfg.complex = 'absimag';
                 coh           = ft_connectivityanalysis(cfg, freq);
                 
-                icoh = abs(squeeze(coh.wplispctrm(2,1,:)));
-                cohsave_vox(:,x) = icoh;
+                icoh = abs(squeeze(coh.wplispctrm(2:end,1,:)));
                 
-% %                 figure(2)
-% %                 subplot(1,2,cond)
-% %                 title(R.condname{cond})
-% %                 xlabel('Freq'); ylabel('iCoh')
-% %                 plot(coh.freq',icoh','k'); hold on
-% %                 ylim([0 0.8]);  grid on
-               
+                figure(2)
+                subplot(1,2,cond)
+                title(R.condname{cond})
+                xlabel('Freq'); ylabel('iCoh')
+                plot(repmat(coh.freq,3,1)',icoh'); hold on
+                ylim([0 0.8]); xlim([2 40]); legend({'STN01','STN02','STN03'}); grid on
+                
+                figure(2); shg
+                gx = inputdlg(['Choose STN for ' R.bandname{band} ' band']);
+                gx = str2num(gx{1});
+                powsave_vox(:,x) = tpx([1 gx]);
+                cohsave_vox(:,x) = icoh(gx,:);
                 % MaxCohs
                 % Alpha
-                
-                [maxcoha fi] = max(icoh(coh.freq>=R.bandef(1,1) & coh.freq<=R.bandef(1,2)));
+                [maxcoha fi] = max(icoh(gx,coh.freq>=R.bandef(1,1) & coh.freq<=R.bandef(1,2)));
                 frqa = R.bandef(1,1)+(fi.*min(diff(freq.freq)));
                 % Low Beta
-                [maxcohb fi] = max(icoh(coh.freq>=R.bandef(2,1) & coh.freq<=R.bandef(2,2)));
+                [maxcohb fi] = max(icoh(gx,coh.freq>=R.bandef(2,1) & coh.freq<=R.bandef(2,2)));
                 frqb = R.bandef(2,1)+(fi.*min(diff(freq.freq)));
                 % High Beta
-                [maxcohc fi] = max(icoh(coh.freq>=R.bandef(3,1) & coh.freq<=R.bandef(3,2)));
+                [maxcohc fi] = max(icoh(gx,coh.freq>=R.bandef(3,1) & coh.freq<=R.bandef(3,2)));
                 frqc = R.bandef(3,1)+(fi.*min(diff(freq.freq)));
                 maxcoh(:,x) = [maxcoha maxcohb maxcohc];
                 
                 frq(:,x) = [frqa frqb frqc];
                 %MaxPows
-                stn_pow = squeeze(mean(abs(freq.fourierspctrm(:,2,:)),1));
+                stn_pow = squeeze(mean(abs(freq.fourierspctrm(:,1+gx,:)),1));
                 [dum fi] = max(stn_pow(freq.freq> R.bandef(2,1) & freq.freq< R.bandef(2,2)));
                 stn_lb_frq(x) =  R.bandef(2,1)+(fi.*min(diff(freq.freq)));
                 frqsave_vox(:,x) = coh.freq;
