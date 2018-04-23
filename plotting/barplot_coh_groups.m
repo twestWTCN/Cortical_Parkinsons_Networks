@@ -30,7 +30,8 @@ grid on; ylabel('Maximum WPLI'); title('Hemi Analyses');
 [h pv(3)] = ttest2(squeeze(sideCoh(:,1,1,1)),squeeze(sideCoh(:,1,1,2)));
 % Left OFF vs Right OFF
 [h pv(4)] = ttest2(squeeze(sideCoh(:,1,2,1)),squeeze(sideCoh(:,1,2,2)));
-H=sigstar({{'Left ON','Left OFF'},{'Right ON','Right OFF'},{'Right ON','Left ON'},{'Right OFF','Left OFF'}},pv); ylim([0 0.45])
+H=sigstar({{'Left ON','Left OFF'},{'Right ON','Right OFF'},{'Right ON','Left ON'},{'Right OFF','Left OFF'}},pv); 
+ylim([0 0.7])
 
 pv = [];
 subplot(1,2,2)
@@ -53,6 +54,6 @@ whisker=a(idx);          % Get the children you need
 set(whisker,'LineWidth',2); % Set width
 %%
 grid on; ylabel('Maximum WPLI'); title('Bilateral Analyses') 
-H=sigstar({{'Total ON','Total OFF'}},pv); ylim([0 0.45])
+H=sigstar({{'Total ON','Total OFF'}},pv); ylim([0 0.7])
 set(gcf,'Position',[512         540        1229         436])
 

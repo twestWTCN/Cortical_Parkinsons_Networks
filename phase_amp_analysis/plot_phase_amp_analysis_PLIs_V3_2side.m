@@ -17,7 +17,7 @@ QX = linspace(-pi,pi,QX);
 % load([R.datapathr 'subject_hbWPLI075'])
 % subscreen = squeeze(sum(subject_hbcohscreen>R.PA.WPLIscreen)==2);
 a = logspace(0.5,log10(150),4); logscalez = [-100 -50 -15 15 50 100]; %-40:10:40; %linspace(-50,50,QY); %logscalez = [-3.^(4:-1:2) 3.^(2:4)];
-for band = 2%; %1:numel(R.bandname)
+for band = 3%; %1:numel(R.bandname)
     for sub = 1:numel(R.subname)
         for side =1:2
             for cond = 1:2

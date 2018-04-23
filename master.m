@@ -5,10 +5,10 @@ clear; close all
 % 1) Theshold segments as ratio of amplitude of envelope of bandpass vs total
 % to yield an SNR
 % 2) Look at Alpha networks - how do they coincide with beta frames? 
-% 3)...
+% 3) Adapt scripts to cope with LM - missing two STN channels left
 add_corticalnetworks_paths()
 R = makeHeader_SubCort_Cort_Networks();
-R = makeHeader_SubCort_Cort_Networks_SFLAP();
+% R = makeHeader_SubCort_Cort_Networks_SFLAP();
 %% Compute Forward
 % subname = {'DF'};
 % % steps = {'loadmri','realign_coords','skullstrip','segment','reslice','headmodel','coregister'}; 
@@ -40,8 +40,9 @@ R.subname = {'JN','MC','SW','DF','JB','MW','DP','DS','JA','LN01','LN02','LN03'};
 % group_DICS_imagemean(R)
 % group_DICs_imageanalyse % not sure what this does
 decide_max_coh_v3(R,0)
-
+plot_DICs_LocalROIdist(R)
 compute_virtual_electrodes_ROI_contdata_v3(R)
+preprocess_epoched_VC(R)
 plot_subject_cohspectra(R)
 
 compute_phase_amp_analysis_v3
@@ -49,6 +50,8 @@ getHists_phase_amp_analysis_PLIs(R)
 plot_phase_amp_analysis_PLIs_V3_2side
 plot_group_level_phaseamp_v3(R)
 network_plot_270317
+
+
 % LEGACY:
 % decide_max_coh_v2(R,0)
 % compute_phase_amp_analysis_050118(R)

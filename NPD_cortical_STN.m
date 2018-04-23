@@ -10,9 +10,11 @@ for cond = 1:2
     for i =1:numel(vchansave)
         data = vchansave(i);
         x = data.trial{1}(1,:);
+        x = (x-mean(x))./std(x);
         y = data.trial{1}(2,:);
-        [f13,t13,c13]=sp2a2_R2_mt(x',y',R.pp.cont.full.fs,R.NPD.windowlength,R.NPD.multitaper);
-        
+        y = (y-mean(y))./std(y);
+%         [f13,t13,c13]=sp2a2_R2_mt(x',y',R.pp.cont.full.fs,10,'M1.5');
+                [f13,t13,c13]=sp2a2_R2(x',y',R.pp.cont.full.fs,9);
         Hz = f13(:,1);
         %     if plotop ==1
         %     subplot(1,4,1);plot(Hz,f13(:,4),'k'); hold on; xlim([2 48]); ylim([0 0.1]);

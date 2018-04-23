@@ -30,15 +30,19 @@ R.dics.bp = [8 12  10 2;
              24 34 29 5;
               ];
 
-R.ROI.maskrho_dic = 3;
-R.ROI.maskrho_vc = 1.5;
+R.ROI.maskrho_global = 2;
+R.ROI.maskrho_local  = 1.5;
+R.ROI.maskrho_vc = 1;
 R.ROI.bandROI(:,1,1) = [-46 -30 2]./10; % R_STG
 R.ROI.bandROI(:,1,2) = [46 -30 2]./10; % L_STG
-R.ROI.bandROI(:,2,1) = [-20 -6 84]./10; % premotor_R
-R.ROI.bandROI(:,2,2) = [20 -6 84]./10; % premotor_L
+R.ROI.bandROI(:,2,1) = [NaN NaN NaN]; % L_STG
+R.ROI.bandROI(:,2,2) = [NaN NaN NaN]; % L_STG
+R.ROI.bandROI(:,3,1) = [-20 -6 84]./10; % premotor_R
+R.ROI.bandROI(:,3,2) = [20 -6 84]./10; % premotor_L
 
+R.VC.normalize = 1; % Normalize
 % NPD
-R.NPD.multitaper = 'M1.5';
+% % % R.NPD.multitaper = 'M0.5'; % NO MULTITAPER"!!
 R.NPD.windowlength = 9;
 
 % Phase Analy
@@ -54,7 +58,8 @@ R.NPD.windowlength = 9;
 R.PA.SType = 2; % 1 = sliding window PLI and 2 = SRP
 R.PA.bwid = [0.75 0.75 0.75];
 R.PA.mwid = 3; % minimum SRP length (cycles)
-R.PA.SRPeps = 0.0075; %0.006;
+R.PA.SRPeps = 0.006; %0.006;
+R.PA.LowAmpFix = 0; % 1 if SRP is adjusted to account for low amplitude
 
 R.PA.slidingwindow = 1;
 R.PA.PLVeps =  0.50;

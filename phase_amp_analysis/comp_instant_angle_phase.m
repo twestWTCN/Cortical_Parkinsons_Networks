@@ -1,4 +1,7 @@
-function [amp phi dphi_12 dphi_12_dt betaS] = comp_instant_angle_phase(Odata,frq,stn_lb_frq,bwid,fsamp)
+function [amp phi dphi_12 dphi_12_dt betaS] = comp_instant_angle_phase(Odata,frq,stn_lb_frq,bwid,fsamp,LowAmpFix)
+if nargin<6
+    LowAmpFix = 0;
+end
 %         % bandpass
 %         cfg = [];
 %         cfg.bpfilter = 'yes';
@@ -17,7 +20,7 @@ function [amp phi dphi_12 dphi_12_dt betaS] = comp_instant_angle_phase(Odata,frq
         
         amp(:,1) = abs(hilbert(Xdata.trial{1}(1,:)));
         amp(:,2) = abs(hilbert(Xdata.trial{1}(2,:)));
-        
+
         phi(:,1) = angle(hilbert(Xdata.trial{1}(1,:)));
         phi(:,2) = angle(hilbert(Xdata.trial{1}(2,:)));
         
@@ -28,6 +31,13 @@ function [amp phi dphi_12 dphi_12_dt betaS] = comp_instant_angle_phase(Odata,frq
 %         dphi_12 = (dphi_12-(1/sqrt(length(phi(:,1)))))./(1-(1/sqrt(length(phi(:,1))))); %%
 dphi_12_dt = diff(dphi_12);
 
+        if LowAmpFix == 1
+        TAmp =  amp(:,1).* amp(:,2);
+        TAmpNorm = (TAmp./mean(TAmp));
+        TAmpNormNeg = TAmpNorm;
+        TAmpNormNeg(TAmpNorm>1) = 1; 
+        dphi_12_dt = dphi_12_dt.*TAmpNormNeg(2:end);
+        end
 % lb_stn_bandpass
 %         cfg = [];
 %         cfg.bpfilter = 'yes';

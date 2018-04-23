@@ -26,7 +26,9 @@ for band = 3; %[1 3] %1:numel(R.bandname)
                     id = idbank(nr,side,cond);
                     frq = frqbank(band,nr,side,cond); %% THIS USES THE 3rd Band (HB)
                     stn_lb_frq = stn_lb_frqbank(nr,side,cond);
-                    load([R.datapathr R.subname{sub} '\ftdata\virtual_sources_' num2str(nr) '_ROI_' R.condname{cond}  '_' R.siden{side} '_' R.ipsicon])
+%                     load([R.datapathr R.subname{sub} '\ftdata\virtual_sources_' num2str(nr) '_ROI_' R.condname{cond}  '_' R.siden{side} '_' R.ipsicon])
+                    load([R.datapathr R.subname{sub} '\ftdata\virtual_sources_' num2str(nr) '_ROI_' R.condname{cond} '_' R.siden{side} '_' R.ipsicon  '_' R.bandname{band}])
+                    
                     %                 load([R.datapathr R.subname{sub} '\ftdata\r' R.subname{sub} '_LCMV_source_' R.condname{cond} 'nrep_' num2str(nr)])
                     
                     % Create data structure
@@ -40,14 +42,14 @@ for band = 3; %[1 3] %1:numel(R.bandname)
                     %                         Xdata.trial{1}(ch,:) = (X-mean(X))./std(X);
                     %                     end
                     signalEnvAmp = median(abs(hilbert(Xdata.trial{1})),2);
-                    if exist([R.datapathr R.subname{sub} '\ftdata\ROI_analy\' R.bandname{band} '_' R.condname{cond} '_nr_' num2str(nr) '_' R.siden{side} '_optfreq.mat']) ==0
+                    if 1 %exist([R.datapathr R.subname{sub} '\ftdata\ROI_analy\' R.bandname{band} '_' R.condname{cond} '_nr_' num2str(nr) '_' R.siden{side} '_optfreq.mat']) ==0
                         [maxfrq maxPLV] = PLV_compute_optimalFrq(Xdata,R,band); % THIS USES THE HIGH BETA BAND FOR OPTIMIZATION
                         save([R.datapathr R.subname{sub} '\ftdata\ROI_analy\' R.bandname{band} '_' R.condname{cond} '_nr_' num2str(nr) '_' R.siden{side} '_optfreq'],'maxfrq','maxPLV')
                     else
                         load([R.datapathr R.subname{sub} '\ftdata\ROI_analy\' R.bandname{band} '_' R.condname{cond} '_nr_' num2str(nr) '_' R.siden{side} '_optfreq'],'maxfrq','maxPLV')
                     end
                     % Compute data transforms (Hilbert)
-                    [amp phi dphi_12 dphi_12_dt betaS] = comp_instant_angle_phase(Xdata,maxfrq,stn_lb_frq,R.PA.bwid(band),Xdata.fsample);
+                    [amp phi dphi_12 dphi_12_dt betaS] = comp_instant_angle_phase(Xdata,maxfrq,stn_lb_frq,R.PA.bwid(band),Xdata.fsample,R.PA.LowAmpFix);
                     
                     % Sliding Window PLV
                     if R.PA.SType == 1
@@ -69,21 +71,22 @@ for band = 3; %[1 3] %1:numel(R.bandname)
                         [phi_dist amp_dist seg_ddt segL_ddt consecSegs H] = analysestablesegs(qstable,tseries,snr_sw,period,mwid,1/SW_sampr,R.PA.SNR(band));
                         
                     elseif R.PA.SType == 2 % Sliding Window PhaseAng. Stability
-                        
+                        clear snr_sw
                         snr_sw(:,1) = log10(amp(:,1)./signalEnvAmp(1));
                         snr_sw(:,2) =  log10(amp(:,2)./signalEnvAmp(2));
                         snr_sw(:,3) =  log10(amp(:,3)./signalEnvAmp(2));
                         
                         mwid = R.PA.mwid; % Minimum number of cycles to consider sync
-                        period = (mwid/frq)*R.pp.cont.full.fs;                        
+                        period = (mwid/frq)*R.pp.cont.full.fs;
+                        cycle = (1/frq)*R.pp.cont.full.fs;
                         %%% Find segments
                         %                 dphi_12_dt_sm = smooth(dphi_12_dt,period/6)';
                         qstable = find(abs(dphi_12_dt')<R.PA.SRPeps); % The points that are below threshold
                         tseries = wrapToPi(dphi_12(2:end));
                         %                 tseries(:,2) = phi(:,2);
                         %                 tseries(:,1) = phi(:,1);
-                        [phi_dist amp_dist seg_ddt1 segL_ddt consecSegs H] = analysestablesegs(qstable,tseries,amp,period,mwid,R.pp.cont.full.fs,R.PA.SNR_eps);
-                        plot_example_phaseanalysis_trace(betaS,amp,phi,dphi_12_dt,seg_ddt1,R.PA.SRPeps);
+                        [phi_dist amp_dist seg_ddt1 segL_ddt consecSegs H] = analysestablesegs(qstable,tseries,amp,period,mwid,R.pp.cont.full.fs,R.PA.SNR(band),cycle);
+%                         plot_example_phaseanalysis_trace(betaS,amp,phi,dphi_12_dt,seg_ddt1,R.PA.SRPeps);
                     end
                     
                     %                 [gc_dist] = analysestablesegs_granger(qstable,tseries,amp,period,mwid,R.pp.cont.full.fs);

@@ -1,6 +1,12 @@
-function [phi_dist amp_dist seg_ddt segL_ddt consecSegs H] = analysestablesegs(qstable,tseries,refseries,period,mwid,fsamp,SNR_eps)
+function [phi_dist amp_dist seg_ddt segL_ddt consecSegs H] = analysestablesegs(qstable,tseries,refseries,period,mwid,fsamp,SNR_eps,minsep)
+if isempty(minsep)
+    minsep = 0;
+end
 amp = refseries;
 consecSegs = SplitVec(qstable,'consecutive');
+% consecSegs = fixGap(consecSegs,minsep);
+
+
 % lengths
 segL_ddt = cellfun('length',consecSegs);
 seglist = find(segL_ddt>(period));

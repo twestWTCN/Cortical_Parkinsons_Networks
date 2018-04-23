@@ -1,5 +1,9 @@
 function decide_max_coh_v3(R,suborthoplot)
 % suborthoplot = 0;
+load([R.datapathr 'template_MRI/standard_sourcemodel3d10mm']);
+template_grid = sourcemodel;
+clear sourcemodel;
+close all
 for band = [1 3];% 1:numel(R.bandname)
     for sub = 1:numel(R.subname)
         clear source_avg_dics peak_loc peak_ind contra_peak_mag ipsi_peak_mag contra_peak_loc ipsi_peak_loc source_cohmag source_cohloc
@@ -12,16 +16,20 @@ for band = [1 3];% 1:numel(R.bandname)
                 %             clear megdata
                 % you need to set indices for left and right to do LM which is missing two
                 % channels left i.e. 4 now becomes 2
+% %                 if strncmp(R.subname{sub},'LM')
+% %                 Rind = find(contains(R.ref_list,'STN_R'));
+% %                 Lind = find(contains(R.ref_list,'STN_L'));
+
                 for refN = 1:numel(R.ref_list)
                     ref_chan = R.ref_list{refN};
                     bandROI_R = 10*R.ROI.bandROI(:,band,1)'; %[-20 -6 84]./10;
                     bandROI_L = 10*R.ROI.bandROI(:,band,2)';%[20 -6 84]./10;
                     load([R.datapathr R.subname{sub} '\ftdata\r' R.subname{sub} '_DICSv2_peakinfo_source' R.condname{cond} 'nrep_' num2str(nr) '_' ref_chan '_' R.bandname{band}])
                     load([R.datapathr R.subname{sub} '\ftdata\r' R.subname{sub} '_DICSv2_source' R.condname{cond} 'nrep_' num2str(nr) '_' ref_chan '_' R.bandname{band}])
-%                     source = sourceTrans;
+                    %                     source = sourceTrans;
                     source_avg_dics(:,refN,nr,cond) = source.avg.coh;
                     figure(400)
-                    mask =  reshape(source.avg.coh,source.dim)>0;
+                    mask =  reshape(template_grid.inside,template_grid.dim)>0;
                     hold on
                     fv = isosurface(mask,0);
                     patch(fv,'FaceColor',[.1 .1 .1],'EdgeColor',[0 0 0],'FaceAlpha',0.1);
@@ -29,7 +37,7 @@ for band = [1 3];% 1:numel(R.bandname)
                     dm = pdist2(source.pos,repmat(bandROI_L,size(source.pos,1),1));
                     [x i] =min(dm(:,2));
                     [max_xyz(1) max_xyz(2) max_xyz(3)] = ind2sub(source.dim,i);
-                    PM_mask_L = makeSphereMask(source.dim,max_xyz,R.ROI.maskrho_dic);
+                    PM_mask_L = makeSphereMask(source.dim,max_xyz,R.ROI.maskrho_global);
                     PM_mask_L = permute(PM_mask_L,[2 1 3]);
                     fv = isosurface(PM_mask_L,0);
                     patch(fv,'FaceColor',[.1 .1 .1],'EdgeColor',[1 0 0],'FaceAlpha',0.1);
@@ -37,7 +45,7 @@ for band = [1 3];% 1:numel(R.bandname)
                     dm = pdist2(source.pos,repmat(bandROI_R,size(source.pos,1),1));
                     [x i] =min(dm(:,2));
                     [max_xyz(1) max_xyz(2) max_xyz(3)] = ind2sub(source.dim,i);
-                    PM_mask_R = makeSphereMask(source.dim,max_xyz,R.ROI.maskrho_dic);
+                    PM_mask_R = makeSphereMask(source.dim,max_xyz,R.ROI.maskrho_global);
                     PM_mask_R = permute(PM_mask_R,[2 1 3]);
                     fv = isosurface(PM_mask_R,0);
                     patch(fv,'FaceColor',[.1 .1 .1],'EdgeColor',[0 0 1],'FaceAlpha',0.1);
@@ -47,15 +55,16 @@ for band = [1 3];% 1:numel(R.bandname)
                     % This recovers the peak locations and magnitudes from the
                     % DICS coh structure. For ipsi, set all contra vertices to
                     % zero, vice versa for contra.
-                    if refN<4 % RHS Ref
+                    
+                    if R.ref_list{refN}(5) == 'R' % RHS Ref
                         LR = source.avg.coh;
                         LR(source.pos(:,1)<=0) = 0; % set RHS to zero
-                        LR = LR.*PM_mask_L(:)
+                        LR = LR.*PM_mask_L(:);
                         [contra_peak_mag(refN,nr,cond) contra_loc] = max(LR); % DICS_peak{4};
                         
                         LR = source.avg.coh;
                         LR(source.pos(:,1)>=0) = 0; % set LHS to zero
-                        LR = LR.*PM_mask_R(:)
+                        LR = LR.*PM_mask_R(:);
                         [ipsi_peak_mag(refN,nr,cond) ipsi_loc] = max(LR); % DICS_peak{4};
                     else % LHS Ref
                         LR = source.avg.coh;
@@ -96,10 +105,7 @@ for band = [1 3];% 1:numel(R.bandname)
             0   0   1    2.2
             0   0   0    1];
         source = ft_transform_geometry(T,source);
-        %                             cfg = [];
-        %                             cfg.method = 'glassbrain';
-        %                             cfg.funparameter = 'avg.coh';
-        %                             ft_sourceplot(cfg,Tmri)
+
         %     close all
         GA_sourceDICS_L = source;
         LR = source_avg_dics;
@@ -114,11 +120,14 @@ for band = [1 3];% 1:numel(R.bandname)
         %     LR = LR.*PM_mask_L(:);
         GA_sourceDICS_R.avg.coh = reshape(nanmean(nanmean(nanmean(LR(:,4:6,:,:),4),2),3),source.dim);
         if suborthoplot == 1; generic_source_plot(R.datapathr,R.subname,GA_sourceDICS_R,Tmri,'avg.coh','right_DICSv2','mni'); end
-        
+%         
+        cfg = [];
+        cfg.funparameter = 'avg.coh';
+        ft_sourceplot(cfg,source)
         figure
         load([R.datapathr R.subname{sub} '\ftdata\volsens' R.condname{cond}])
         vol = volsens.MEG.vol;
-        vol = ft_convert_units(vol,'cm');
+        vol = ft_convert_units(vol,'mm');
         ft_plot_mesh(vol.bnd);
         hold on
         a = gca;
@@ -132,28 +141,28 @@ for band = [1 3];% 1:numel(R.bandname)
                 xpeak_mag = contra_peak_mag;
         end
         % These are the ON peaks
-        locs = reshape(xpeak_loc(:,:,:,1),3,[]); 
-        mags = reshape(xpeak_mag(:,:,1),1,[]); 
+        locs = reshape(xpeak_loc(:,:,:,1),3,[]);
+        mags = reshape(xpeak_mag(:,:,1),1,[]);
         mags(sum(locs,1)==0) = []; locs(:,sum(locs,1)==0) = [];
-        locs(:,mags==0) = [];mags(mags==0) = [];  
+        locs(:,mags==0) = [];mags(mags==0) = [];
         scatter3(locs(1,:),locs(2,:),locs(3,:),mags*5000,'r','filled','d')
         
         hold on
         % These are the OFF peaks
-        locs = reshape(xpeak_loc(:,:,:,2),3,[]); 
-        mags = reshape(xpeak_mag(:,:,2),1,[]); 
+        locs = reshape(xpeak_loc(:,:,:,2),3,[]);
+        mags = reshape(xpeak_mag(:,:,2),1,[]);
         mags(sum(locs,1)==0) = []; locs(:,sum(locs,1)==0) = [];
         locs(:,mags==0) = [];mags(mags==0) = [];
         scatter3(locs(1,:),locs(2,:),locs(3,:),mags*5000,'b','filled')
         
-        %% Run again to define global ROIs
+        %% Run again to define LOCAL ROIs
         % This just takes the peak from the mean DICs image left and right
         % Define Left ROI
         A = GA_sourceDICS_L.avg.coh.*PM_mask_R;
         [a1 xyz] = max(A(:));
         max_pos = GA_sourceDICS_L.pos(xyz,:);
         [max_xyz(1) max_xyz(2) max_xyz(3)] = ind2sub(GA_sourceDICS_L.dim,xyz);
-        mask = makeSphereMask(GA_sourceDICS_L.dim,max_xyz,R.ROI.maskrho_dic);
+        mask = makeSphereMask(GA_sourceDICS_L.dim,max_xyz,R.ROI.maskrho_local);
         maskL = permute(mask,[2 1 3]);
         %  ROI_list_L = find(GA_sourceDICS_L.inside.*reshape(mask,[],1));
         
@@ -162,7 +171,7 @@ for band = [1 3];% 1:numel(R.bandname)
         [a1 xyz] = max(A(:));
         max_pos = GA_sourceDICS_R.pos(xyz,:);
         [max_xyz(1) max_xyz(2) max_xyz(3)] = ind2sub(GA_sourceDICS_R.dim,xyz);
-        mask = makeSphereMask(GA_sourceDICS_R.dim,max_xyz,R.ROI.maskrho_dic);
+        mask = makeSphereMask(GA_sourceDICS_R.dim,max_xyz,R.ROI.maskrho_local);
         maskR = permute(mask,[2 1 3]);
         ROI_list_R = find(GA_sourceDICS_R.inside.*reshape(mask,[],1));
         
@@ -223,7 +232,7 @@ for band = [1 3];% 1:numel(R.bandname)
                 [a1 xyz] = max(maxcohs);
                 maxlocs = squeeze(source_cohloc(1,1:3,nr,cond));
                 [loc(1) loc(2) loc(3)] = ind2sub(source.dim,maxlocs(xyz));
-                STNselection{1,2,nr,cond} = {R.condname{cond} 'contra_RSTN_LM1' a1 xyz R.ref_list{xyz} maxlocs(xyz)  loc source.pos(maxlocs(xyz),:)};
+                STNselection{1,2,nr,cond} = {R.condname{cond} 'contra_RSTN_LM1' a1 xyz R.ref_list{3+xyz} maxlocs(xyz)  loc source.pos(maxlocs(xyz),:)};
                 
                 % Ipsi -Left STN, Left M1
                 maxcohs = squeeze(source_cohmag(1,4:6,nr,cond));
@@ -248,11 +257,10 @@ for band = [1 3];% 1:numel(R.bandname)
                 locmax(:,1,nr,sub,cond) = maxlocs(xyz);
                 maxlocs = squeeze(source_cohloc(2,1:3,nr,cond));
                 [loc(1) loc(2) loc(3)] = ind2sub(source.dim,maxlocs(xyz));
-                STNselection{1,1,nr,cond} = {R.condname{cond} 'ipsi_RSTN_RM1' a1 xyz R.ref_list{xyz} maxlocs(xyz)  loc source.pos(maxlocs(xyz),:)};
+                STNselection{1,1,nr,cond} = {R.condname{cond} 'ipsi_RSTN_RM1' a1 xyz R.ref_list{3+xyz} maxlocs(xyz)  loc source.pos(maxlocs(xyz),:)};
             end
         end
         save([R.datapathr R.subname{sub} '\ftdata\r' R.subname{sub} '_DICSv2_source_channelselectioninfo_' R.bandname{band}],'STNselection')
-        
         
         % Subject Effects
         % source_cohmag(left/rightM1,refn,nr,cond)
@@ -261,17 +269,17 @@ for band = [1 3];% 1:numel(R.bandname)
         ON = [squeeze(source_cohmag(1,4:6,:,1)) squeeze(source_cohmag(2,1:3,:,1))]; ON = ON(:); ON(ON==0) = [];
         A = [ON;OFF]; B = [repmat(1,size(ON)); repmat(2,size(OFF))];
         figure;
-        barplot_N2_grouping(A,B,'DICs Max. Coherence','STN/DICs Ipsilateral High Beta Source Coherence')
+        barplot_N2_grouping(A,B,'DICs Max. Coherence',['STN/DICs Ipsilateral ' R.bandname{band} ' Source Coherence'])
         [h P stat] = ttest2(OFF,ON);
         dics_cohstattable.ispi.cohstat = [mean(ON) std(ON)/sqrt(numel(ON)) mean(OFF) std(OFF)/sqrt(numel(OFF)) mean(ON)-mean(OFF) stat(2) P];
         dics_cohstattable.ispi.cohmax = [max(ON) max(OFF)];
-
+        
         %         CONTRAlateral sources
         OFF = [squeeze(source_cohmag(1,1:3,:,2)) squeeze(source_cohmag(2,4:6,:,2))]; OFF = OFF(:); OFF(OFF==0) = [];
         ON = [squeeze(source_cohmag(1,1:3,:,1)) squeeze(source_cohmag(2,4:6,:,1))]; ON = ON(:); ON(ON==0) = [];
         A = [ON;OFF]; B = [repmat(1,size(ON)); repmat(2,size(OFF))];
         figure
-        barplot_N2_grouping(A,B,'DICs Max. Coherence','STN/DICs Contralateral High Beta Source Coherence')
+        barplot_N2_grouping(A,B,'DICs Max. Coherence',['STN/DICs Contralateral ' R.bandname{band} ' Source Coherence'])
         [h P stat] = ttest2(OFF,ON);
         dics_cohstattable.contra.cohstat = [mean(ON) std(ON)/sqrt(numel(ON)) mean(OFF) std(OFF)/sqrt(numel(OFF)) mean(ON)-mean(OFF) stat(2) P];
         dics_cohstattable.contra.cohmax = [max(ON) max(OFF)];

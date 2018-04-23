@@ -7,7 +7,7 @@ function compute_virtual_electrodes_ROI_contdata_v3(R)
 %%%
 normv = @(x) (x-mean(x)); %./std(x);
 scatleg = {'bo','bx';'ro','rx'};
-for band = 1 %:numel(R.bandname)
+for band = [1 3] %:numel(R.bandname)
 for sub = 1:numel(R.subname)
     for cond = 1:2
         [datafileN,pp_mark,nrep,senscheck] = data_fileguide(R.subname{sub},cond-1);
@@ -23,13 +23,13 @@ for sub = 1:numel(R.subname)
             load([R.datapathr R.subname{sub} '\ftdata\meg_clean_fullsampdata_cont_' num2str(nr) '_' R.condname{cond}])
             %             load([R.datapathr R.subname{i} '\ftdata\meg_clean_data_cont_' num2str(nr) '_' R.condname{cond}])
             load([R.datapathr R.subname{sub} '\ftdata\r' R.subname{sub} '_DICSv2_source_channelselectioninfo_' R.bandname{band}])
-            load([R.datapathr R.subname{sub} '\ftdata\r' R.subname{sub} '_LCMV_source_' R.condname{cond} 'nrep_' num2str(nr)])
+            load([R.datapathr R.subname{sub} '\ftdata\r' R.subname{sub} '_LCMV_source_' R.condname{cond} 'nrep_' num2str(nr) '_' R.bandname{band}])
             for side = 1:2
                 switch R.ipsicon
                     case 'ipsi'
-                        seldet = STNselection{side,1,nrepOFF,2}; % selected for ipsi % Use OFF
+                        seldet = STNselection{side,1,nrep,cond}; % selected for ipsi % Use OFF
                     case 'contra'
-                        seldet = STNselection{side,2,nrepOFF,2}; % selected for contra % Use OFF
+                        seldet = STNselection{side,2,nrep,cond}; % selected for contra % Use OFF
                 end
                 chansel = ft_channelselection('MEG', fullsampdata.label); % find MEG sensor names
                 chansel = match_str(fullsampdata.label, chansel);         % find MEG sensor indices
@@ -46,21 +46,21 @@ for sub = 1:numel(R.subname)
                 ROI = seldet{7};
                 ROIsave(:,cond,nr,side,sub) = ROI;
                 %                 scatter3(ROI(1),ROI(2),ROI(3),125,scatleg{cond,side},'filled'); hold on
-                mask = makeSphereMask(source.dim,ROI,R.ROI.maskrho_vc,0);
+                mask = makeSphereMask(source.dim,ROI,1,0);
                 mask = permute(mask,[2 1 3]);
                 ROI_list = find(source.inside.*mask(:));
                 POS_list = source.pos(source.inside.*mask(:)>0,:);
                 clear vchansave
                 
                 for p = 1:size(ROI_list,1)
-                    iz = ROI_list(p); size(ROI_list,1)
+                    iz = ROI_list(p); %size(ROI_list,1)
                     loc = zeros(1,3);
                     [loc(1),loc(2),loc(3)] = ind2sub(source.dim,ROI_list(p));
                     %                     scatter3(x,y,z,'rx'); hold on
                     
                     iz = ROI_list(p); %sub2ind(source.dim,ROI_list(p,1),ROI_list(p,2),ROI_list(p,3));
-                    %             MNI = source.pos(iz,:);
-                    %             fprintf('You have chosen a point at %1.f %1.f %1.f in MNI',MNI)
+                                MNI = source.pos(iz,:);
+                                fprintf('You have chosen a point at %.1f %.1f %.1f in MNI',MNI)
                     
                     vchan = [];
                     vchan.label = {'gam_pow_x', 'gam_pow_y', 'gam_pow_z'};
@@ -94,7 +94,7 @@ for sub = 1:numel(R.subname)
                     for trln = 1:numel(mx)
                         if ~isempty(sfilter)
                             A = normv(u(:,1)' * sfilter * mx{trln}(chansel,:));
-                            B = normv(mx{trln}(refsel,:));
+                            B = normv(mx{trln}(refsel,:));fc
                             trial{trln} = [A; B];
                         else
                             trial{trln} = [NaN; NaN];
@@ -122,7 +122,7 @@ for sub = 1:numel(R.subname)
                 end
                 
                 save([R.datapathr R.subname{sub} '\ftdata\virtual_sources_' num2str(nr) '_ROI_' R.condname{cond} '_' R.siden{side} '_' R.ipsicon  '_' R.bandname{band}],'vchansave','vtime','ROI_list')
-                disp([side nr cond sub])
+                disp([side nr cond sub band])
             end
         end
     end

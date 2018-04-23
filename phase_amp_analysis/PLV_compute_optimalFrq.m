@@ -5,7 +5,7 @@ surdata = Xdata.trial{1};
 surfft = fft(surdata);
 Amp = abs(surfft);
 Phi = angle(surfft);
-for frqn = 1:numel(frqlist)
+parfor frqn = 1:numel(frqlist)
     [amp phi dphi_12 dphi_12_dt betaS] = comp_instant_angle_phase(Xdata,frqlist(frqn),R.PA.stn_lb_frq,R.PA.bwid(band),fsamp);
     WinSize = R.PA.slidingwindow*fsamp;
     [PLV PLV_tvec] = slidingwindowPLV(WinSize,phi,R.PA.WinOver);
@@ -19,6 +19,7 @@ for frqn = 1:numel(frqlist)
     
     Rdata = [];
     Rdata.trial{1} = phasescm;
+    Rdata.time = Xdata.time;
     [amp phi dphi_12 dphi_12_dt betaS] = comp_instant_angle_phase(Rdata,frqlist(frqn),R.PA.stn_lb_frq,R.PA.bwid(2),fsamp);
     WinSize =R.PA.slidingwindow*fsamp;
     [PLV PLV_tvec] = slidingwindowPLV(WinSize,phi,R.PA.WinOver);

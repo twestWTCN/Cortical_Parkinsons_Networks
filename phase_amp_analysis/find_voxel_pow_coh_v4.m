@@ -1,35 +1,35 @@
-function [idbank frqbank stn_lb_frqbank] = find_voxel_pow_coh_v3(R,subname,band,nr)
+function [idbank frqbank stn_lb_frqbank] = find_voxel_pow_coh_v4(R,sub,band,nr)
 for  cond = 1:2 % USE just OFF to identify ROI for now
-    [datafileN,pp_mark,nrep,senscheck] = data_fileguide(R.subname{subname},cond-1);
+    [datafileN,pp_mark,nrep,senscheck] = data_fileguide(R.subname{sub},cond-1);
     for side = 1:2
         for nr = 1:nrep
-            vchansave = [];
-            load([R.datapathr R.subname{subname} '\ftdata\virtual_sources_' num2str(nr) '_ROI_' R.condname{cond} '_' R.siden{side} '_' R.ipsicon '_' R.bandname{band}])
-            for x = 1:numel(vchansave)
-                Xdata(x).fsample = R.pp.cont.full.fs;
-                Xdata(x).label = vchansave(x).label;
-                Xdata(x).trial = vchansave(x).trial; %{1};
-                Xdata(x).time = {vchansave(x).time};
+            vc_clean = [];
+            load([R.datapathr R.subname{sub} '\ftdata\virtual_sources_clean_' num2str(nr) '_ROI_' R.condname{cond} '_' R.siden{side} '_' R.ipsicon  '_' R.bandname{band}],'vc_clean')
+            for x = 1:numel(vc_clean)
+                Xdata(x).fsample = vc_clean.fsample;
+                Xdata(x).label = vc_clean(x).label;
+                Xdata(x).trial = vc_clean(x).trial; %{1};
+                Xdata(x).time = vc_clean(x).time;
                 %                 Xdata(x).trial{1} = Xdata(x).trial{1}(:,2*R.pp.cont.full.fs:(end-2*R.pp.cont.full.fs));
                 if R.VC.normalize == 1
                 Xdata(x).trial{1} = ((Xdata(x).trial{1}'-mean(Xdata(x).trial{1}'))./std(Xdata(x).trial{1}'))';
                 end
-                Xdata(x).time{1} = linspace(0,size( Xdata(x).trial{1},2)/R.pp.cont.full.fs, size( Xdata(x).trial{1},2));  %Xdata(x).time{1}(:,2*fsamp:(end-2*fsamp));
-                Xdata(x).cfg = [];
-                cfg = [];
-                cfg.resamplefs = R.pp.cont.thin.fs;
-                X = ft_resampledata(cfg,Xdata(x));
-                Xdata(x) = X;
+%                 Xdata(x).time{1} = linspace(0,size( Xdata(x).trial{1},2)/R.pp.cont.full.fs, size( Xdata(x).trial{1},2));  %Xdata(x).time{1}(:,2*fsamp:(end-2*fsamp));
+%                 Xdata(x).cfg = [];
+%                 cfg = [];
+%                 cfg.resamplefs = R.pp.cont.thin.fs;
+%                 X = ft_resampledata(cfg,Xdata(x));
+%                 Xdata(x) = X;
             end
-            N = numel(vchansave);
+%             N = numel(vc_clean);
             %             progressStepSize = 1;
             %             if ~is_in_parallel; parpool; end
             %             ppm = ParforProgMon('Power Estimation: ', N, progressStepSize, 800, 300);
-            parfor x = 1:numel(vchansave)
-                cfg = [];
-                cfg.length = 0.5;
-                Xseg = ft_redefinetrial(cfg,Xdata(x));
-                
+            for x = 1:numel(vc_clean)
+%                 cfg = [];
+%                 cfg.length = 0.5;
+%                 Xseg = ft_redefinetrial(cfg,Xdata(x));
+                Xseg = Xdata(x);
                 % cfg = [];
                 % cfg.viewmode = 'vertical';  % you can also specify 'butterfly'
                 % ft_databrowser(cfg, Xdata);
@@ -59,21 +59,26 @@ for  cond = 1:2 % USE just OFF to identify ROI for now
 % %                                                 hold on
 % %                                                 plot(freq.freq',tpx(2,:)','r')
 % %                                                 legend({'CTX','STN'}); grid on
+                                                
+                cfg = [];
+                cfg.length = 1;
+                Xseg = ft_redefinetrial(cfg,Xdata(x));
+                                                
                 cfg           = [];
                 cfg.method    = 'mtmfft';
-                cfg.taper     = 'hanning';
+%                 cfg.taper     = 'hanning';
                 cfg.output    = 'fourier';
                 %                 cfg.foilim = [4 48];
                 % cfg.pad       = 128;
-%                 cfg.tapsmofrq  = 2;
+                cfg.tapsmofrq  = 3;
                 cfg.pad         =  'nextpow2';
                 freq         = ft_freqanalysis(cfg, Xseg);
                 cfg           = [];
-                cfg.method    = 'coh';
-                %                         cfg.complex = 'imag';
+                cfg.method    = 'wpli';
+                %                         cfg.complex = 'absimag';
                 coh           = ft_connectivityanalysis(cfg, freq);
                 
-                icoh = abs(squeeze(coh.cohspctrm(2,1,:)));
+                icoh = abs(squeeze(coh.wplispctrm(2,1,:)));
                 cohsave_vox(:,x) = icoh;
                 
 % %                 figure(2)
@@ -81,7 +86,7 @@ for  cond = 1:2 % USE just OFF to identify ROI for now
 % %                 title(R.condname{cond})
 % %                 xlabel('Freq'); ylabel('iCoh')
 % %                 plot(coh.freq',icoh','k'); hold on
-% %                 ylim([0 0.15]);  grid on
+% %                 ylim([0 0.8]);  grid on
                
                 % MaxCohs
                 % Alpha
@@ -109,7 +114,7 @@ for  cond = 1:2 % USE just OFF to identify ROI for now
             powsave{nr,side,cond} = powsave_vox;
             cohsave{nr,side,cond} = cohsave_vox;
             frqsave{nr,side,cond} = frqsave_vox;
-            maxcoh(maxcoh>0.8) = NaN;
+            maxcoh(maxcoh>0.9) = NaN;
             [dum id] = max(maxcoh(band,:));
             idbank(nr,side,cond) = id;
             frqbank(:,nr,side,cond) = frq(:,id);
@@ -119,7 +124,7 @@ for  cond = 1:2 % USE just OFF to identify ROI for now
         end
     end
 end
-mkdir([R.datapathr R.subname{subname} '\ftdata\ROI_analy\'])
-save([R.datapathr R.subname{subname} '\ftdata\ROI_analy\ROIvoxel_power_' R.ipsicon '_' R.bandname{band}],'powsave','frqsave')
-save([R.datapathr R.subname{subname} '\ftdata\ROI_analy\ROIvoxel_coh_' R.ipsicon '_' R.bandname{band}],'cohsave','frqsave')
-save([R.datapathr R.subname{subname} '\ftdata\ROI_analy\ROIvoxel_bank_' R.ipsicon '_' R.bandname{band}],'frqbank','idbank','stn_lb_frqbank')
+mkdir([R.datapathr R.subname{sub} '\ftdata\ROI_analy\'])
+save([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_power_' R.ipsicon '_' R.bandname{band}],'powsave','frqsave')
+save([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_coh_' R.ipsicon '_' R.bandname{band}],'cohsave','frqsave')
+save([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_bank_' R.ipsicon '_' R.bandname{band}],'frqbank','idbank','stn_lb_frqbank')
