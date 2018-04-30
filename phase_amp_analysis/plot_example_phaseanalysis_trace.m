@@ -1,11 +1,11 @@
-function plot_example_phaseanalysis_trace(Xdata,amp,phi,dphi_12_dt,seg_ddt,ddphi_ci) %,PLI_tvec,PLI,consecSegs)     
+function plot_example_phaseanalysis_trace(Xdata,amp,phi,dphi_12_dt,seg_ddt,ddphi_ci,fsamp) %,PLI_tvec,PLI,consecSegs)     
         ax(1) = subplot(4,1,1);
         cmap = linspecer(2);
         plot(Xdata.time{1},normaliseV(Xdata.trial{1}(1,:)),'color',cmap(1,:));hold on
         plot(Xdata.time{1},normaliseV(Xdata.trial{1}(2,:)),'color',cmap(2,:))
-        Amp1 = normaliseV(amp(:,1)')-min(normaliseV(amp(:,1)'));
-        Amp2 = normaliseV(amp(:,2)')-min(normaliseV(amp(:,2)'));
-        plot(Xdata.time{1},Amp1,'color',cmap(1,:)); plot(Xdata.time{1},Amp2,'color',cmap(2,:));
+        Amp1 = normaliseV(amp(:,1)'); Amp1 = Amp1-min(Amp1);
+        Amp2 = normaliseV(amp(:,2)'); Amp2 = Amp2-min(Amp2);
+        plot(Xdata.time{1}(fsamp:end-fsamp),Amp1,'color',cmap(1,:)); plot(Xdata.time{1}(fsamp:end-fsamp),Amp2,'color',cmap(2,:));
 %         TAmp = Amp1.*Amp2;
 %         TAmpNorm = (TAmp./mean(TAmp));
 %         TAmpNormNeg = TAmpNorm;
@@ -21,16 +21,16 @@ function plot_example_phaseanalysis_trace(Xdata,amp,phi,dphi_12_dt,seg_ddt,ddphi
 
 
         ax(2) = subplot(4,1,2);
-        plot(Xdata.time{1},phi(:,1),Xdata.time{1},phi(:,2),'linestyle','none','marker','.');%xlim([60 70])
+        plot(Xdata.time{1}(1:length(phi)),phi(:,1),Xdata.time{1}(1:length(phi)),phi(:,2),'linestyle','none','marker','.');%xlim([60 70])
         ylabel('\phi_{1/2}','FontSize',14,'FontWeight','bold');
 
 
         % ddt Time Series
         ax(3) = subplot(4,1,3);
-        plot(Xdata.time{1}(2:end),dphi_12_dt); %xlim([60 70]);
+        plot(Xdata.time{1}(1:length(dphi_12_dt)),dphi_12_dt); %xlim([60 70]);
         tvec = nan(size(Xdata.time{1}(2:end))); tvec(seg_ddt) = Xdata.time{1}(seg_ddt);
         yvec = nan(size(dphi_12_dt)); yvec(seg_ddt) = dphi_12_dt(seg_ddt);
-        hold on; plot(tvec,yvec,'LineWidth',2)
+        hold on; plot(tvec(1:length(yvec)),yvec,'LineWidth',2)
         hold on; plot([0 Xdata.time{1}(end)],[ddphi_ci ddphi_ci],'k--');
         plot([0 Xdata.time{1}(end)],[-ddphi_ci -ddphi_ci],'k--'); ylim([-0.1 0.1])
         % Amplitude Adjusted SRP

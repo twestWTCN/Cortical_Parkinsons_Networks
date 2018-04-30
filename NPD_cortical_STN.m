@@ -1,4 +1,4 @@
-function [npdspctrm_out, Hz] = NPD_cortical_STN(vchansave_ON,vchansave_OFF,R,plotop)
+function [npdspctrm_out, Hz] = NPD_cortical_STN(vchansave_ON,vchansave_OFF,R,plotop,refid)
 close all
 for cond = 1:2
     if cond == 1
@@ -11,7 +11,7 @@ for cond = 1:2
         data = vchansave(i);
         x = data.trial{1}(1,:);
         x = (x-mean(x))./std(x);
-        y = data.trial{1}(2,:);
+        y = data.trial{1}(refid(cond),:);
         y = (y-mean(y))./std(y);
 %         [f13,t13,c13]=sp2a2_R2_mt(x',y',R.pp.cont.full.fs,10,'M1.5');
                 [f13,t13,c13]=sp2a2_R2(x',y',R.pp.cont.full.fs,9);

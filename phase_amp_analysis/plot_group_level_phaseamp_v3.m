@@ -3,7 +3,7 @@ if nargin<1;
     R = makeHeader_SubCort_Cort_Networks_SFLAP();
 end
 close all
-band = 2;
+band = 3;
 
 load([R.datapathr '\results\seganalysis\groupseganaly_' R.bandname{band}])
 % CORRELATION BETWEEN BETA POWER AND DURATION OF SEGMENTS
@@ -103,7 +103,7 @@ y = densesave{1,side}(k,cond).Yedges;
 %     Nbed(Nbed==0) = NaN;
     pcolor(x,y,Nbed');
     % imagesc(x,y,av1');
-    caxis([0 0.02]); title(R.condname{1});
+    caxis([0 0.1]); title(R.condname{1});
     xlabel('Phi_1 - Phi_2'); ylabel(analynames{k}); set(gca,'YDir','normal');
     h = colorbar; a = ylabel(h, 'Occurence (s^{-1})');
     set(a,'rotation',270); set(a,'Position',get(a,'Position') + [0.8 0 0]);
@@ -115,7 +115,7 @@ y = densesave{1,side}(k,cond).Yedges;
 %     Nbed(Nbed==0) = NaN;
     pcolor(x,y,Nbed');
     % imagesc(x,y,av2');
-    caxis([0 0.02]); title(R.condname{2});
+    caxis([0 0.1]); title(R.condname{2});
     xlabel('Phi_1 - Phi_2'); ylabel(analynames{k}); set(gca,'YDir','normal');
     h = colorbar; a = ylabel(h, 'Occurence (s^{-1})');
     set(a,'rotation',270); set(a,'Position',get(a,'Position') + [0.8 0 0]);
@@ -126,7 +126,7 @@ y = densesave{1,side}(k,cond).Yedges;
     Nbed(Nbed==0) = NaN;
     pcolor(x,y,Nbed'); %,'alphadata', ~(isnan(statmat')|isinf(statmat')|statmat'==0));
     % imagesc(x,y,statmat', 'alphadata', ~(isnan(statmat')|isinf(statmat')|statmat'==0));
-    caxis([-3 3]); title('OFF-ON t-stat'); xlabel('Phi_1 - Phi_2'); ylabel(analynames{k}); h = colorbar; a = ylabel(h, 't-stat');
+    caxis([-5 5]); title('OFF-ON t-stat'); xlabel('Phi_1 - Phi_2'); ylabel(analynames{k}); h = colorbar; a = ylabel(h, 't-stat');
     set(a,'rotation',270); set(a,'Position',get(a,'Position') + [0.8 0 0]);
     set(gca,'YDir','normal');
     %     pcolor_text(squeeze(stat.prob),0.05)

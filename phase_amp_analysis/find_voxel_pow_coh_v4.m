@@ -60,9 +60,9 @@ for  cond = 1:2 % USE just OFF to identify ROI for now
                 plot(repmat(freq.freq,3,1)',tpx(2:end,:)','r')
                 legend({'CTX','STN'}); grid on
                 
-%                 cfg = [];
-%                 cfg.length = 1;
-%                 Xseg = ft_redefinetrial(cfg,Xdata(x));
+                %                 cfg = [];
+                %                 cfg.length = 1;
+                %                 Xseg = ft_redefinetrial(cfg,Xdata(x));
                 
                 cfg           = [];
                 cfg.method    = 'mtmfft';
@@ -75,9 +75,10 @@ for  cond = 1:2 % USE just OFF to identify ROI for now
                 freq         = ft_freqanalysis(cfg, Xseg);
                 cfg           = [];
                 cfg.method    = 'wpli';
-                %                         cfg.complex = 'absimag';
+%                 cfg.method    = 'coh';
+%                                         cfg.complex = 'absimag';
                 coh           = ft_connectivityanalysis(cfg, freq);
-                
+%                 icoh = abs(squeeze(coh.cohspctrm(2:end,1,:)));
                 icoh = abs(squeeze(coh.wplispctrm(2:end,1,:)));
                 
                 figure(2)
@@ -85,35 +86,39 @@ for  cond = 1:2 % USE just OFF to identify ROI for now
                 title(R.condname{cond})
                 xlabel('Freq'); ylabel('iCoh')
                 plot(repmat(coh.freq,3,1)',icoh'); hold on
-                ylim([0 0.8]); xlim([2 40]); legend({'STN01','STN02','STN03'}); grid on
+                ylim([0 0.8]); xlim([2 65]); legend({'STN01','STN02','STN03'}); grid on
                 
                 figure(2); shg
-                gx = inputdlg(['Choose STN for ' R.bandname{band} ' band']);
-                gx = str2num(gx{1});
-                powsave_vox(:,x) = tpx([1 gx]);
-                cohsave_vox(:,x) = icoh(gx,:);
-                % MaxCohs
-                % Alpha
-                [maxcoha fi] = max(icoh(gx,coh.freq>=R.bandef(1,1) & coh.freq<=R.bandef(1,2)));
-                frqa = R.bandef(1,1)+(fi.*min(diff(freq.freq)));
-                % Low Beta
-                [maxcohb fi] = max(icoh(gx,coh.freq>=R.bandef(2,1) & coh.freq<=R.bandef(2,2)));
-                frqb = R.bandef(2,1)+(fi.*min(diff(freq.freq)));
-                % High Beta
-                [maxcohc fi] = max(icoh(gx,coh.freq>=R.bandef(3,1) & coh.freq<=R.bandef(3,2)));
-                frqc = R.bandef(3,1)+(fi.*min(diff(freq.freq)));
-                maxcoh(:,x) = [maxcoha maxcohb maxcohc];
-                
-                frq(:,x) = [frqa frqb frqc];
-                %MaxPows
-                stn_pow = squeeze(mean(abs(freq.fourierspctrm(:,1+gx,:)),1));
-                [dum fi] = max(stn_pow(freq.freq> R.bandef(2,1) & freq.freq< R.bandef(2,2)));
-                stn_lb_frq(x) =  R.bandef(2,1)+(fi.*min(diff(freq.freq)));
-                frqsave_vox(:,x) = coh.freq;
-                %                 ppm.increment();
-                %                 close all
+%                 gx = inputdlg(['Choose STN for ' R.bandname{band} ' band']);
+%                 gx = str2num(gx{1});
+gx = 2;
+                    powsave_vox(:,:,x) = tpx([1 gx],:);
+                    cohsave_vox(:,x) = icoh(gx,:);
+                    
+                    % MaxCohs
+                    % Alpha
+                    [maxcoha fi] = max(icoh(gx,coh.freq>=R.bandef(1,1) & coh.freq<=R.bandef(1,2)));
+                    frqa = R.bandef(1,1)+(fi.*min(diff(freq.freq)));
+                    % Low Beta
+                    [maxcohb fi] = max(icoh(gx,coh.freq>=R.bandef(2,1) & coh.freq<=R.bandef(2,2)));
+                    frqb = R.bandef(2,1)+(fi.*min(diff(freq.freq)));
+                    % High Beta
+                    [maxcohc fi] = max(icoh(gx,coh.freq>=R.bandef(3,1) & coh.freq<=R.bandef(3,2)));
+                    frqc = R.bandef(3,1)+(fi.*min(diff(freq.freq)));
+                    maxcoh(:,x) = [maxcoha maxcohb maxcohc];
+                    
+                    frq(:,x) = [frqa frqb frqc];
+                    %MaxPows
+                    stn_pow = squeeze(mean(abs(freq.fourierspctrm(:,1+gx,:)),1));
+                    [dum fi] = max(stn_pow(freq.freq> R.bandef(2,1) & freq.freq< R.bandef(2,2)));
+                    stn_lb_frq(x) =  R.bandef(2,1)+(fi.*min(diff(freq.freq)));
+                    frqsave_vox(:,x) = coh.freq;
+                    %                 ppm.increment();
+                close all
             end
+            
             %             ppm.delete()
+            refsave{nr,side,cond} = gx;
             powsave{nr,side,cond} = powsave_vox;
             cohsave{nr,side,cond} = cohsave_vox;
             frqsave{nr,side,cond} = frqsave_vox;
@@ -123,11 +128,10 @@ for  cond = 1:2 % USE just OFF to identify ROI for now
             frqbank(:,nr,side,cond) = frq(:,id);
             stn_lb_frqbank(nr,side,cond) = stn_lb_frq(id);
             clear maxcoh frq
-            
         end
     end
 end
 mkdir([R.datapathr R.subname{sub} '\ftdata\ROI_analy\'])
 save([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_power_' R.ipsicon '_' R.bandname{band}],'powsave','frqsave')
 save([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_coh_' R.ipsicon '_' R.bandname{band}],'cohsave','frqsave')
-save([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_bank_' R.ipsicon '_' R.bandname{band}],'frqbank','idbank','stn_lb_frqbank')
+save([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_bank_' R.ipsicon '_' R.bandname{band}],'frqbank','idbank','stn_lb_frqbank','refsave')

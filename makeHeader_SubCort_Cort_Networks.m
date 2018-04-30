@@ -57,14 +57,14 @@ R.NPD.windowlength = 9;
 % R.PA.SNR = -1;
 R.PA.SType = 2; % 1 = sliding window PLI and 2 = SRP
 R.PA.bwid = [0.75 0.75 0.75];
-R.PA.mwid = 3; % minimum SRP length (cycles)
-R.PA.SRPeps = 0.006; %0.006;
+R.PA.mwid = 6; % minimum SRP length (cycles)
+R.PA.SRPeps = 0.0015; %0.006;
 R.PA.LowAmpFix = 0; % 1 if SRP is adjusted to account for low amplitude
 
 R.PA.slidingwindow = 1;
 R.PA.PLVeps =  0.50;
 R.PA.WinOver = 0.98;
-R.PA.stn_lb_frq = 14;
+% R.PA.stn_lb_frq = 14;
 R.PA.SNR_eps = -1;
 
 R.PA.frqrange{1} = R.bandef(1,1):0.5: R.bandef(1,2);

@@ -1,4 +1,4 @@
-function compute_phase_amp_analysis_v3(R,idd)
+function compute_phase_amp_analysis_v4(R,idd)
 if nargin<2
     R = makeHeader_SubCort_Cort_Networks();
 end
@@ -6,24 +6,18 @@ if nargin<2
     idd = '';
 end
 %%%
-% This script computes the instantaneous phase sync analyses. We partition
-% the recording into stable segments using threshold, can compute Granger
-% etc within frames. DFA is also computed PS/AE versions. Barplots for DFA
-% at end of script.
-%%%
-for band = 3; %[1 3] %1:numel(R.bandname)
+
+for band = 3; %[1 3] 
     for sub = 1:numel(R.subname)
-        load([R.datapathr 'results\spectral\screen.mat'])
-        load([R.datapathr 'results\spectral\refidSave_' R.bandname{band} '.mat'])
+        load([R.datapathr 'results\spectral\screen.mat']) % Load in the screening matrix
+        load([R.datapathr 'results\spectral\refidSave_' R.bandname{band} '.mat']) % Load in the optimal STN reference matrix
         load([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_bank_' R.ipsicon '_' R.bandname{band}])
         for side = 1:2
             if screen(side,sub) == 1
                 for cond = 1:2
-                    [datafileN,pp_mark,nrep,senscheck] = data_fileguide(R.subname{sub},cond-1);
                     [~,~,nrepOFF,~] = data_fileguide(R.subname{sub},cond-1);
                     for nr = 1:nrepOFF
-                        id = idbank(nr,side,cond);
-                        frq = frqbank(band,nr,side,cond); %% THIS USES THE 3rd Band (HB)
+                        frq = frqbank(band,nr,side,cond); 
                         R.PA.stn_lb_frq = stn_lb_frqbank(nr,side,cond);
                         %                     load([R.datapathr R.subname{sub} '\ftdata\virtual_sources_' num2str(nr) '_ROI_' R.condname{cond}  '_' R.siden{side} '_' R.ipsicon])
                         load([R.datapathr R.subname{sub} '\ftdata\virtual_sources_' num2str(nr) '_ROI_' R.condname{cond} '_' R.siden{side} '_' R.ipsicon  '_' R.bandname{band}])
@@ -35,8 +29,6 @@ for band = 3; %[1 3] %1:numel(R.bandname)
                         Xdata.label = {vchansave(id).label{[1 refidSave{side,sub}(cond)+1]}};
                         Xdata.trial{1} = vchansave(id).trial{1}([1 refidSave{side,sub}(cond)+1],:);
                         Xdata.time{1} = vchansave(id).time; %{1}
-                        
-                        databank{sub,side,cond} = Xdata;
                         
                         %                     for ch = 1:2
                         %                         X = Xdata.trial{1}(ch,:);
@@ -107,8 +99,8 @@ for band = 3; %[1 3] %1:numel(R.bandname)
                         segL_pli_dist_save{cond,nr} = segL_ddt;
                         timevec{cond,nr} = vchansave(id).time; %{1}
                         
-                        threshnetwork.PLV = dphi_12_dt;
-                        threshnetwork.PLV_tvec = betaS.time;
+                        %                     threshnetwork.PLV = PLV;
+                        %                     threshnetwork.PLV_tvec = PLV_tvec;
                         threshnetwork.stn_lb_frq = R.PA.stn_lb_frq;
                         threshnetwork.maxfrq = maxfrq;
                         threshnetwork.betaS = betaS;

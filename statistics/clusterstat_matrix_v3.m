@@ -19,7 +19,7 @@ cfg = [];
 cfg.latency          = 'all';
 cfg.frequency        = 'all';
 cfg.method           = 'montecarlo';
-cfg.statistic        = 'ft_statfun_depsamplesT'; %'ft_statfun_depsamplesT';  % ft_statfun_indepsamplesT
+cfg.statistic        = 'ft_statfun_indepsamplesT'; %'ft_statfun_depsamplesT';  % ft_statfun_indepsamplesT
 cfg.correctm         = 'cluster';
 cfg.clusteralpha     = 0.2;
 cfg.clusterstatistic = 'maxsum';
@@ -39,6 +39,6 @@ cfg.numrandomization = N;
 
 cfg.design           = design;
 cfg.ivar             = 2;
-cfg.uvar             = 1;
+% cfg.uvar             = 1;
 [stat] = ft_freqstatistics(cfg, ABdata(1), ABdata(2));
 

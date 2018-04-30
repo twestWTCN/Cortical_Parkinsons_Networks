@@ -15,19 +15,22 @@ for band = [1 3]
             delete([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_bank_' R.ipsicon '.mat']);
             eval(['!del /q ' R.datapathr R.subname{sub} '\ftdata\ROI_analy\'])
         end
-        if exist([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_bank_' R.ipsicon '_'  R.bandname{band} '.mat']) == 0
+        if 1% exist([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_bank_' R.ipsicon '_'  R.bandname{band} '.mat']) == 0
             [idbank frqbank stn_lb_frqbank] = find_voxel_pow_coh_v4(R,sub,band);
             load([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_power_' R.ipsicon '_'  R.bandname{band} '.mat'],'powsave')
             load([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_coh_' R.ipsicon '_'  R.bandname{band}],'cohsave','frqsave')
-            load([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_bank_' R.ipsicon '_'  R.bandname{band}],'frqbank','idbank','stn_lb_frqbank')
+            load([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_bank_' R.ipsicon '_'  R.bandname{band}],'frqbank','idbank','stn_lb_frqbank','refsave')
         else
             load([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_power_' R.ipsicon '_'  R.bandname{band}],'powsave')
             load([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_coh_' R.ipsicon '_'  R.bandname{band}],'cohsave','frqsave')
-            load([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_bank_' R.ipsicon '_'  R.bandname{band}],'frqbank','idbank','stn_lb_frqbank')
+            load([R.datapathr R.subname{sub} '\ftdata\ROI_analy\ROIvoxel_bank_' R.ipsicon '_'  R.bandname{band}],'frqbank','idbank','stn_lb_frqbank','refsave')
         end
         [~,~,nrep(1),~] = data_fileguide(R.subname{sub},0);
         [~,~,nrep(2),~] = data_fileguide(R.subname{sub},1);
         for side = 1:2
+            refid(1) = refsave{nrep(1),side,1};
+            refid(2) = refsave{nrep(2),side,2};
+
             id(1) = idbank(nrep(1),side,1);
             id(2) = idbank(nrep(2),side,2);
             
@@ -36,7 +39,7 @@ for band = [1 3]
             load([R.datapathr R.subname{sub} '\ftdata\virtual_sources_' num2str(nrep(2)) '_ROI_' R.condname{2} '_' R.siden{side} '_' R.ipsicon '_'  R.bandname{band}]);
             locbank(:,2,side,sub) = vchansave(id(2)).loc; vchansave_OFF = vchansave(id(2));
             
-            [npdspctrm, Hz] = NPD_cortical_STN(vchansave_ON,vchansave_OFF,R,1);
+            [npdspctrm, Hz] = NPD_cortical_STN(vchansave_ON,vchansave_OFF,R,1,refid);
             savefigure_v2([R.datapathr R.subname{sub} '\images\spectral\'],['NPD_STN_Source_analysis_' R.subname{sub} '_' R.siden{side} '_'  R.bandname{band}],[],[],[]);
             close all
             for cond =1:2
@@ -109,7 +112,7 @@ for band = [1 3]
             [maxcoh2 ind] = max(mean(OFF(frq>R.bandef(band,1) & frq<R.bandef(band,2),:),1));
             highbetacoh{2,side,sub} = [maxcoh2 ind maxcoh2>0.05];
             highbetacoh{3,side,sub} = maxcoh1>0.05 && maxcoh2>0.05;
-            
+            refidSave{side,sub} = refid;
             savefigure_v2([R.datapathr R.subname{sub} '\images\spectral\'],['STN_Source_Power_analysis_' R.subname{sub} '_' R.siden{side}  '_'  R.bandname{band}],[],[],'-r200');
             close all
         end

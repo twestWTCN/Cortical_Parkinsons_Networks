@@ -1,4 +1,4 @@
-function compute_phase_amp_analysis_v3(R,idd)
+function compute_phase_amp_analysis_Cagnan(R,idd)
 if nargin<2
     R = makeHeader_SubCort_Cort_Networks();
 end
@@ -11,7 +11,7 @@ end
 % etc within frames. DFA is also computed PS/AE versions. Barplots for DFA
 % at end of script.
 %%%
-for band = 3; %[1 3] %1:numel(R.bandname)
+for band = 1; %[1 3] %1:numel(R.bandname)
     for sub = 1:numel(R.subname)
         load([R.datapathr 'results\spectral\screen.mat'])
         load([R.datapathr 'results\spectral\refidSave_' R.bandname{band} '.mat'])
@@ -36,8 +36,6 @@ for band = 3; %[1 3] %1:numel(R.bandname)
                         Xdata.trial{1} = vchansave(id).trial{1}([1 refidSave{side,sub}(cond)+1],:);
                         Xdata.time{1} = vchansave(id).time; %{1}
                         
-                        databank{sub,side,cond} = Xdata;
-                        
                         %                     for ch = 1:2
                         %                         X = Xdata.trial{1}(ch,:);
                         %                         Xdata.trial{1}(ch,:) = (X-mean(X))./std(X);
@@ -49,55 +47,9 @@ for band = 3; %[1 3] %1:numel(R.bandname)
                         else
                             load([R.datapathr R.subname{sub} '\ftdata\ROI_analy\' R.bandname{band} '_' R.condname{cond} '_nr_' num2str(nr) '_' R.siden{side} '_optfreq'],'maxfrq','maxPLV')
                         end
+                        
                         % Compute data transforms (Hilbert)
                         [amp phi dphi_12 dphi_12_dt betaS] = comp_instant_angle_phase(Xdata,maxfrq,R.PA.stn_lb_frq,R.PA.bwid(band),Xdata.fsample,R.PA.LowAmpFix);
-                        
-                        % Sliding Window PLV
-                        if R.PA.SType == 1
-                            WinSize = R.PA.slidingwindow*R.pp.cont.full.fs;
-                            [PLV PLV_tvec] = slidingwindowPLV(WinSize,phi,R.PA.WinOver);
-                            PLV_tvec = Xdata.time{1}(PLV_tvec);
-                            amp_sw = cont2slidingwindow(amp,WinSize,floor(R.PA.WinOver*WinSize));
-                            clear snr_sw
-                            snr_sw(:,1) = log10(amp_sw(:,1)./signalEnvAmp(1));
-                            snr_sw(:,2) =  log10(amp_sw(:,2)./signalEnvAmp(2));
-                            snr_sw(:,3) =  log10(amp_sw(:,3)./signalEnvAmp(2));
-                            dphi_12_sw = cont2slidingwindow(dphi_12,WinSize,round(R.PA.WinOver*WinSize));
-                            
-                            SW_sampr = max(diff(PLV_tvec));
-                            tseries = dphi_12_sw; qstable = find(PLV>R.PA.PLVeps);
-                            mwid = R.PA.mwid;
-                            period = (mwid/frq)/SW_sampr;
-                            % Minimum number of cycles to consider sync
-                            [phi_dist amp_dist seg_ddt segL_ddt consecSegs H] = analysestablesegs(qstable,tseries,snr_sw,period,mwid,1/SW_sampr,R.PA.SNR(band));
-                            
-                        elseif R.PA.SType == 2 % Sliding Window PhaseAng. Stability
-                            clear snr_sw
-                            snr_sw(:,1) = log10(amp(:,1)./signalEnvAmp(1));
-                            snr_sw(:,2) =  log10(amp(:,2)./signalEnvAmp(2));
-                            snr_sw(:,3) =  log10(amp(:,3)./signalEnvAmp(2));
-                            
-
-
-                            
-                            
-                            mwid = R.PA.mwid; % Minimum number of cycles to consider sync
-                            period = (mwid/frq)*R.pp.cont.full.fs;
-                            cycle = (1/frq)*R.pp.cont.full.fs;
-                            
-%                             b = (1/floor(period))*ones(1,floor(period));
-%                             a = 1;
-%                             dphi_12_dt = filter(b,a,dphi_12_dt);
-                            
-                            %%% Find segments
-                            %                 dphi_12_dt_sm = smooth(dphi_12_dt,period/6)';
-                            qstable = find(abs(dphi_12_dt')<R.PA.SRPeps); % The points that are below threshold
-                            tseries = wrapToPi(dphi_12(2:end));
-                            %                 tseries(:,2) = phi(:,2);
-                            %                 tseries(:,1) = phi(:,1);
-                            [phi_dist amp_dist seg_ddt1 segL_ddt consecSegs H] = analysestablesegs(qstable,tseries,amp,period,mwid,R.pp.cont.full.fs,R.PA.SNR(band),cycle);
-%                              plot_example_phaseanalysis_trace(betaS,amp,phi,dphi_12_dt,seg_ddt1,R.PA.SRPeps);
-                        end
                         
                         %                 [gc_dist] = analysestablesegs_granger(qstable,tseries,amp,period,mwid,R.pp.cont.full.fs);
                         gc_dist_save{cond,nr} = NaN; %gc_dist;
@@ -107,8 +59,8 @@ for band = 3; %[1 3] %1:numel(R.bandname)
                         segL_pli_dist_save{cond,nr} = segL_ddt;
                         timevec{cond,nr} = vchansave(id).time; %{1}
                         
-                        threshnetwork.PLV = dphi_12_dt;
-                        threshnetwork.PLV_tvec = betaS.time;
+                        %                     threshnetwork.PLV = PLV;
+                        %                     threshnetwork.PLV_tvec = PLV_tvec;
                         threshnetwork.stn_lb_frq = R.PA.stn_lb_frq;
                         threshnetwork.maxfrq = maxfrq;
                         threshnetwork.betaS = betaS;

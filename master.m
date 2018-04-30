@@ -44,6 +44,7 @@ plot_DICs_LocalROIdist(R)
 compute_virtual_electrodes_ROI_contdata_v3(R)
 preprocess_epoched_VC(R)
 plot_subject_cohspectra(R)
+grandAverageSpectra_Screened(R)
 
 compute_phase_amp_analysis_v3
 getHists_phase_amp_analysis_PLIs(R)

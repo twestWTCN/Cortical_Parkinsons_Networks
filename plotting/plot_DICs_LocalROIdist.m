@@ -49,6 +49,7 @@ for band = [1 3] %:numel(R.bandname)
                     scatter3(ROI(1),ROI(2),ROI(3),125,scatleg{cond,side},'LineWidth',3);
                     hold on
                     disp([side nr cond sub])
+                    view([-90 90]); axis equal
                 end
             end
         end
