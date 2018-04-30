@@ -34,7 +34,8 @@ for band = 3%; %1:numel(R.bandname)
                     for nr = 1:nrep
                         if nr == 2;                            a = 1; end
                         load([R.datapathr R.subname{sub} '\ftdata\ROI_analy\' idd '_ROIvoxel_phaseamp_PLI_' R.ipsicon '_' R.siden{side} '_' R.bandname{band} '.mat'])
-                        relativePhi{nr} = wrapToPi(pA_pli_dist_save{cond,nr}-circ_mean(pA_pli_dist_save{cond,nr}') ); %circ_mean(pA_pli_dist_save{2,nrOFF}(amp_pli_dist_save{2,nrOFF}(3,:)>95)')); %wrapToPi(pA_pli_dist_save{cond,nr}); %-circ_mean([pA_pli_dist_save{2,nrOFF}]'));
+                       phi = pA_pli_dist_save{cond,nr}';
+                        relativePhi{nr} = wrapToPi(phi-circ_mean(phi(~isnan(phi))) )'; %circ_mean(pA_pli_dist_save{2,nrOFF}(amp_pli_dist_save{2,nrOFF}(3,:)>95)')); %wrapToPi(pA_pli_dist_save{cond,nr}); %-circ_mean([pA_pli_dist_save{2,nrOFF}]'));
                         segL{nr} =  segL_pli_dist_save{cond,nr}; %((segL_pli_dist_save{cond,nr} - mean([segL_pli_dist_save{cond,nr}],2))./mean([segL_pli_dist_save{cond,nr}],2)  )*100;
                         ampSeg{nr} = amp_pli_dist_save{cond,nr}; %((amp_pli_dist_save{cond,nr}  - mean([amp_pli_dist_save{cond,nr}],2))./mean([amp_pli_dist_save{cond,nr}],2) )*100;
                         HdistSeg{nr} = H_dist_save{cond,nr}(1,:);
@@ -61,7 +62,7 @@ for band = 3%; %1:numel(R.bandname)
                     f(2) = figure((2)*10 +2);
                     subplot(1,3,cond);
                     [L5(cond) ampbin(:,nr,cond,1) binmid pdense(2,cond)] = plot_PA_Dep_relation(cond,relativePhiCol,ampSegCol(1,:),...
-                        'M1 High Beta Amp',QX,linspace(-30,250,QY),f,tendtot); %linspace(0,7,8) ,linspace(-100,200,QY)
+                        'M1 High Beta Amp',QX,linspace(-50,250,QY),f,tendtot); %linspace(0,7,8) ,linspace(-100,200,QY)
                     xlim([-3.5 3.5]); %ylim([0 8])
                     figure(f(2)); set(gcf,'Position',[263 517 1403 352]); if cond>0; colorbar; end; title(R.condname{cond})
                     caxis([0 0.2]);
@@ -71,7 +72,7 @@ for band = 3%; %1:numel(R.bandname)
                     f(2) = figure((2)*10 +3);
                     subplot(1,3,cond)
                     [L6(cond) ampbin(:,nr,cond,2) binmid pdense(3,cond)] = plot_PA_Dep_relation(cond,relativePhiCol,ampSegCol(2,:),...
-                        'STN High Beta Amp',QX,linspace(-50,300,QY),f,tendtot); %linspace(0,7,8) linspace(-100,200,QY)
+                        'STN High Beta Amp',QX,linspace(-50,250,QY),f,tendtot); %linspace(0,7,8) linspace(-100,200,QY)
                     xlim([-3.5 3.5]); %ylim([0 8]);
                     figure(f(2)); set(gcf,'Position',[263 517 1403 352]);  if cond>0; colorbar; end; title(R.condname{cond})
                     caxis([0 0.2]);
@@ -81,7 +82,7 @@ for band = 3%; %1:numel(R.bandname)
                     f(2) = figure((2)*10 +4); set(gcf,'Position',[263 517 1403 352])
                     subplot(1,3,cond)
                     [L7(cond) ampbin(:,nr,cond,3) binmid pdense(4,cond)] = plot_PA_Dep_relation(cond,relativePhiCol,ampSegCol(3,:),...
-                        'STN Low Beta Amp',QX,linspace(-50,200,QY),f,tendtot); % linspace(0,4,8) linspace(-100,200,QY)
+                        'STN Low Beta Amp',QX,linspace(-50,250,QY),f,tendtot); % linspace(0,4,8) linspace(-100,200,QY)
                     xlim([-3.5 3.5]); %ylim([0 5]);
                     figure(f(2)); set(gcf,'Position',[263 517 1403 352]);  if cond>0; colorbar; end; title(R.condname{cond})
                     caxis([0 0.2]);

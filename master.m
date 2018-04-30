@@ -46,9 +46,9 @@ preprocess_epoched_VC(R)
 plot_subject_cohspectra(R)
 grandAverageSpectra_Screened(R)
 
-compute_phase_amp_analysis_v3
+compute_phase_amp_analysis_v6(R)
 getHists_phase_amp_analysis_PLIs(R)
-plot_phase_amp_analysis_PLIs_V3_2side
+plot_phase_amp_analysis_PLIs_V3_2side(R)
 plot_group_level_phaseamp_v3(R)
 network_plot_270317
 

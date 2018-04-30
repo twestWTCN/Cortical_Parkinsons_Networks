@@ -14,7 +14,7 @@ idd = '';
 close all
 analynames = {'Segment Length','CTX High Beta Amp','STN High Beta Amp','STN Low Beta Amp','STN/CTX High Beta Amp Correlation','Causal Density'};
 
-QX = 8 ; QY = 8; % 6 6
+QX = 6 ; QY = 8; % 6 6
 % QX = [-pi -pi/8 pi/8 pi]';
 QX = linspace(-pi,pi,QX);
 % load([R.datapathr 'subject_hbWPLI075'])
@@ -34,7 +34,8 @@ for band = 3%; %1:numel(R.bandname)
                     for nr = 1:nrep
                         if nr == 2;                            a = 1; end
                         load([R.datapathr R.subname{sub} '\ftdata\ROI_analy\' idd '_ROIvoxel_phaseamp_PLI_' R.ipsicon '_' R.siden{side} '_' R.bandname{band} '.mat'])
-                        relativePhi{nr} = wrapToPi(pA_pli_dist_save{cond,nr}-circ_mean(pA_pli_dist_save{2,nrOFF}') ); %circ_mean(pA_pli_dist_save{2,nrOFF}(amp_pli_dist_save{2,nrOFF}(3,:)>95)')); %wrapToPi(pA_pli_dist_save{cond,nr}); %-circ_mean([pA_pli_dist_save{2,nrOFF}]'));
+                        phi = pA_pli_dist_save{cond,nr}'; phi_off = pA_pli_dist_save{2,nr}';
+                        relativePhi{nr} = phi'; %wrapToPi(phi-circ_mean(phi(~isnan(phi'))) )'; %circ_mean(pA_pli_dist_save{2,nrOFF}(amp_pli_dist_save{2,nrOFF}(3,:)>95)')); %wrapToPi(pA_pli_dist_save{cond,nr}); %-circ_mean([pA_pli_dist_save{2,nrOFF}]'));
                         segL{nr} =  segL_pli_dist_save{cond,nr}; %((segL_pli_dist_save{cond,nr} - mean([segL_pli_dist_save{cond,nr}],2))./mean([segL_pli_dist_save{cond,nr}],2)  )*100;
                         ampSeg{nr} = amp_pli_dist_save{cond,nr}; %((amp_pli_dist_save{cond,nr}  - mean([amp_pli_dist_save{cond,nr}],2))./mean([amp_pli_dist_save{cond,nr}],2) )*100;
                         HdistSeg{nr} = H_dist_save{cond,nr}(1,:);
@@ -62,7 +63,7 @@ for band = 3%; %1:numel(R.bandname)
                     segBinGroup{cond,sub} = segBinMu;
                     figure(1)
                     cmap = linspecer(3);
-                    panlist = [1 3 5 ; 2 4 6]; ylimlist = {[-50 300];[-50 150];[-50 75]};
+                    panlist = [1 3 5 ; 2 4 6]; ylimlist = {[-100 400];[-50 250];[-50 250]};
                     obs = {['PMC ' R.bandname{band}],['STN ' R.bandname{band}],['STN ' R.bandname{band-1}]};
                     for i = 1:3
                         subplot(3,2,panlist(cond,i))

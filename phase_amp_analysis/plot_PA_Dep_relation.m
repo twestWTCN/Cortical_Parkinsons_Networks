@@ -11,8 +11,8 @@ pA_dist(isnan(Dep)) = [];  Dep(isnan(Dep)) = [];
 [N,Xedges,Yedges] = histcounts2(pA_dist,Dep,bedge,Yedge); %,'Normalization','probability');
 N = N./tend;
 % N(N==0) = NaN;
-% h = fspecial('gaussian',[3 3]);
-% N = filter2(h, N);
+h = fspecial('gaussian',[3 3]);
+N = filter2(h, N);
 pdense.N = N; pdense.Xedges = Xedges; pdense.Yedges = Yedges;
 % Xmidges =Xedges(1:end-1)+(diff(Xedges)/2)
 % Ymidges = Yedges(1:end-1)+(diff(Yedges)/2);

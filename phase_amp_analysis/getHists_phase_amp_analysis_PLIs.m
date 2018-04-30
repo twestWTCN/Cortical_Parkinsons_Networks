@@ -36,9 +36,9 @@ for sub = 1:numel(R.subname)
                     x = [segL_pli_dist_save{1,:}]; y = [segL_pli_dist_save{2,:}];[h pseg(nr,sub)] = ttest2(x,y)
                     figure(20)
                      subplot(1,2,cond)
-                    histogram(segL,logspace(log10(0.05),log10(1.5),16),'FaceColor',condcr{cond},'FaceAlpha',0.1,'Normalization','Probability'); hold on
+                    histogram(segL,logspace(log10(0.01),log10(2),16),'FaceColor',condcr{cond},'FaceAlpha',0.1,'Normalization','Probability'); hold on
                     set(gca,'xscale','log')
-                    xlabel('Segment Length');ylabel('P(X)');  grid on; title(R.condname{cond});ylim([0 0.5]); xlim([-1 1.5]);
+                    xlabel('Segment Length');ylabel('P(X)');  grid on; title(R.condname{cond});ylim([0 0.5]); xlim([-1 2]);
                     [N B] = histcounts(segL,linspace(0,3.5,12));
                     segL_dist(nr,cond,sub).N = N;
                     segL_dist(nr,cond,sub).B = B;   
@@ -50,7 +50,7 @@ for sub = 1:numel(R.subname)
 
                         figure(30+i)
                          subplot(1,2,cond)
-                        histogram(amp,linspace(-100,250,12),'FaceColor',condcr{cond},'FaceAlpha',0.1,'Normalization','Probability'); hold on
+                        histogram(amp,linspace(-100,600,12),'FaceColor',condcr{cond},'FaceAlpha',0.1,'Normalization','Probability'); hold on
                         xlabel(ampname{i});ylabel('P(X)'); ylim([0 0.7]); grid on; title(R.condname{cond})
                         [N B] = histcounts(amp,linspace(-100,100,14));
                         amp_dist(i,nr,cond,sub).N  = N;

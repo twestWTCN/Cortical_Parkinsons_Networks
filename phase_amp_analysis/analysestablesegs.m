@@ -1,4 +1,4 @@
-function [phi_dist amp_dist seg_ddt segL_ddt consecSegs H] = analysestablesegs(qstable,tseries,refseries,period,mwid,fsamp,SNR_eps,minsep,zerodel)
+function [phi_dist amp_dist seg_ddt segL_ddt consecSegs H] = analysestablesegs(qstable,tseries,refseries,period,mwid,fsamp,SNR_eps,minsep,zerodel,Ampeps,snrw)
 if isempty(minsep)
     minsep = 0;
 end
@@ -19,7 +19,7 @@ phi_dist = [];
 amp_dist = [];
 H = [];
 for j = 1:numel(seglist)
-    if sum(mean(amp(consecSegs{seglist(j)},1:2))>SNR_eps) == 2 % && abs(circ_mean(wrapToPi(tseries(consecSegs{seglist(j)}))))>(pi/12)%%&& ((median(amp(consecSegs{seglist(j)},3))-median(amp(:,3)))/median(amp(:,3))*100)>50
+    if sum(mean(snrw(consecSegs{seglist(j)},1:2))>SNR_eps) == 2 % && abs(circ_mean(wrapToPi(tseries(consecSegs{seglist(j)}))))>(pi/12)%%&& ((median(amp(consecSegs{seglist(j)},3))-median(amp(:,3)))/median(amp(:,3))*100)>50
         phi_dist(j) = circ_mean(wrapToPi(tseries(consecSegs{seglist(j)})));
         %         phi_2_dist(j) = circ_mean(wrapTo2Pi(tseries(consecSegs{j},2)));
         %         phi_1_dist(j) = circ_mean(wrapTo2Pi(tseries(consecSegs{j},1)));
