@@ -1,1 +1,0 @@
-robocopy "C:\Users\Tim\Documents\Work\Cortical_Networks\Data" "C:\Users\Tim\Documents\Work\Cortical_Networks\DataStruct" /e /xf *

@@ -1,11 +1,11 @@
 function [] = barplot_coh_groups(datapathr,highbetacoh)
 subplot(1,2,1)
-sideCoh(:,:,2,1) = vertcat(highbetacoh{2,1,:}); % Left ON
-sideCoh(:,:,1,1) = vertcat(highbetacoh{1,1,:}); % Left OFF
-sideCoh(:,:,2,2) = vertcat(highbetacoh{2,2,:}); % Right ON
-sideCoh(:,:,1,2) = vertcat(highbetacoh{1,2,:}); % Right OFF
+sideCoh(:,:,1,1) = vertcat(highbetacoh{1,1,:}); % Left ON
+sideCoh(:,:,2,1) = vertcat(highbetacoh{2,1,:}); % Left OFF
+sideCoh(:,:,1,2) = vertcat(highbetacoh{1,2,:}); % Right ON
+sideCoh(:,:,2,2) = vertcat(highbetacoh{2,2,:}); % Right OFF
 
-boxplot([squeeze(sideCoh(:,1,1,1)) squeeze(sideCoh(:,1,2,1)) squeeze(sideCoh(:,1,1,2)) squeeze(sideCoh(:,1,2,2))],'labels',{'Left OFF','Left ON','Right OFF','Right ON'},...
+boxplot([squeeze(sideCoh(:,1,1,1)) squeeze(sideCoh(:,1,2,1)) squeeze(sideCoh(:,1,1,2)) squeeze(sideCoh(:,1,2,2))],'labels',{'Left ON','Left OFF','Right ON','Right OFF'},...
     'BoxStyle','filled','Widths',0.8)
 %%
 a = get(get(gca,'children'),'children');   % Get the handles of all the objects
@@ -29,8 +29,8 @@ grid on; ylabel('Maximum WPLI'); title('Hemi Analyses');
 % Left ON vs Right ON
 [h pv(3)] = ttest2(squeeze(sideCoh(:,1,1,1)),squeeze(sideCoh(:,1,1,2)));
 % Left OFF vs Right OFF
-[h pv(4)] = ttest2(squeeze(sideCoh(:,1,2,1)),squeeze(sideCoh(:,1,2,2))); 
-H=sigstar({{'Left OFF','Left ON'},{'Right OFF','Right ON'},{'Left OFF','Right ON'},{'Left OFF','Right ON'}},pv); 
+[h pv(4)] = ttest2(squeeze(sideCoh(:,1,2,1)),squeeze(sideCoh(:,1,2,2)));
+H=sigstar({{'Left ON','Left OFF'},{'Right ON','Right OFF'},{'Right ON','Left ON'},{'Right OFF','Left OFF'}},pv); 
 ylim([0 0.7])
 
 pv = [];
@@ -38,7 +38,7 @@ subplot(1,2,2)
 Coh(:,:,1) = vertcat(highbetacoh{1,:,:});
 Coh(:,:,2) = vertcat(highbetacoh{2,:,:});
 [h pv] = ttest2(squeeze(Coh(:,1,1)),squeeze(Coh(:,1,2)));
-boxplot([Coh(:,1,1) Coh(:,1,2)],'labels',{'Total OFF','Total ON'},...
+boxplot([Coh(:,1,1) Coh(:,1,2)],'labels',{'Total ON','Total OFF'},...
         'BoxStyle','filled','Widths',0.8)
 %%
 a = get(get(gca,'children'),'children');   % Get the handles of all the objects
@@ -54,6 +54,6 @@ whisker=a(idx);          % Get the children you need
 set(whisker,'LineWidth',2); % Set width
 %%
 grid on; ylabel('Maximum WPLI'); title('Bilateral Analyses') 
-H=sigstar({{'Total OFF','Total ON'}},pv); ylim([0 0.7])
+H=sigstar({{'Total ON','Total OFF'}},pv); ylim([0 0.7])
 set(gcf,'Position',[512         540        1229         436])
 
