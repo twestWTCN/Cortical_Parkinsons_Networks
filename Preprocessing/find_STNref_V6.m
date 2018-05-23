@@ -3,12 +3,17 @@ if nargin<1
     R = makeHeader_SubCort_Cort_Networks();
 end
 close all
-for sub = 7:length(R.subname)
+for sub = 1:length(R.subname)
     for cond = 1:length(R.condname)
         for breg = 1:length(R.bregname)
             for side = 1:2
                 load([R.datapathr R.subname{sub} '\ftdata\cleaned\V6_sources_clean_ROI_' R.condname{cond} '_' R.siden{side} '_' R.ipsicon  '_' R.bregname{breg}],'vc_clean')
-                
+                gxl = [];
+                try
+                gxl = vc_clean.specanaly.gx_pick{1};
+                catch
+                    gxl = [];
+                end
                 cfg = [];
                 cfg.length = R.specanaly.epochL;
                 Xseg = ft_redefinetrial(cfg,vc_clean);
@@ -50,25 +55,28 @@ for sub = 7:length(R.subname)
                 cfg.pad         =  'nextpow2';
                 freq         = ft_freqanalysis(cfg, Xseg);
                 cfg           = [];
-                %                 cfg.method    = 'wpli';
-                cfg.method    = 'coh';
+                cfg.method    = 'wpli';
+%                 cfg.method    = 'coh';
                 %                 cfg.complex = 'absimag';
                 coh           = ft_connectivityanalysis(cfg, freq);
-                icoh = abs(squeeze(coh.cohspctrm(2:end,1,:)));
-                %                 icoh = abs(squeeze(coh.wplispctrm(2:end,1,:)));
+%                 icoh = abs(squeeze(coh.cohspctrm(2:end,1,:)));
+                                icoh = abs(squeeze(coh.wplispctrm(2:end,1,:)));
                 if size(icoh,1)>size(icoh,2); icoh = icoh'; end
                 % ch x n
                 figure(2)
                 %                 subplot(1,2,cond)
                 title(R.condname{cond})
-                xlabel('Freq'); ylabel('iCoh')
+                xlabel('Freq'); ylabel('WPLI')
                 plot(repmat(coh.freq,3,1)',icoh'); hold on
                 ylim([0 0.8]); xlim([2 65]); legend({'STN01','STN02','STN03'}); grid on
                 set(gcf,'Position',[1310         677         560         420])
                 figure(2); shg
-                gx = newid(['Choose STN for ' R.bandname{R.bregband{breg}} ' band']);
-                gx = str2num(gx{1});
-                
+                if isempty(gxl)
+                    gx = newid(['Choose STN for ' R.bandname{R.bregband{breg}} ' band']);
+                    gx = str2num(gx{1});
+                else
+                    gx = 1;
+                end
                 if gx<4
                     vc_clean.trial{1} = vc_clean.trial{1}([1 1+gx],:);
                     vc_clean.label = {vc_clean.label{[1 1+gx]}};
@@ -110,6 +118,8 @@ for sub = 7:length(R.subname)
                 end
                 vc_clean.history = [vc_clean.history{:} {[mfilename '_' date]}];
                 save([R.datapathr R.subname{sub} '\ftdata\cleaned\V6_sources_clean_ROI_' R.condname{cond} '_' R.siden{side} '_' R.ipsicon  '_' R.bregname{breg}],'vc_clean')
+                
+                disp([side sub cond])
                 close all
             end
         end

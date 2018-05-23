@@ -24,7 +24,7 @@ R.bregname = {'STG','SMA'};
 R.bregband = {[1],[3]};
 R.bregROI = {[-46 -30 -2;46 -30 -2];[-18 -6 58; 18 -6 58]};
 % Virtual Channel Construction
-R.voi.radius = 15;
+R.voi.radius = 12.5;
 R.voi.resolution = 5;
 
 R.specanaly.epochL = 1; % epoch length (s)
@@ -55,6 +55,7 @@ R.PA.optimalPLFrqMeth = 'PLI'; % Use PLI or PLV to determine frequency for bandp
 R.PA.AmpSurrN = 50; % Number of draws to compute surrogate distributions for stats.
 R.PA.SRPeps_prctile = 5; % Stable relative phase Percentile
 R.PA.SNReps_prctile = 5; % Signal Noise Percentile
+R.PA.PLVeps_prctile = 95; % Signal Noise Percentile
 R.PA.plotting.realignMeth = 'WghtedMaxBin'; % Method to align phases
 % 'MaxLBAmp' - Maximum Low Beta Amp
 % 'WghtedMeanAmp' -Wghted Mean Low Beta Amp

@@ -118,7 +118,6 @@ for breg = 1:length(R.bregname)
     barplot_coh_groups(R.datapathr,highbetacoh)
     savefigure_v2([R.datapathr 'results\spectral\'],['STN_Source_Power_analysis_GroupAverage_boxplots_'  R.bregname{breg}],[],[],'-r100'); close all
    switch breg; case 1; ylimz = [0 0.15]; case 2; ylimz = [0 0.1]; end
-        
     plotNPD(Hz,npdspctrm_group,R,ylimz)
     
     spectralplots_groups(R.datapathr,powsubgrand,cohsubgrand,frqsave,{'STN',R.bregname{breg}},R.bandname{R.bregband{breg}})
@@ -140,7 +139,6 @@ for breg = 1:length(R.bregname)
     
 end
 
-function lin
 
 %% For Location Plotting
 

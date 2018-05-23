@@ -1,6 +1,6 @@
 function [] = plotNPD(Hz,npdspctrm,R,ylimz)
 if nargin<4
-    ylimz = [0 0.15];
+    ylimz = [0 0.2];
 end
 subplot(1,4,1);
 ax(1) = boundedline(Hz,nanmean(npdspctrm{1,1,1},2),nanstd(npdspctrm{1,1,1},0,2)/sqrt(size(npdspctrm{1,1,1},2)),'cmap',R.condcmap(1,:),'alpha','transparency',0.45);

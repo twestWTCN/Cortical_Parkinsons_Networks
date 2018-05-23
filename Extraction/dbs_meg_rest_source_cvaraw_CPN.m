@@ -1,4 +1,4 @@
-function Ds = dbs_meg_rest_source_cvaraw_CPN(initials, drug, prefix, ROI,R,breg)
+function Ds = dbs_meg_rest_source_cvaraw_CPN(initials, drug, prefix, ROI,R,breg,siden)
 
 druglbl = R.condnamelc;
 
@@ -21,6 +21,17 @@ catch
 end
 
 % Interpolate Missing Data
+if siden == 'L'
+    stnKO = find(strncmp(D.chanlabels,'STN_R',5));
+elseif siden == 'R'
+    stnKO = find(strncmp(D.chanlabels,'STN_L',5));
+end
+chlist = setdiff(1:numel(D.chanlabels),stnKO);
+
+S = [];
+S.D = D;
+S.channels = D.chanlabels(chlist)
+D = spm_eeg_crop(S);
 a = D(:,:,:);
 for x = 1:size(a,1)
     if sum(isnan(a(x,:)))> 1
@@ -32,9 +43,9 @@ end
 D(:,:,:) = a;
 clear a
 
-S = [];
-S.D = D; S.fsample_new = 128;
-D = spm_eeg_downsample(S);
+% S = [];
+% S.D = D; S.fsample_new = 128;
+% D = spm_eeg_downsample(S);
 
 % cd(fullfile(root, 'SPMrest'));
 cd([R.datapathr initials]);
@@ -128,7 +139,7 @@ if isequal(roisum, 'keep')
     S.conditions.all = 1;
     S.timewin = [-Inf Inf];
     Ds = spm_eeg_reduce(S);
-    
+    save(Ds);
     if ~keep, delete(S.D); end;
 end
 %%

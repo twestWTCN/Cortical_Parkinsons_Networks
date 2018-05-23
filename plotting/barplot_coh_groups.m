@@ -54,6 +54,6 @@ whisker=a(idx);          % Get the children you need
 set(whisker,'LineWidth',2); % Set width
 %%
 grid on; ylabel('Maximum WPLI'); title('Bilateral Analyses') 
-H=sigstar({{'Total OFF','Total ON'}},pv); ylim([0 0.7])
+H=sigstar({{'Total OFF','Total ON'}},pv); ylim([0 1])
 set(gcf,'Position',[512         540        1229         436])
 

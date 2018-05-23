@@ -2,7 +2,7 @@ function phishift = findAmpPhi(R,amp,phi,phiBin)
 % phiBin = linspace(-pi,pi,N);
 phiBinMid = phiBin(1:end-1)+((phiBin(2)-phiBin(1))/2);
 if strncmp(R.PA.plotting.realignMeth,'WghtedPrctleAmp',15)
-    prc = num2str(R.PA.plotting.realignMeth(end-1:end));
+    prc = str2double(R.PA.plotting.realignMeth(end-1:end));
 else
     prc = 85;
 end
@@ -16,14 +16,14 @@ for i = 1:length(phiBin)-1
     ampBinSEM(:,i) = nanstd(binDat)/size(binDat,1);
 end
 WLrgampBinMu = ampBinMu.*(ampBinNumel./max(ampBinNumel));
-switch R.PA.plotting.realignMeth
+switch R.PA.plotting.realignMeth(isstrprop(R.PA.plotting.realignMeth,'alpha'))
     case 'PhiHist'
         phishift = phiBinMid(binN==max(binN));
         phishift = wrapToPi(phi - phishift(1)); % Use the first maximum
     case 'MaxLBAmp'
         phishift = phiBinMid(ampBinMu==max(ampBinMu));
         phishift = wrapToPi(phi - phishift(1)); % Use the first maximum
-    case 'WghtedPrctleAmp##'
+    case 'WghtedPrctleAmp'
         phishift = phiBinMid(WampBinPrct==max(WampBinPrct));
         phishift = wrapToPi(phi - phishift(1)); % Use the first maximum
     case 'WghtedMaxBin'

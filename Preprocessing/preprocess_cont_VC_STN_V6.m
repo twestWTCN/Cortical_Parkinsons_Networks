@@ -9,9 +9,9 @@ for sub = 1:length(R.subname)
                 load([R.datapathr R.subname{sub} '\ftdata\VC_new_ROI_' R.condname{cond} '_' R.siden{side} '_' R.ipsicon  '_' R.bregname{breg}],'VC_new')
                 % find ipsi channels
                 reflist = find(strncmp(VC_new.label,['STN_' R.siden{side}(1)],5));
-                
+                ctxlist = find(strncmp(VC_new.label,['ipsi'],4));
                 clear x2data x3data x4data
-                xdata = VC_new.trial{1}([1 reflist],:);
+                xdata = VC_new.trial{1}([ctxlist reflist],:);
                 fsamp = VC_new.fsample;
                 for i = 1:size(xdata,1)
                     x = xdata(i,:);
@@ -26,7 +26,7 @@ for sub = 1:length(R.subname)
                     x4data(i,:) = x;
                 end
                 
-                vc_clean.label = {VC_new.label{[1 reflist]}};
+                vc_clean.label = {VC_new.label{[ctxlist reflist]}};
                 vc_clean.fsample = VC_new.fsample;
                 vc_clean.trial{1} = x4data;
                 vc_clean.time{1} = linspace(0,length(x4data)./fsamp,length(x4data));
