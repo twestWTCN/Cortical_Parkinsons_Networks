@@ -21,12 +21,13 @@ for j = 1:numel(seglist)
         phi_dist(j) = circ_mean(wrapToPi(tseries(consecSegs{seglist(j)})));
         %         phi_2_dist(j) = circ_mean(wrapTo2Pi(tseries(consecSegs{j},2)));
         %         phi_1_dist(j) = circ_mean(wrapTo2Pi(tseries(consecSegs{j},1)));
-        amp_dist(1,j) = (median(amp(consecSegs{seglist(j)},1))-median(amp(:,1)))/median(amp(:,1))*100;
-        amp_dist(2,j) = (median(amp(consecSegs{seglist(j)},2))-median(amp(:,2)))/median(amp(:,2))*100;
-        amp_dist(3,j) = (median(amp(consecSegs{seglist(j)},3))-median(amp(:,3)))/median(amp(:,3))*100;
+        amp_dist(1,j) = (median(amp(consecSegs{seglist(j)},1))-Ampeps(1))/(Ampeps(1))*100;
+        amp_dist(2,j) = (median(amp(consecSegs{seglist(j)},2))-Ampeps(2))/(Ampeps(2))*100;
+        amp_dist(3,j) = (median(amp(consecSegs{seglist(j)},3))-Ampeps(3))/(Ampeps(3))*100;
         % Amp correlations
         x1 = amp(consecSegs{seglist(j)},1); x2 = amp(consecSegs{seglist(j)},2);
-        [r,i] = my_xcorr(x1,x2,-10:10); %[r,i] = xcorr(x1,x2,fsamp,'unbiased');
+%         [r,i] = my_xcorr(x1,x2,-10:10); %[r,i] = xcorr(x1,x2,fsamp,'unbiased');
+r = 1; i =0;
         [r,ii] = max(r);
         %         subplot(1,2,1); plot(1:numel(x1),x1,1:numel(x2),x2);
         %         subplot(1,2,2); plot(x1+x2);

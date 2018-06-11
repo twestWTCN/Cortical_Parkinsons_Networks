@@ -35,7 +35,7 @@ for sub = 1:length(R.subname)
                 tpx = squeeze(mean(abs(freq.fourierspctrm(:,:,:)),1));
                 % Normalisation
                 for i = 1:numel(Xseg.label)
-                    tpx(i,:) = tpx(i,:)./sum(tpx(i,freq.freq>4 & freq.freq<45));
+                    tpx(i,:) = tpx(i,:)./sum(tpx(i,freq.freq>4 & freq.freq<45));                   
                 end
                 
                 figure(1)
@@ -55,19 +55,19 @@ for sub = 1:length(R.subname)
                 cfg.pad         =  'nextpow2';
                 freq         = ft_freqanalysis(cfg, Xseg);
                 cfg           = [];
-                cfg.method    = 'wpli';
-%                 cfg.method    = 'coh';
+%                 cfg.method    = 'wpli';
+                cfg.method    = 'coh';
                 %                 cfg.complex = 'absimag';
-                coh           = ft_connectivityanalysis(cfg, freq);
-%                 icoh = abs(squeeze(coh.cohspctrm(2:end,1,:)));
-                                icoh = abs(squeeze(coh.wplispctrm(2:end,1,:)));
-                if size(icoh,1)>size(icoh,2); icoh = icoh'; end
+                cohstruc           = ft_connectivityanalysis(cfg, freq);
+                coh = abs(squeeze(cohstruc.cohspctrm(2:end,1,:)));
+%                 icoh = abs(squeeze(coh.wplispctrm(2:end,1,:)));
+                if size(coh,1)>size(coh,2); coh = coh'; end
                 % ch x n
                 figure(2)
                 %                 subplot(1,2,cond)
                 title(R.condname{cond})
-                xlabel('Freq'); ylabel('WPLI')
-                plot(repmat(coh.freq,3,1)',icoh'); hold on
+                xlabel('Freq'); ylabel('Coherence')
+                plot(repmat(cohstruc.freq,3,1)',coh'); hold on
                 ylim([0 0.8]); xlim([2 65]); legend({'STN01','STN02','STN03'}); grid on
                 set(gcf,'Position',[1310         677         560         420])
                 figure(2); shg
@@ -82,13 +82,13 @@ for sub = 1:length(R.subname)
                     vc_clean.label = {vc_clean.label{[1 1+gx]}};
                     % MaxCohs
                     % Alpha
-                    [maxcoha fi] = max(icoh(gx,coh.freq>=R.bandef(1,1) & coh.freq<=R.bandef(1,2)));
+                    [maxcoha fi] = max(coh(gx,cohstruc.freq>=R.bandef(1,1) & cohstruc.freq<=R.bandef(1,2)));
                     frqa = R.bandef(1,1)+(fi.*min(diff(freq.freq)));
                     % Low Beta
-                    [maxcohb fi] = max(icoh(gx,coh.freq>=R.bandef(2,1) & coh.freq<=R.bandef(2,2)));
+                    [maxcohb fi] = max(coh(gx,cohstruc.freq>=R.bandef(2,1) & cohstruc.freq<=R.bandef(2,2)));
                     frqb = R.bandef(2,1)+(fi.*min(diff(freq.freq)));
                     % High Beta
-                    [maxcohc fi] = max(icoh(gx,coh.freq>=R.bandef(3,1) & coh.freq<=R.bandef(3,2)));
+                    [maxcohc fi] = max(coh(gx,cohstruc.freq>=R.bandef(3,1) & cohstruc.freq<=R.bandef(3,2)));
                     frqc = R.bandef(3,1)+(fi.*min(diff(freq.freq)));
                     maxcoh = [maxcoha maxcohb maxcohc];
                     frqcoh = [frqa frqb frqc];
@@ -103,7 +103,7 @@ for sub = 1:length(R.subname)
                     maxpow = [maxpowa maxpowb maxcohc];
                     frqpow = [frqa frqb frqc];
                     
-                    vc_clean.specanaly.icoh = icoh(gx,:);
+                    vc_clean.specanaly.coh = coh(gx,:);
                     vc_clean.specanaly.normpow = tpx([1 1+gx],:);
                     vc_clean.specanaly.frq = freq.freq;
                     vc_clean.specanaly.cohstats.frqcoh = frqcoh;

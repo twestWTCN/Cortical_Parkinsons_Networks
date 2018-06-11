@@ -7,7 +7,7 @@ amp = amp(fsamp:end-fsamp,:); % Truncate Filter Artefacts
 phi(:,1) = angle(hilbert(Xdata.trial{1}(1,:)));
 phi(:,2) = angle(hilbert(Xdata.trial{1}(2,:)));
 phi = phi(fsamp:end-fsamp,:); % Truncate Filter Artefacts
-dphi_12 = unwrap(phi(:,1)-phi(:,2));
+dphi_12 = unwrap(diff(phi,1,2));
 
 % % optional amp weighting
 % % ampw = unwrap((amp(:,1).*amp(:,2))./(max(amp(:,1))*max(amp(:,2))));  %%

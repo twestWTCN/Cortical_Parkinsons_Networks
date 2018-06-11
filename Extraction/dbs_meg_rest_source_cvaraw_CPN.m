@@ -1,4 +1,4 @@
-function Ds = dbs_meg_rest_source_cvaraw_CPN(initials, drug, prefix, ROI,R,breg,siden)
+function Ds = dbs_meg_rest_source_cvaraw_CPN(initials, drug, prefix, ROI,R,breg,siden,CVAfrqrng)
 
 druglbl = R.condnamelc;
 
@@ -13,11 +13,11 @@ if nargin<3
 end
 % From dbs_meg_rest_extract.. [prefix initials '_' seq{f}(1) '_' num2str(cnt) '_' druglbl{drug+1}]
 try
-%     D = spm_eeg_load(fullfile(root, 'SPMrest', [prefix initials '_' druglbl{drug+1} '.mat']));
+    %     D = spm_eeg_load(fullfile(root, 'SPMrest', [prefix initials '_' druglbl{drug+1} '.mat']));
     D = spm_eeg_load([R.origpath initials '\' initials '_R_1_' druglbl{drug+1}]);
 catch
     error('not found');
-%     D = dbs_meg_rest_prepare_spm12(initials, drug);
+    %     D = dbs_meg_rest_prepare_spm12(initials, drug);
 end
 
 % Interpolate Missing Data
@@ -30,8 +30,9 @@ chlist = setdiff(1:numel(D.chanlabels),stnKO);
 
 S = [];
 S.D = D;
-S.channels = D.chanlabels(chlist)
+S.channels = D.chanlabels(chlist);
 D = spm_eeg_crop(S);
+
 a = D(:,:,:);
 for x = 1:size(a,1)
     if sum(isnan(a(x,:)))> 1
@@ -53,7 +54,8 @@ cd([R.datapathr initials]);
 res = mkdir('BF');
 
 
-roisum = 'keep';%'svd';%'keep' 'max'
+roisum = 'max';%'svd';%'keep' 'max'
+scramblestn = 'no';
 keep = 1;
 %%
 source{1}.spm.tools.beamforming.data.dir = {[R.datapathr initials '\BF']};
@@ -97,8 +99,8 @@ source{6}.spm.tools.beamforming.write.plugin.spmeeg.prefix = [R.bregname{breg} '
 for i = 1:size(ROI, 1)
     source{2}.spm.tools.beamforming.sources.plugin.voi.vois{i}.voidef.label = ROI{i, 1};
     source{2}.spm.tools.beamforming.sources.plugin.voi.vois{i}.voidef.pos = ROI{i, 4};
-%     source{2}.spm.tools.beamforming.sources.plugin.voi.vois{i}.maskdef.label = ROI{i, 1};
-%     source{2}.spm.tools.beamforming.sources.plugin.voi.vois{i}.maskdef.mask =  ROI(i, 2);
+    %     source{2}.spm.tools.beamforming.sources.plugin.voi.vois{i}.maskdef.label = ROI{i, 1};
+    %     source{2}.spm.tools.beamforming.sources.plugin.voi.vois{i}.maskdef.mask =  ROI(i, 2);
 end
 
 %************
@@ -118,7 +120,18 @@ Ds = Ds.path([R.datapathr initials '\SPMdata\']);
 save(Ds);
 % Ds = spm_eeg_load('C:\Users\twest\Documents\Work\GitHub\Cortical_Parkinsons_Networks\Data\DF\SPMdata\STG_VC04052018_dDF_R_1_off.mat')
 %%
-if isequal(roisum, 'keep')    
+if isequal(scramblestn, 'yes')
+stnchans = find(strncmp(Ds.chanlabels,'STN',3));
+for i = 1:numel(stnchans)
+    x = Ds(stnchans(i),:);
+    x = x(randperm(length(x)));
+    Ds(stnchans(i),:) = x;
+end
+save(Ds);
+end
+if isequal(roisum, 'keep')
+
+    
     S = [];
     S.D = Ds;
     S.prefix = 'R';
@@ -130,9 +143,9 @@ if isequal(roisum, 'keep')
         S.settings.chanset(i).refchan.channels{1}.type = 'LFP';
         S.settings.chanset(i).ncomp = 1;
         S.settings.chanset(i).outlabel = ROI{i, 1};
-        S.settings.chanset(i).foi = ROI{i, 3};
-        S.settings.chanset(i).tshiftwin = [-60 60];
-        S.settings.chanset(i).tshiftres = 20;
+        S.settings.chanset(i).foi = ROI{i, 3}; %CVAfrqrng; %
+        S.settings.chanset(i).tshiftwin = [-80 80];
+        S.settings.chanset(i).tshiftres = 10;
     end
     
     S.keepothers = false;

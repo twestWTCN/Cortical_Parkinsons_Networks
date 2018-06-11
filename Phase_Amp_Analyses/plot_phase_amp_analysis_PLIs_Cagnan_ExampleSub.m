@@ -1,4 +1,4 @@
-function plot_phase_amp_analysis_PLIs_Cagnan(R)
+function plot_phase_amp_analysis_PLIs_Cagnan_ExampleSub(R)
 if nargin<1
     R = makeHeader_SubCort_Cort_Networks();
 end
@@ -64,7 +64,7 @@ for breg = 2:length(R.bregname)
                     ylimlist = {{[-25 350];[-25 250];[-25 250]},{[-25 75];[-25 200];[-25 250]}};
                     for i = 1:3
                         subplot(4,2,panlist(cond,i))
-                        hl = plot(phiBinMid', ampBinMu(i,:)','--','color',cmap(i,:)); hold on
+                        hl = plot(phiBinMid', ampBinMu(i,:)','--','color',cmap(i,:)); %hold on
                         % %                         [hl, hp] = boundedline(phiBinMid', ampBinMu(i,:)',ampBinSEM(i,:)','cmap',cmap(i,:)); hold on
                         % %                         if cond == 1; hl.LineStyle = '--'; end
                         % %                         hp.FaceAlpha = 0.4;
@@ -83,7 +83,7 @@ for breg = 2:length(R.bregname)
                     cmap = linspecer(5);
                     panlist(:,4) = [7; 8];
                     subplot(4,2,panlist(cond,4))
-                    hl = plot(phiBinMid', segBinMu(1,:)','--','color',cmap(5,:)); hold on
+                    hl = plot(phiBinMid', segBinMu(1,:)','--','color',cmap(5,:)); %hold on
                     % %                     [hl, hp] = boundedline(phiBinMid', segBinMu(1,:)',segBinSEM(1,:)','cmap',cmap(5,:));
                     % %                     if cond == 1; hl.LineStyle = '--'; end
                     % %                     hp.FaceAlpha = 0.4;
@@ -121,10 +121,10 @@ for breg = 2:length(R.bregname)
     a = gca;
     %     mean(x1)
     %     mean(x2)
-    [h,p, chi2stat,df] = prop_test([sum(x2(:,1:2)>0)], [size(x2,1),size(x2,1)],'false');
-    [h,p, chi2stat,df] = prop_test([sum(x1(:,1:2)>0)], [size(x1,1),size(x1,1)],'false');
-    [h p]=ttest2(x1(:,2),x2(:,2));
-    [h p]=ttest2(x1(:,1),x2(:,1));
+%     [h,p, chi2stat,df] = prop_test([sum(x2(:,1:2)>0)], [size(x2,1),size(x2,1)],'false');
+%     [h,p, chi2stat,df] = prop_test([sum(x1(:,1:2)>0)], [size(x1,1),size(x1,1)],'false');
+%     [h p]=ttest2(x1(:,2),x2(:,2));
+%     [h p]=ttest2(x1(:,1),x2(:,1));
     
     figure(1)
     set(gcf,'Position',[539    81   626   999])
@@ -136,8 +136,8 @@ for breg = 2:length(R.bregname)
             y1 = reshape(y(i,:),size(phiBinMid,2),[])';
             ysave{cond,i} = y1;
             [hl hp] = boundedline(phiBinMid', nanmedian(y1)',abs([prctile(y1,16)' prctile(y1,84)']-nanmedian(y1)'),'cmap',cmap(i,:)); %
-            hl.LineWidth = 2;
-            L = get(gca,'children'); L(2) = L(end); L(end) = hp;set(gca,'children',L)
+%             hl.LineWidth = 2;
+%             L = get(gca,'children'); L(2) = L(end); L(end) = hp;set(gca,'children',L)
             xlim([-pi pi])
             if cond ==2
                 x1 = sqres(ysave{1,i},nanmedian(ysave{1,i}))/1000; x2 = sqres(ysave{2,i},nanmedian(ysave{2,i}))/1000;
@@ -162,8 +162,8 @@ for breg = 2:length(R.bregname)
         ysave{cond,4} = y;
         subplot(4,2,panlist(cond,4)); hold on
         [hl hp] = boundedline(phiBinMid', nanmedian(y)',abs([prctile(y,16)' prctile(y,84)']-nanmedian(y)'),'cmap',cmap(5,:));
-        hl.LineWidth = 2;
-        L = get(gca,'children'); L(2) = L(end); L(end) = hp; set(gca,'children',L)
+%         hl.LineWidth = 2;
+%         L = get(gca,'children'); L(2) = L(end); L(end) = hp; set(gca,'children',L)
         xlim([-pi pi])
         if cond ==2
             x1 = sqres(ysave{1,i},nanmedian(ysave{1,i}))/1000; x2 = sqres(ysave{2,i},nanmedian(ysave{2,i}))/1000;
@@ -180,7 +180,7 @@ for breg = 2:length(R.bregname)
         end
     end
     clear p
-    [ptt,pvart] = cagnan_stats_test(phiBinMid,ysave,1,panlist,cmapA);
+%     [ptt,pvart] = cagnan_stats_test(phiBinMid,ysave,1,panlist,cmapA);
     annotation(gcf,'textbox',...
         [ 0.1820    0.9570    0.2550    0.0350],...
         'String',{'OFF L-Dopa'},...

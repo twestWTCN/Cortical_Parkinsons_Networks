@@ -16,13 +16,13 @@ for sub = 1:length(R.subname)
                 for i = 1:size(xdata,1)
                     x = xdata(i,:);
                     x = x(floor(fsamp*0.75):end-floor(fsamp*0.75));
-                    x = (x-mean(x))/std(x);
+                    x = (x-mean(x)); %/std(x);
                     x2data(i,:) = x;
                 end
                 x3data = ft_preproc_bandpassfilter(x2data, fsamp,R.pp.cont.thin.bp, [], 'but', 'twopass', 'reduce');
                 for i = 1:size(x3data,1)
                     x = x3data(i,:);
-                    x = (x-mean(x))./std(x);
+                    x = (x-mean(x)); %./std(x);
                     x4data(i,:) = x;
                 end
                 

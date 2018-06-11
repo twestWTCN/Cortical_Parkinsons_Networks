@@ -4,9 +4,13 @@ if nargin<2
 end
 close all
 analynames = {'Segment Length','CTX High Beta Amp','STN High Beta Amp','STN Low Beta Amp','STN/CTX High Beta Amp Correlation','Causal Density'};
-QXN = 6 ; QYN = 6; %
+QXN = 8 ; QYN = 8; %
 QX = linspace(-pi,pi,QXN);
 climits = [0 0.025];
+
+ampylim = {{[-25 350];[-25 250];[-25 250]},{[-25 100];[-25 250];[-25 250]}};
+segylim = {[0 1],[0 1]};
+
 %%%
 for breg = 1:length(R.bregname)
     for sub = 1:length(R.subname)
@@ -31,7 +35,7 @@ for breg = 1:length(R.bregname)
                 f(2) = figure((2)*10 +1); set(gcf,'Position',[263 517 1403 352])
                 subplot(1,3,cond);
                 [L4(cond) segLbin(:,cond) binmid pdense(1,cond)] = plot_PA_InterpArray(cond,phishift,segLCol,...
-                    'SRP Length',QX,linspace(0.1,1.5,QYN),f,tendtot,R.PA.interpolgrid); % ,logspace(log10(0.5),log10(1.2),6)
+                    'SRP Length',QX,linspace(segylim{breg}(1),segylim{breg}(2),QYN),f,tendtot,R.PA.interpolgrid); % ,logspace(log10(0.5),log10(1.2),6)
                 %                     xlim([-3.5 3.5]); %ylim([0 1.75]);
                 figure(f(2)); set(gcf,'Position',[263 517 1403 352]);  if cond>0; colorbar; end; title(R.condname{cond})
                 caxis(climits);
@@ -42,7 +46,7 @@ for breg = 1:length(R.bregname)
                 f(2) = figure((2)*10 +2);
                 subplot(1,3,cond);
                 [L5(cond) ampbin(:,cond,1) binmid pdense(2,cond)] = plot_PA_InterpArray(cond,phishift,ampSegCol(1,:),...
-                    [R.bregname{breg} ' ' R.bandname{R.bregband{breg}} ' Power'],QX,linspace(-100,300,QYN),f,tendtot,R.PA.interpolgrid); %linspace(0,7,8) ,linspace(-100,200,QY)
+                    [R.bregname{breg} ' ' R.bandname{R.bregband{breg}} ' Power'],QX,linspace(ampylim{breg}{1}(1),ampylim{breg}{1}(2),QYN),f,tendtot,R.PA.interpolgrid); %linspace(0,7,8) ,linspace(-100,200,QY)
                 figure(f(2)); set(gcf,'Position',[263 517 1403 352]); if cond>0; colorbar; end; title(R.condname{cond})
                 caxis(climits);
                 
@@ -52,7 +56,7 @@ for breg = 1:length(R.bregname)
                 f(2) = figure((2)*10 +3);
                 subplot(1,3,cond)
                 [L6(cond) ampbin(:,cond,2) binmid pdense(3,cond)] = plot_PA_InterpArray(cond,phishift,ampSegCol(2,:),...
-                    ['STN ' R.bandname{R.bregband{breg}} ' Power'],QX,linspace(-100,300,QYN),f,tendtot,R.PA.interpolgrid); %linspace(0,7,8) linspace(-100,200,QY)
+                    ['STN ' R.bandname{R.bregband{breg}} ' Power'],QX,linspace(ampylim{breg}{2}(1),ampylim{breg}{2}(2),QYN),f,tendtot,R.PA.interpolgrid); %linspace(0,7,8) linspace(-100,200,QY)
                 figure(f(2)); set(gcf,'Position',[263 517 1403 352]);  if cond>0; colorbar; end; title(R.condname{cond})
                 caxis(climits);
                 
@@ -62,7 +66,7 @@ for breg = 1:length(R.bregname)
                 f(2) = figure((2)*10 +4); set(gcf,'Position',[263 517 1403 352])
                 subplot(1,3,cond)
                 [L7(cond) ampbin(:,cond,3) binmid pdense(4,cond)] = plot_PA_InterpArray(cond,phishift,ampSegCol(3,:),...
-                    'STN Low Beta Amp',QX,linspace(-100,300,QYN),f,tendtot,R.PA.interpolgrid); % linspace(0,4,8) linspace(-100,200,QY)
+                    'STN Low Beta Amp',QX,linspace(ampylim{breg}{3}(1),ampylim{breg}{3}(2),QYN),f,tendtot,R.PA.interpolgrid); % linspace(0,4,8) linspace(-100,200,QY)
                 figure(f(2)); set(gcf,'Position',[263 517 1403 352]);  if cond>0; colorbar; end; title(R.condname{cond})
                 caxis(climits);
                 %                 % Plots of rel phase vs Segment Length DDT

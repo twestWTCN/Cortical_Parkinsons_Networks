@@ -43,20 +43,16 @@ R.condcmap = linspecer(2);
 % Preprocessing
 R.pp.cont.thin.fs = 128;
 R.pp.cont.thin.bp = [4 48];
-
 % R.pp.cont.full.bp = [4 400];
 % R.pp.cont.full.fs = 1024;
-% NPD
-% % % R.NPD.multitaper = 'M0.5'; % NO MULTITAPER"!!
-R.NPD.windowlength = 9;
 
 % Phase Analy
-R.PA.optimalPLFrqMeth = 'PLI'; % Use PLI or PLV to determine frequency for bandpass
-R.PA.AmpSurrN = 50; % Number of draws to compute surrogate distributions for stats.
-R.PA.SRPeps_prctile = 5; % Stable relative phase Percentile
-R.PA.SNReps_prctile = 5; % Signal Noise Percentile
-R.PA.PLVeps_prctile = 95; % Signal Noise Percentile
-R.PA.plotting.realignMeth = 'WghtedMaxBin'; % Method to align phases
+R.PA.optimalPLFrqMeth = 'WPLV'; % Use PLI or PLV to determine frequency for bandpass
+R.PA.AmpSurrN = 200; % Number of draws to compute surrogate distributions for stats.
+R.PA.SRPeps_prctile = 1; % Stable relative phase Percentile
+R.PA.SNReps_prctile = 50; % Signal Noise Percentile
+R.PA.PLVeps_prctile = 99; % Signal Noise Percentile
+R.PA.plotting.realignMeth = 'WghtedPrctleAmp75'; % Method to align phases
 % 'MaxLBAmp' - Maximum Low Beta Amp
 % 'WghtedMeanAmp' -Wghted Mean Low Beta Amp
 % 'WghtedPrctleAmp##' -Wghted Prctile Low Beta at ==%
@@ -64,11 +60,10 @@ R.PA.plotting.realignMeth = 'WghtedMaxBin'; % Method to align phases
 % 'PhiHist'  - Bin with highest frequency
 % 'noshift'  - Dont do any shifting
 R.PA.SType = 1; % 1 = sliding window PLI and 2 = SRP
-R.PA.bwid = [0.25 0.5 0.75];
+R.PA.bwid = [1 1.25 1.5];
 R.PA.mwid = 3; % minimum SRP length (cycles)
 R.PA.LowAmpFix = 0; % 1 if SRP is adjusted to account for low amplitude
 
-R.PA.slidingwindow = 1;
 R.PA.interpolgrid = 1; % For interpolating the grids
 R.PA.frqrange{1} = R.bandef(1,1):0.5: R.bandef(1,2);
 R.PA.frqrange{2} =  R.bandef(2,1):0.5: R.bandef(2,2);
@@ -82,10 +77,7 @@ R.PA.frqrange{3} =  R.bandef(3,1):0.5: R.bandef(3,2);
 % R.PA.SNR_eps = -1;
 % R.PA.bwid = 0.75;
 R.PA.slidingwindow = 0.5;
-R.PA.PLVeps =  0.35;
-R.PA.WinOver = 0.95;
-R.PA.PLVmwid = 8;
-% 
+R.PA.WinOver = 0.99;
 % R.PA.stn_lb_frq = 14;
 % R.PA.frqrange{1} = 24:0.5:34;
 % R.PA.frqrange{2} = 8:0.5:12;
