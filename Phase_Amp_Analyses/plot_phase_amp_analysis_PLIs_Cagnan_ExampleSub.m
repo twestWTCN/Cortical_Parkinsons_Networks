@@ -27,7 +27,7 @@ for breg = 2:length(R.bregname)
                     relativePhiCol = phi'; %wrapToPi(phi-circ_mean(phi(~isnan(phi'))) )'; %circ_mean(pA_pli_dist_save{2,nrOFF}(amp_pli_dist_save{2,nrOFF}(3,:)>95)')); %wrapToPi(pA_pli_dist_save{cond,nr}); %-circ_mean([pA_pli_dist_save{2,nrOFF}]'));
                     segLCol =  vc_clean.PA.segL_pli_dist_save; %((segL_pli_dist_save{cond,nr} - mean([segL_pli_dist_save{cond,nr}],2))./mean([segL_pli_dist_save{cond,nr}],2)  )*100;
                     ampSegCol = vc_clean.PA.amp_pli_dist_save; %((amp_pli_dist_save{cond,nr}  - mean([amp_pli_dist_save{cond,nr}],2))./mean([amp_pli_dist_save{cond,nr}],2) )*100;
-%                     HdistSegCol = vc_clean.PA.H_dist_save(1,:);
+                    %                     HdistSegCol = vc_clean.PA.H_dist_save(1,:);
                     tendtot = vc_clean.PA.timevec{1}(end)-vc_clean.PA.timevec{1}(1);
                     
                     figure(30)
@@ -102,8 +102,8 @@ for breg = 2:length(R.bregname)
                     ylabel(['LB Segment Length (s)']); xlabel('Relative Phase (rads)')
                 end
             end
-set(gcf,'Position',[1000         171         733         825]);
-close all
+            set(gcf,'Position',[1000         171         733         825]);
+            close all
         end
     end
     figure(30)
@@ -126,10 +126,10 @@ close all
     a = gca;
     %     mean(x1)
     %     mean(x2)
-%     [h,p, chi2stat,df] = prop_test([sum(x2(:,1:2)>0)], [size(x2,1),size(x2,1)],'false');
-%     [h,p, chi2stat,df] = prop_test([sum(x1(:,1:2)>0)], [size(x1,1),size(x1,1)],'false');
-%     [h p]=ttest2(x1(:,2),x2(:,2));
-%     [h p]=ttest2(x1(:,1),x2(:,1));
+    %     [h,p, chi2stat,df] = prop_test([sum(x2(:,1:2)>0)], [size(x2,1),size(x2,1)],'false');
+    %     [h,p, chi2stat,df] = prop_test([sum(x1(:,1:2)>0)], [size(x1,1),size(x1,1)],'false');
+    %     [h p]=ttest2(x1(:,2),x2(:,2));
+    %     [h p]=ttest2(x1(:,1),x2(:,1));
     
     figure(1)
     set(gcf,'Position',[539    81   626   999])
@@ -141,8 +141,8 @@ close all
             y1 = reshape(y(i,:),size(phiBinMid,2),[])';
             ysave{cond,i} = y1;
             [hl hp] = boundedline(phiBinMid', nanmedian(y1)',abs([prctile(y1,16)' prctile(y1,84)']-nanmedian(y1)'),'cmap',cmap(i,:)); %
-%             hl.LineWidth = 2;
-%             L = get(gca,'children'); L(2) = L(end); L(end) = hp;set(gca,'children',L)
+            %             hl.LineWidth = 2;
+            %             L = get(gca,'children'); L(2) = L(end); L(end) = hp;set(gca,'children',L)
             xlim([-pi pi])
             if cond ==2
                 x1 = sqres(ysave{1,i},nanmedian(ysave{1,i}))/1000; x2 = sqres(ysave{2,i},nanmedian(ysave{2,i}))/1000;
@@ -167,8 +167,8 @@ close all
         ysave{cond,4} = y;
         subplot(4,2,panlist(cond,4)); hold on
         [hl hp] = boundedline(phiBinMid', nanmedian(y)',abs([prctile(y,16)' prctile(y,84)']-nanmedian(y)'),'cmap',cmap(5,:));
-%         hl.LineWidth = 2;
-%         L = get(gca,'children'); L(2) = L(end); L(end) = hp; set(gca,'children',L)
+        %         hl.LineWidth = 2;
+        %         L = get(gca,'children'); L(2) = L(end); L(end) = hp; set(gca,'children',L)
         xlim([-pi pi])
         if cond ==2
             x1 = sqres(ysave{1,i},nanmedian(ysave{1,i}))/1000; x2 = sqres(ysave{2,i},nanmedian(ysave{2,i}))/1000;
@@ -185,7 +185,7 @@ close all
         end
     end
     clear p
-%     [ptt,pvart] = cagnan_stats_test(phiBinMid,ysave,1,panlist,cmapA);
+    %     [ptt,pvart] = cagnan_stats_test(phiBinMid,ysave,1,panlist,cmapA);
     annotation(gcf,'textbox',...
         [ 0.1820    0.9570    0.2550    0.0350],...
         'String',{'OFF L-Dopa'},...

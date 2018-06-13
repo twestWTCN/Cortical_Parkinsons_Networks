@@ -9,11 +9,13 @@ if strcmp(getenv('COMPUTERNAME'),'SFLAP-2')
     addpath(genpath('C:\Users\Tim\Documents\Work\GIT\Cortical_Parkinsons_Networks\Statistics'))
     addpath(genpath('C:\Users\Tim\Documents\Work\GIT\Cortical_Parkinsons_Networks\Tools'))
     addpath(genpath('C:\Users\Tim\Documents\Work\GIT\Cortical_Parkinsons_Networks\Segregate_Networks'))
+    addpath(genpath('C:\Users\twest\Documents\Work\GIT\DynPhaseConnectivity'))
     pathCell = regexp(path, pathsep, 'split'); onPath = any(strcmpi('C:\Users\Tim\Documents\MATLAB_ADDONS\mvgc_v1.0', pathCell));
     
     % Grangerpath
     if ~onPath; addpath('C:\Users\Tim\Documents\MATLAB_ADDONS\mvgc_v1.0'); run startup.m; end
     addpath('C:\Users\Tim\Documents\MATLAB_ADDONS\gramm-master\@gramm')
+    addpath('C:\Users\Tim\Documents\MATLAB_ADDONS\distributionPlot')
     
 elseif strcmp(getenv('COMPUTERNAME'),'FREE')
     addpath('C:\shared')
