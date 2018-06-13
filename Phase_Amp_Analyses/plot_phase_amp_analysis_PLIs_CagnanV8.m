@@ -29,6 +29,7 @@ for breg = 2:length(R.bregname)
                     
                     ylimlistS{1}= {{[-25 350];[-25 250];[-25 250]},{[-25 50];[-25 125];[-25 125]}};
                     ylimlistS{2}={{[0 0]},{[0 1]},{[0 1]}};
+                    ylimlistS{3}= {{[-25 350];[-25 250];[-25 250]},{[-100 300];[-100 400];[-100 400]}};
                     panlist = [1 3 5 ; 2 4 6];
                     phiBin = linspace(-pi,pi,QX);
                     obs = {[R.bregname{breg} ' ' R.bandinits{R.bregband{breg}}],['STN ' R.bandinits{R.bregband{breg}}],['STN ' R.bandinits{2}],[R.bregname{breg} ' Seg. Length']};

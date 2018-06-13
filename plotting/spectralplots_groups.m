@@ -21,12 +21,11 @@ ax(2) = boundedline(frq,mean(ON,2),std(ON,0,2)./sqrt(size(ON,2)),'cmap',cmap(2,:
 xlim([6 45]);%ylim([0.005 0.05]);
 xlabel('Frequency (Hz)','FontSize',10);ylabel('Normalized Power','FontSize',10); title(titular{1},'FontSize',10)
 ax(1).LineWidth = 1.5; ax(2).LineWidth = 1.5;
-legend(ax,R.condname); grid on
-
 if statflag==1
     [specstat] = spectralclusterstats230518(OFF',ON',frq,'ll',100);
      clustat = plotFreqCluster(specstat)
 end
+legend(ax,R.condname); grid on
 
 subplot(1,3,2)
 OFF = [powsubgrand{1,2,grouperI{i},:}];
@@ -39,12 +38,11 @@ ax(2) = boundedline(frq,mean(ON,2),std(ON,0,2)./sqrt(size(ON,2)),'cmap',cmap(2,:
 xlim([6 45]);%ylim([0.0085 0.05]);
 xlabel('Frequency (Hz)','FontSize',10);ylabel('Normalized Power','FontSize',10); title(titular{2},'FontSize',10)
 ax(1).LineWidth = 1.5; ax(2).LineWidth = 1.5;
-legend(ax,R.condname); grid on
-
 if statflag==1
     [specstat] = spectralclusterstats230518(OFF',ON',frq,'ll',500)
      clustat = plotFreqCluster(specstat)
 end
+legend(ax,R.condname); grid on
 
 subplot(1,3,3)
 OFF = [cohsubgrand{1,grouperI{i},:}];
@@ -55,12 +53,12 @@ ax(2) = boundedline(frq',mean(ON,2),std(ON,0,2)./sqrt(size(ON,2)),'cmap',cmap(2,
 xlim([6 45]); %ylim([0 0.35]); 
 xlabel('Frequency (Hz)','FontSize',10);ylabel('Coherence','FontSize',10); title([titular{1} '/' titular{2} ' coherence'],'FontSize',10)
 ax(1).LineWidth = 1.5; ax(2).LineWidth = 1.5;
-legend(ax,R.condname);grid on
 
 if statflag==1
     [specstat] = spectralclusterstats230518(OFF',ON',frq,'ll',100);
      clustat = plotFreqCluster(specstat)
 end
+legend(ax,R.condname);grid on
 
 % set(gca,'xscale','log')
 % close all
