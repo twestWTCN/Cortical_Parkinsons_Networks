@@ -3,7 +3,7 @@ if nargin<1
     R = makeHeader_SubCort_Cort_Networks();
 end
 load([R.datapathr 'UPDRS_Scores'])
-for breg = 1:length(R.bregname)
+for breg = 2:length(R.bregname)
     for sub = 1:length(R.subname)
         for side = 1:2
             for cond = 1:length(R.condname)
@@ -43,19 +43,19 @@ for breg = 1:length(R.bregname)
                     subplot(1,3,ch)
                     %% ON
                     frq = vchansave_ON.specanaly.frq; powsubgrand{2,ch,side,sub} = ON(:,1);
-                    ax(2) = plot(frq,mean(ON,2),'color',cmap(2,:));
+                    ax(2) = plot((frq),(mean(ON,2)),'color',cmap(2,:));
                     %                     %                     ax(1) = boundedline(frq,mean(ON,2),std(ON,0,2)/sqrt(size(ON,2)),'cmap',cmap(1,:),'alpha','transparency',0.45);
                     %                     %                     set(gca,'xscale','log'); set(gca,'yscale','log')
-                    xlim([6 45]);%ylim([0.005 0.05])
+                    xlim(([6 45]));%ylim([0.005 0.05])
                     hold on
                     %                     %                             [xCalc,yCalc] = linregress(log10(frq)',log10(ON));
                     %                     %                             plot(xCalc(:,2),yCalc,'--','color',cmap(1,:),'linewidth',2);
                     %% OFF
                     frq =  vchansave_OFF.specanaly.frq; powsubgrand{1,ch,side,sub} = OFF(:,1);
-                    ax(1) = plot(frq,mean(OFF,2),'color',cmap(1,:));
+                    ax(1) = plot((frq),(mean(OFF,2)),'color',cmap(1,:));
                     %                     ax(2) = boundedline(frq,mean(OFF,2),std(OFF,0,2)/sqrt(size(OFF,2)),'cmap',cmap(2,:),'alpha','transparency',0.45);
                     %                     set(gca,'xscale','log'); set(gca,'yscale','log')
-                    xlim([6 45]);%ylim([0.005 0.05]);
+                    xlim(([6 45]));%ylim([0.005 0.05]);
                     if ch == 1; tit = [R.siden{side} ' ' R.bregname{breg}]; else tit = [R.siden{side} ' STN']; end
                     xlabel('Frequency (Hz)');ylabel('log Normalized Power'); title(tit)
                     legend(ax,R.condname);
@@ -98,13 +98,16 @@ for breg = 1:length(R.bregname)
                     npdspctrm_group{cond,side,4}(:,sub) = nan(size(npdspctrm{cond,1,4}(:,1)));
                 end
             end
-            
+%             % If testing NPD
+%             OFF = npdspctrm_group{1,side,3}(:,sub);  ON = npdspctrm_group{2,side,3}(:,sub);
+%             frq = Hz;
+
             pind = find(strcmp(R.subname{sub},patient));
-            %         if side == 1; hemiI = 2; elseif side == 2; hemiI = 1; end
-            updrsSave{1,side,sub} = eval([R.siden{side}(1) '_akinesia_' R.condname{1} '(' num2str(pind) ')']);
+            if side == 1; hemiI = 2; elseif side == 2; hemiI = 1; end
+            updrsSave{1,side,sub} = eval([R.siden{hemiI}(1) '_akinesia_' R.condname{1} '(' num2str(pind) ')']);
             updrsSave{2,side,sub} = eval(['total_' R.condname{1} '(' num2str(pind) ')']);
             updrsSave{3,side,sub} = eval(['total_' R.condname{2} '(' num2str(pind) ')'])-eval(['total_' R.condname{1} '(' num2str(pind) ')']);
-            updrsSave{4,side,sub} = eval([R.siden{side}(1) '_akinesia_' R.condname{2} '(' num2str(pind) ')'])-eval([R.siden{side}(1) '_akinesia_' R.condname{1} '(' num2str(pind) ')']);
+            updrsSave{4,side,sub} = eval([R.siden{hemiI}(1) '_akinesia_' R.condname{2} '(' num2str(pind) ')'])-eval([R.siden{hemiI}(1) '_akinesia_' R.condname{1} '(' num2str(pind) ')']);
             [maxcoh1 ind] = max(mean(OFF(frq>R.bandef(R.bregband{breg},1) & frq<R.bandef(R.bregband{breg},2),:),1));
             highbetacoh{1,side,sub} = [maxcoh1 ind maxcoh1>0.05];
             [maxcoh2 ind] = max(mean(ON(frq>R.bandef(R.bregband{breg},1) & frq<R.bandef(R.bregband{breg},2),:),1));
@@ -112,7 +115,8 @@ for breg = 1:length(R.bregname)
             highbetacoh{3,side,sub} = maxcoh1>0.05 && maxcoh2>0.05;
             highbetacoh{3,side,sub} = maxcoh2 - maxcoh1;
             %             refidSave{side,sub} = refid;
-            %             savefigure_v2([R.datapathr R.subname{sub} '\images\spectral\'],['STN_Source_Power_analysis_' R.subname{sub} '_' R.siden{side}  '_'  R.bregname{breg}],[2],[],'-r200');
+            title(['OFF ' num2str(updrsSave{2,side,sub}) ' OFF-ON: ' num2str(updrsSave{3,side,sub})])
+                        savefigure_v2([R.datapathr '\images\spectral\' R.subname{sub} '\'],['STN_Source_Power_analysis_' R.subname{sub} '_' R.siden{side}  '_'  R.bregname{breg}],[1:2],[],'-r200');
             close all
         end
     end

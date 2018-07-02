@@ -62,12 +62,20 @@ for sub = 1:length(R.subname)
                 coh = abs(squeeze(cohstruc.cohspctrm(2:end,1,:)));
 %                 icoh = abs(squeeze(coh.wplispctrm(2:end,1,:)));
                 if size(coh,1)>size(coh,2); coh = coh'; end
+                
+                % Run PLV
+                cfg.method    = 'plv';
+                plvstruc           = ft_connectivityanalysis(cfg, freq);
+                plv = abs(squeeze(plvstruc.plvspctrm(2:end,1,:)));
+%                 icoh = abs(squeeze(coh.wplispctrm(2:end,1,:)));
+                if size(plv,1)>size(plv,2); plv = plv'; end
+
                 % ch x n
                 figure(2)
                 %                 subplot(1,2,cond)
                 title(R.condname{cond})
-                xlabel('Freq'); ylabel('Coherence')
-                plot(repmat(cohstruc.freq,3,1)',coh'); hold on
+                xlabel('Freq'); ylabel('PLV')
+                plot(repmat(plvstruc.freq,3,1)',plv'); hold on
                 ylim([0 0.8]); xlim([2 65]); legend({'STN01','STN02','STN03'}); grid on
                 set(gcf,'Position',[1310         677         560         420])
                 figure(2); shg
@@ -92,6 +100,19 @@ for sub = 1:length(R.subname)
                     frqc = R.bandef(3,1)+(fi.*min(diff(freq.freq)));
                     maxcoh = [maxcoha maxcohb maxcohc];
                     frqcoh = [frqa frqb frqc];
+
+                    % MaxPLVs
+                    % Alpha
+                    [maxplva fi] = max(plv(gx,plvstruc.freq>=R.bandef(1,1) & plvstruc.freq<=R.bandef(1,2)));
+                    frqa = R.bandef(1,1)+(fi.*min(diff(freq.freq)));
+                    % Low Beta
+                    [maxplvb fi] = max(plv(gx,plvstruc.freq>=R.bandef(2,1) & plvstruc.freq<=R.bandef(2,2)));
+                    frqb = R.bandef(2,1)+(fi.*min(diff(freq.freq)));
+                    % High Beta
+                    [maxplvc fi] = max(plv(gx,plvstruc.freq>=R.bandef(3,1) & plvstruc.freq<=R.bandef(3,2)));
+                    frqc = R.bandef(3,1)+(fi.*min(diff(freq.freq)));
+                    maxplv = [maxplva maxplvb maxplvc];
+                    frqplv = [frqa frqb frqc];
                     
                     %MaxPows
                     [maxpowa fi] = max(tpx(1+gx,freq.freq> R.bandef(1,1) & freq.freq< R.bandef(1,2)));
@@ -106,6 +127,8 @@ for sub = 1:length(R.subname)
                     vc_clean.specanaly.coh = coh(gx,:);
                     vc_clean.specanaly.normpow = tpx([1 1+gx],:);
                     vc_clean.specanaly.frq = freq.freq;
+                    vc_clean.specanaly.plvstats.frqplv = frqplv;
+                    vc_clean.specanaly.plvstats.maxplv = maxplv;                    
                     vc_clean.specanaly.cohstats.frqcoh = frqcoh;
                     vc_clean.specanaly.cohstats.maxcoh = maxcoh;
                     vc_clean.specanaly.powstats.frqpow = frqpow;

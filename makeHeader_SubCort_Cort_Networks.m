@@ -24,7 +24,7 @@ R.bregname = {'STG','SMA'};
 R.bregband = {[1],[3]};
 R.bregROI = {[-46 -30 -2;46 -30 -2];[-18 -6 58; 18 -6 58]};
 % Virtual Channel Construction
-R.voi.radius = 12.5;
+R.voi.radius = 15;
 R.voi.resolution = 5;
 
 R.specanaly.epochL = 1; % epoch length (s)
@@ -36,7 +36,7 @@ R.ipsicon = 'ipsi';
 R.ref_list = {'STN_L01','STN_L12','STN_L23','STN_R01','STN_R12','STN_R23'};
 R.bandname = {'Alpha','Low Beta','High Beta'};
 R.bandinits = {'\alpha','\beta_1','\beta_2'};
-R.bandef = [8 13; 14 21; 22 34];
+R.bandef = [8 13; 14 20; 24 34];
 
 R.condcmap = linspecer(2);
 
@@ -47,11 +47,11 @@ R.pp.cont.thin.bp = [4 48];
 % R.pp.cont.full.fs = 1024;
 
 % Phase Analy
-R.PA.optimalPLFrqMeth = 'WPLV'; % Use PLI or PLV to determine frequency for bandpass
-R.PA.AmpSurrN = 200; % Number of draws to compute surrogate distributions for stats.
+R.PA.optimalPLFrqMeth = 'WPLV'; % Use PLI or PLV or WPLV to determine frequency for bandpass
+R.PA.AmpSurrN = 100; % Number of draws to compute surrogate distributions for stats.
 R.PA.SRPeps_prctile = 1; % Stable relative phase Percentile
 R.PA.SNReps_prctile = 50; % Signal Noise Percentile
-R.PA.PLVeps_prctile = 99; % Signal Noise Percentile
+R.PA.PLVeps_prctile = 85; % PLV Percentile
 R.PA.plotting.realignMeth = 'WghtedPrctleAmp75'; % Method to align phases
 % 'MaxLBAmp' - Maximum Low Beta Amp
 % 'WghtedMeanAmp' -Wghted Mean Low Beta Amp
@@ -60,7 +60,7 @@ R.PA.plotting.realignMeth = 'WghtedPrctleAmp75'; % Method to align phases
 % 'PhiHist'  - Bin with highest frequency
 % 'noshift'  - Dont do any shifting
 R.PA.SType = 1; % 1 = sliding window PLI and 2 = SRP
-R.PA.bwid = [1 1.25 1.5];
+R.PA.bwid = [1.5 1.5 1.5];
 R.PA.mwid = 3; % minimum SRP length (cycles)
 R.PA.LowAmpFix = 0; % 1 if SRP is adjusted to account for low amplitude
 
@@ -76,7 +76,7 @@ R.PA.frqrange{3} =  R.bandef(3,1):0.5: R.bandef(3,2);
 % R.PA.stn_lb_frq = 14;
 % R.PA.SNR_eps = -1;
 % R.PA.bwid = 0.75;
-R.PA.slidingwindow = 0.5;
+R.PA.slidingwindow = 1;
 R.PA.WinOver = 0.99;
 % R.PA.stn_lb_frq = 14;
 % R.PA.frqrange{1} = 24:0.5:34;

@@ -12,7 +12,8 @@ clear; close all
 % shown the increase-
 % 4) Consider simple model to test whether the signal power has any effect
 % on the PA metrics.
-
+% 5) Rethink the power metric - % over median scrambled? Does this mean
+% anything...
 add_corticalnetworks_paths()
 R = makeHeader_SubCort_Cort_Networks();
 
@@ -28,7 +29,7 @@ plot_phase_amp_array(R)
 plot_group_level_phaseamp_v6(R)
 
 plot_phase_amp_analysis_PLIs_CagnanV8(R)
-
+plot_phase_amp_analysis_PLIs_Cagnan_ExampleSub(R)
 %%
 %%network_plot_270317
 

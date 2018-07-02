@@ -1,6 +1,6 @@
 function [] = plotNPD(Hz,npdspctrm,R,ylimz,statflag)
 if nargin<4
-    ylimz = [0 0.8];
+    ylimz = [0 0.1];
 end
 if nargin<5
     statflag= 0;

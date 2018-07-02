@@ -7,53 +7,60 @@ analynames = {'Segment Length','CTX High Beta Amp','STN High Beta Amp','STN Low 
 % WIP
 % Percentage Change over what? Baseline or baseline of segments?
 QX = 8; % Bin Size
-% sub 3 side 2 - very peaked OFF
-% sub 1 side 1 - very flat but amplified
-% sub 7 side 2 - wide OFF tight ON
-% sub 11 side 1/[2!]
-% sub 13 side 1 - VERY peaked on OFF, flat 1
+% sub 1 side 2
 for breg = 2:length(R.bregname)
     cmapint = linspecer(3);
     cmap = linspecer(5);
     cmapint(4,:) = cmap(5,:);
     
-    for sub = 11 %1:length(R.subname)
+    for sub = 1:length(R.subname)
         cmapint = cmapint*0.95;
-        for side = 1 %1:2
+        for side = 1:2
             for cond = 1:length(R.condname)
                 load([R.datapathr R.subname{sub} '\ftdata\cleaned\V6_sources_clean_ROI_' R.condname{cond} '_' R.siden{side} '_' R.ipsicon  '_' R.bregname{breg}],'vc_clean')
                 if vc_clean.specanaly.flag ~= 1 % Check significant coherences                        load([R.datapathr R.subname{sub} '\ftdata\ROI_analy\' idd '_ROIvoxel_phaseamp_PLI_' R.ipsicon '_' R.siden{side} '_' R.bandname{band} '.mat'])
                     phi = vc_clean.PA.pA_pli_dist_save';
                     relativePhiCol = phi'; %wrapToPi(phi-circ_mean(phi(~isnan(phi'))) )'; %circ_mean(pA_pli_dist_save{2,nrOFF}(amp_pli_dist_save{2,nrOFF}(3,:)>95)')); %wrapToPi(pA_pli_dist_save{cond,nr}); %-circ_mean([pA_pli_dist_save{2,nrOFF}]'));
                     segLCol =  vc_clean.PA.segL_pli_dist_save; %((segL_pli_dist_save{cond,nr} - mean([segL_pli_dist_save{cond,nr}],2))./mean([segL_pli_dist_save{cond,nr}],2)  )*100;
-                    ampSegCol = vc_clean.PA.amp_pli_dist_save; %((amp_pli_dist_save{cond,nr}  - mean([amp_pli_dist_save{cond,nr}],2))./mean([amp_pli_dist_save{cond,nr}],2) )*100;
+                    ampSegCol = ((vc_clean.PA.amp_pli_dist_save-median(vc_clean.PA.pureAmp)')./median(vc_clean.PA.pureAmp)').*100; %((amp_pli_dist_save{cond,nr}  - mean([amp_pli_dist_save{cond,nr}],2))./mean([amp_pli_dist_save{cond,nr}],2) )*100;
                     %                     HdistSegCol = vc_clean.PA.H_dist_save(1,:);
-                    tendtot = vc_clean.PA.timevec{1}(end)-vc_clean.PA.timevec{1}(1);
+                    tendtot = vc_clean.PA.timevec(end)-vc_clean.PA.timevec(1);
                     
-                    figure(30)
-                    panlist = [1 3 5 ; 2 4 6]; ylimlist = {{[-25 350];[-25 250];[-25 250]},{[-100 200];[-100 300];[-25 300]}};
-                    obs = {[R.bregname{breg} ' ' R.bandinits{R.bregband{breg}}],['STN ' R.bandinits{R.bregband{breg}}],['STN ' R.bandinits{2}],[R.bregname{breg} '/STN ' R.bandinits{breg} ' Seg. Length']};
-                    for i = 1:3
-                        subplot(3,2,panlist(cond,i))
-                        [A stat] = linplot_PD(log10(segLCol)',ampSegCol(i,:)','Seg Length (s)','Amplitude',cmapint(i,:)); xlim([-1.5 1])
-                        ylim(ylimlist{breg}{i})
-                        Rcoeff(:,:,i) = stat.modcoef.*(stat.p<0.05);
-                        title(['STN-' R.bregname{breg} ' ' R.bandinits{R.bregband{breg}} ' Phase vs ' obs{i} ' Power'])
-                        ylabel(['% Change in ' obs{i}]); xlabel('Segment Length (s)')
-                        
+                    panlist = [1 3 5 7 9; 2 4 6 8 10]; ylimlist = {{[-25 350];[-25 250];[-25 250];[-25 250]},{[-100 100];[-100 300];[-100 100];[-100 300]}};
+                    obs = {[R.bregname{breg} ' ' R.bandinits{R.bregband{breg}}],['STN ' R.bandinits{R.bregband{breg}}],['SMA ' R.bandinits{2}],['STN ' R.bandinits{2}]};
+                    for i = 1:4
+                        titlist{i} = ['STN-' R.bregname{breg} ' ' R.bandinits{R.bregband{breg}} ' Phase vs ' obs{i} ' Power'];
                     end
+
+%                     figure(30)
+%                     for i = 1:4
+%                         subplot(4,2,panlist(cond,i))
+%                         [A stat] = linplot_PD(log10(segLCol)',ampSegCol(i,:)','Seg Length (s)','Amplitude',cmapint(i,:)); xlim([-1.5 1])
+%                         ylim(ylimlist{breg}{i})
+%                         Rcoeff(:,:,i) = stat.modcoef.*(stat.p<0.05);
+%                        title(titlist{i});
+%                         ylabel(['% Change in ' obs{i}]); xlabel('Segment Length (s)')
+%                         
+%                     end
+                    maxcohGroup(:,cond,side,sub) = vc_clean.specanaly.cohstats.maxcoh';
+                    maxpowGroup(:,cond,side,sub) = vc_clean.specanaly.powstats.maxpow';
+                    meansegColGroup(cond,side,sub) = sum(segLCol)./tendtot;%
+                    meanpowGroup(:,cond,side,sub) =  nanmean(ampSegCol,2);
                     ampsegColGroup{cond,side,sub} = ampSegCol;
                     segLColGroup{cond,side,sub} = segLCol;
-                    RcoeffGroup{cond,side,sub} = Rcoeff;
+%                     RcoeffGroup{cond,side,sub} = Rcoeff;
                     phiBin = linspace(-pi,pi,QX);
                     phiBinMid = phiBin(1:end-1)+((phiBin(2)-phiBin(1))/2);
-                    [sub side cond]
-                    for i = 1:3
-                        [shiftPhiCol phipeak(i)]= findAmpPhi(R,ampSegCol(i,:),relativePhiCol,phiBin);
+                    ampSur = makeAmpRPhiSurr(R,ampSegCol,relativePhiCol,phiBin);
+
+ %                     ampSur = ampSur - min(ampSur')';
+                    for i = 1:4
+                        relativePhiCol = relativePhiCol;
+                        [shiftPhiCol phipeak(i)]= findAmpPhi(R,ampSegCol(i,:),relativePhiCol',phiBin);
                         [ampBinMu(i,:) ampBinSEM(i,:) ampBinDat{i}] = binstats(shiftPhiCol,ampSegCol(i,:),phiBin);
                     end
                     
-                    [shiftPhiCol phipeak(4)]= findAmpPhi(R,segLCol,relativePhiCol,phiBin);
+                    [shiftPhiCol phipeak(4)]= findAmpPhi(R,segLCol,relativePhiCol',phiBin);
                     [segBinMu segBinSEM segBinDat] = binstats(shiftPhiCol,segLCol,phiBin);
                     segBinSEM(isnan(segBinSEM)) = 0;
                     
@@ -61,51 +68,72 @@ for breg = 2:length(R.bregname)
                     ampBinGroup{cond,side,sub} = ampBinMu;
                     segBinGroup{cond,side,sub} = segBinMu;
                     phipeakGroup{cond,side,sub} = phipeak;
-                    
-                    figure(1)
-                    cmap = linspecer(3);
-                    ylimlist = {{[-25 350];[-25 250];[-25 250]},{[-25 75];[-25 200];[-25 250]}};
-                    for i = 1:3
-                        subplot(4,2,panlist(cond,i))
-                        hl = plot(phiBinMid', ampBinMu(i,:)','--','color',cmap(i,:)); %hold on
-                        % %                         [hl, hp] = boundedline(phiBinMid', ampBinMu(i,:)',ampBinSEM(i,:)','cmap',cmap(i,:)); hold on
-                        % %                         if cond == 1; hl.LineStyle = '--'; end
-                        % %                         hp.FaceAlpha = 0.4;
-                        % %                         [xq yq R2 exitflag] = VMfit(phiBinMid',ampBinMu(i,:)',20,[0,-pi,-100],[100,pi,1e3],0);
-                        % %                         if exitflag == 1
-                        % %                             hold on; plot(xq,yq,'color',cmap(i,:));
-                        % %                         end
-                        % %                         [xq yq R2 exitflag] = sinfit(phiBinMid', ampBinMu(i,:)',20,[25; 2*pi; 0; -500],[300;2*pi; 2*pi; 500],0);
-                        % %                         plot(xq,yq,'color',cmap(i,:));
-                        ylim(ylimlist{breg}{i})
-                        title(['STN-' R.bregname{breg} ' ' R.bandinits{R.bregband{breg}} ' Phase vs ' obs{i} ' Power'])
-                        ylabel(['% Change in ' obs{i}]); xlabel('Relative Phase (rads)')
-                        grid on
-                    end
-                    
                     cmap = linspecer(5);
-                    panlist(:,4) = [7; 8];
-                    subplot(4,2,panlist(cond,4))
-                    hl = plot(phiBinMid', segBinMu(1,:)','--','color',cmap(5,:)); %hold on
-                    % %                     [hl, hp] = boundedline(phiBinMid', segBinMu(1,:)',segBinSEM(1,:)','cmap',cmap(5,:));
-                    % %                     if cond == 1; hl.LineStyle = '--'; end
-                    % %                     hp.FaceAlpha = 0.4;
-                    % %                     [xq yq R2 exitflag] = VMfit(phiBinMid',segBinMu(1,:)',20,[0,-10,0.01],[1,10,1e3],0);
-                    % %                     [xq yq R2 exitflag] = sinfit(phiBinMid', segBinMu(1,:)',20,[0.01; 2*pi; 0; -1],[0.5; 2*pi; 2*pi; 1],0);
-                    % %                     if exitflag == 1
-                    % %                     hold on; plot(xq,yq,'color',cmap(5,:));
-                    % %                     end
-                    ylimlist = {[0 1],[0 1]};
-                    ylim(ylimlist{breg}); grid on
-                    title(['STN-' R.bregname{breg} ' ' R.bandinits{R.bregband{breg}} ' Phase vs ' R.bandinits{R.bregband{breg}} ' Frame Length'])
-                    
-                    ylabel(['LB Segment Length (s)']); xlabel('Relative Phase (rads)')
+                    figure(10+cond)
+                    plotExampleSub_PA(shiftPhiCol,phiBin,ampSegCol,segLCol,ampSur,cmap,obs,ylimlist{breg},titlist,cond)
+                    %                     figure(1)
+                    %                     cmap = linspecer(3);
+                    %                     ylimlist = {{[-25 350];[-25 250];[-25 250]},{[-25 75];[-25 200];[-25 250]}};
+                    %                     for i = 1:3
+                    %                         subplot(4,2,panlist(cond,i))
+                    %                         hl = plot(phiBinMid', ampBinMu(i,:)','--','color',cmap(i,:)); %hold on
+                    %                         % %                         [hl, hp] = boundedline(phiBinMid', ampBinMu(i,:)',ampBinSEM(i,:)','cmap',cmap(i,:)); hold on
+                    %                         % %                         if cond == 1; hl.LineStyle = '--'; end
+                    %                         % %                         hp.FaceAlpha = 0.4;
+                    %                         % %                         [xq yq R2 exitflag] = VMfit(phiBinMid',ampBinMu(i,:)',20,[0,-pi,-100],[100,pi,1e3],0);
+                    %                         % %                         if exitflag == 1
+                    %                         % %                             hold on; plot(xq,yq,'color',cmap(i,:));
+                    %                         % %                         end
+                    %                         % %                         [xq yq R2 exitflag] = sinfit(phiBinMid', ampBinMu(i,:)',20,[25; 2*pi; 0; -500],[300;2*pi; 2*pi; 500],0);
+                    %                         % %                         plot(xq,yq,'color',cmap(i,:));
+                    %                         ylim(ylimlist{breg}{i})
+                    %                         title(['STN-' R.bregname{breg} ' ' R.bandinits{R.bregband{breg}} ' Phase vs ' obs{i} ' Power'])
+                    %                         ylabel(['% Change in ' obs{i}]); xlabel('Relative Phase (rads)')
+                    %                         grid on
+                    %                     end
+                    %
+                    %                     cmap = linspecer(5);
+                    %                     panlist(:,4) = [7; 8];
+                    %                     subplot(4,2,panlist(cond,4))
+                    %                     hl = plot(phiBinMid', segBinMu(1,:)','--','color',cmap(5,:)); %hold on
+                    %                     % %                     [hl, hp] = boundedline(phiBinMid', segBinMu(1,:)',segBinSEM(1,:)','cmap',cmap(5,:));
+                    %                     % %                     if cond == 1; hl.LineStyle = '--'; end
+                    %                     % %                     hp.FaceAlpha = 0.4;
+                    %                     % %                     [xq yq R2 exitflag] = VMfit(phiBinMid',segBinMu(1,:)',20,[0,-10,0.01],[1,10,1e3],0);
+                    %                     % %                     [xq yq R2 exitflag] = sinfit(phiBinMid', segBinMu(1,:)',20,[0.01; 2*pi; 0; -1],[0.5; 2*pi; 2*pi; 1],0);
+                    %                     % %                     if exitflag == 1
+                    %                     % %                     hold on; plot(xq,yq,'color',cmap(5,:));
+                    %                     % %                     end
+                    %                     ylimlist = {[0 1],[0 1]};
+                    %                     ylim(ylimlist{breg}); grid on
+                    %                     title(['STN-' R.bregname{breg} ' ' R.bandinits{R.bregband{breg}} ' Phase vs ' R.bandinits{R.bregband{breg}} ' Frame Length'])
+                    %
+                    %                     ylabel(['LB Segment Length (s)']); xlabel('Relative Phase (rads)')
                 end
             end
-            set(gcf,'Position',[1000         171         733         825]);
+            %             set(gcf,'Position',[1000         171         733         825]);
             close all
         end
     end
+%
+% Try to correlate classical statistics i.e. power/coherence with time
+% varying approaches.
+
+ms = {'ro','bo'};
+    for cond = 1:2
+        figure(10+cond)
+        a = squeeze(maxcohGroup(3,cond,:,:));
+        b = squeeze(meansegColGroup(cond,:,:));
+        %         [r p] = corrcoef(a(:),b(:))
+        linplot(a(:),b(:),'B2 Coherence','Sum B2 Frame Length',ms{cond})
+        figure(20+cond)
+        a = squeeze(maxpowGroup(3,cond,:,:));
+        b = squeeze(meanpowGroup(2,cond,:,:));
+        %         [r p] = corrcoef(a(:),b(:))
+        linplot(a(:),b(:),'B1 Power','Mean B1 In-Frame Amp',ms{cond})
+    end
+    
+    
     figure(30)
     set(gcf,'Position',[1190         330         627         750])
     x1 = vertcat(RcoeffGroup{1,:,:});

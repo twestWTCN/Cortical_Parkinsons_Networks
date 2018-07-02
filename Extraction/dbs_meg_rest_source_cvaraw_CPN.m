@@ -54,7 +54,7 @@ cd([R.datapathr initials]);
 res = mkdir('BF');
 
 
-roisum = 'max';%'svd';%'keep' 'max'
+roisum = 'keep';%'svd';%'keep' 'max'
 scramblestn = 'no';
 keep = 1;
 %%
@@ -120,15 +120,15 @@ Ds = Ds.path([R.datapathr initials '\SPMdata\']);
 save(Ds);
 % Ds = spm_eeg_load('C:\Users\twest\Documents\Work\GitHub\Cortical_Parkinsons_Networks\Data\DF\SPMdata\STG_VC04052018_dDF_R_1_off.mat')
 %%
-if isequal(scramblestn, 'yes')
-stnchans = find(strncmp(Ds.chanlabels,'STN',3));
-for i = 1:numel(stnchans)
-    x = Ds(stnchans(i),:);
-    x = x(randperm(length(x)));
-    Ds(stnchans(i),:) = x;
-end
-save(Ds);
-end
+% if isequal(scramblestn, 'yes')
+% stnchans = find(strncmp(Ds.chanlabels,'STN',3));
+% for i = 1:numel(stnchans)
+%     x = Ds(stnchans(i),:);
+%     x = x(randperm(length(x)));
+%     Ds(stnchans(i),:) = x;
+% end
+% save(Ds);
+% end
 if isequal(roisum, 'keep')
 
     
