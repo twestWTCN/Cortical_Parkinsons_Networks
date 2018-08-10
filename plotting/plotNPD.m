@@ -6,8 +6,10 @@ if nargin<5
     statflag= 0;
 end
 subplot(1,4,1);
-ax(1) = boundedline(Hz,nanmean(npdspctrm{1,1,1},2),nanstd(npdspctrm{1,1,1},0,2)/sqrt(size(npdspctrm{1,1,1},2)),'cmap',R.condcmap(1,:),'alpha','transparency',0.4);
-ax(2) = boundedline(Hz,nanmean(npdspctrm{2,1,1},2),nanstd(npdspctrm{2,1,1},0,2)/sqrt(size(npdspctrm{2,1,1},2)),'cmap',R.condcmap(2,:),'alpha','transparency',0.4);
+for cond = 1:size(npdspctrm,1)
+    ax(cond) = boundedline(Hz,nanmean(npdspctrm{cond,1,1},2),nanstd(npdspctrm{cond,1,1},0,2)/sqrt(size(npdspctrm{cond,1,1},2)),'cmap',R.condcmap(cond,:),'alpha','transparency',0.4);
+end
+
 title('Zero','FontSize',10); xlim([6 45]); ylim(ylimz);
 xlabel('Frequency (Hz)','FontSize',10); ylabel('NPD','FontSize',10);
 
@@ -20,9 +22,10 @@ end
 legend(ax,R.condname); grid on
 
 subplot(1,4,2);
-ax(1) = boundedline(Hz,nanmean(npdspctrm{1,1,2},2),nanstd(npdspctrm{1,1,2},0,2)/sqrt(size(npdspctrm{1,1,2},2)),'cmap',R.condcmap(1,:),'alpha','transparency',0.8);
-ax(2) = boundedline(Hz,nanmean(npdspctrm{2,1,2},2),nanstd(npdspctrm{2,1,2},0,2)/sqrt(size(npdspctrm{2,1,2},2)),'cmap',R.condcmap(2,:),'alpha','transparency',0.8);
-title('Forward','FontSize',10); xlim([6 45]); ylim(ylimz); legend(ax,R.condname); grid on
+for cond = 1:size(npdspctrm,1)
+    ax(cond) = boundedline(Hz,nanmean(npdspctrm{cond,1,2},2),nanstd(npdspctrm{cond,1,2},0,2)/sqrt(size(npdspctrm{cond,1,2},2)),'cmap',R.condcmap(cond,:),'alpha','transparency',0.4);
+end
+title('STN -> Medial','FontSize',10); xlim([6 45]); ylim(ylimz); legend(ax,R.condname); grid on
 xlabel('Frequency (Hz)','FontSize',10);ylabel('NPD','FontSize',10);
 
 if statflag==1
@@ -33,9 +36,10 @@ if statflag==1
 end
 
 subplot(1,4,3);
-ax(1) = boundedline(Hz,nanmean(npdspctrm{1,1,3},2),nanstd(npdspctrm{1,1,3},0,2)/sqrt(size(npdspctrm{1,1,3},2)),'cmap',R.condcmap(1,:),'alpha','transparency',0.8);
-ax(2) = boundedline(Hz,nanmean(npdspctrm{2,1,3},2),nanstd(npdspctrm{2,1,3},0,2)/sqrt(size(npdspctrm{2,1,3},2)),'cmap',R.condcmap(2,:),'alpha','transparency',0.8);
-title('Reverse','FontSize',10); xlim([6 45]); ylim(ylimz); 
+for cond = 1:size(npdspctrm,1)
+    ax(cond) = boundedline(Hz,nanmean(npdspctrm{cond,1,3},2),nanstd(npdspctrm{cond,1,3},0,2)/sqrt(size(npdspctrm{cond,1,3},2)),'cmap',R.condcmap(cond,:),'alpha','transparency',0.4);
+end
+title('Medial -> STN','FontSize',10); xlim([6 45]); ylim(ylimz);
 xlabel('Frequency (Hz)','FontSize',10);ylabel('NPD','FontSize',10);
 
 if statflag==1
@@ -47,8 +51,9 @@ end
 legend(ax,R.condname); grid on
 
 subplot(1,4,4);
-ax(1) = boundedline(Hz,nanmean(npdspctrm{1,1,4},2),nanstd(npdspctrm{1,1,4},0,2)/sqrt(size(npdspctrm{1,1,4},2)),'cmap',R.condcmap(1,:),'alpha','transparency',0.8);
-ax(2) = boundedline(Hz,nanmean(npdspctrm{2,1,4},2),nanstd(npdspctrm{2,1,4},0,2)/sqrt(size(npdspctrm{2,1,4},2)),'cmap',R.condcmap(2,:),'alpha','transparency',0.8);
+for cond = 1:size(npdspctrm,1)
+    ax(cond) = boundedline(Hz,nanmean(npdspctrm{cond,1,4},2),nanstd(npdspctrm{cond,1,4},0,2)/sqrt(size(npdspctrm{cond,1,4},2)),'cmap',R.condcmap(cond,:),'alpha','transparency',0.4);
+end
 title('Sum Coherence','FontSize',10); xlim([6 45]); ylim([ylimz(1) ylimz(2)+0.1]);
 xlabel('Frequency (Hz)','FontSize',10);ylabel('NPD','FontSize',10);
 if statflag==1
