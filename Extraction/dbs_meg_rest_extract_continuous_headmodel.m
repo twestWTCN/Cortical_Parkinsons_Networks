@@ -216,7 +216,7 @@ for f = 1:numel(files)
     
     % Downsample =======================================================
     S = [];
-    S.D = D; S.fsample_new = 128;
+    S.D = D; S.fsample_new = 180;
     D = spm_eeg_downsample(S);
     
     % Artefact marking in MEG =========================================
@@ -300,7 +300,7 @@ for f = 1:numel(files)
     S.D = D;
     S.band = 'high';
     S.freq = 4;
-    S.type = 'butterworth';
+    S.type = 'fir';
     S.prefix = 'f';
     D = spm_eeg_filter(S);
     

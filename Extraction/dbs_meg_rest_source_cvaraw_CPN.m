@@ -33,6 +33,7 @@ S.D = D;
 S.channels = D.chanlabels(chlist);
 D = spm_eeg_crop(S);
 
+% Missing Data
 a = D(:,:,:);
 for x = 1:size(a,1)
     if sum(isnan(a(x,:)))> 1
@@ -44,6 +45,20 @@ end
 D(:,:,:) = a;
 clear a
 
+% Jumps
+a = D(:,:,:);
+for x = 1:size(a,1)
+    dat = a(x,:);
+    dat(abs(dat)>(6*std(dat))) = NaN;
+    dat= fillmissing(dat,'spline');
+    a(x,:) = dat;
+end
+D(:,:,:) = a;
+clear a
+
+
+
+
 % S = [];
 % S.D = D; S.fsample_new = 128;
 % D = spm_eeg_downsample(S);
@@ -54,9 +69,9 @@ cd([R.datapathr initials]);
 res = mkdir('BF');
 
 
-roisum = 'keep';%'svd';%'keep' 'max'
+roisum = 'max';%'svd';%'keep' 'max'
 scramblestn = 'no';
-keep = 1;
+keep = 0;
 %%
 source{1}.spm.tools.beamforming.data.dir = {[R.datapathr initials '\BF']};
 source{1}.spm.tools.beamforming.data.D = {fullfile(D)};
