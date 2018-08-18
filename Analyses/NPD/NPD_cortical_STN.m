@@ -25,11 +25,11 @@ for cond = 1:2
         %     subplot(1,4,3);plot(Hz,f13(:,11),'b'); hold on; xlim([2 48]); ylim([0 0.1]);
         %     subplot(1,4,4);plot(Hz,f13(:,12),'g'); hold on; xlim([2 48]); ylim([0 0.1]);
         %     end
-        kappa = 1; %3.8;
-        npdspctrm{cond,1,1}(:,i) = kappa.*f13(:,10);
-        npdspctrm{cond,1,2}(:,i) = kappa.*f13(:,11);
-        npdspctrm{cond,1,3}(:,i) = kappa.*f13(:,12);
-        npdspctrm{cond,1,4}(:,i) = kappa.*f13(:,4);
+        kappa = 2;
+        npdspctrm{cond,1,i,1} = kappa.*f13(:,10);
+        npdspctrm{cond,1,i,2} = kappa.*f13(:,11);
+        npdspctrm{cond,1,i,3} = kappa.*f13(:,12);
+        npdspctrm{cond,1,i,4} = kappa.*f13(:,4);
         
         %  f column 1       frequency in Hz
         %  f column 2       Log input/x  spectrum
@@ -50,8 +50,8 @@ if plotop ==1
     plotNPD(Hz,npdspctrm,R)
 end
 for cond = 1:2
-    npdspctrm_out{cond,1,1}(:,1) = mean(npdspctrm{cond,1,1},2);
-    npdspctrm_out{cond,1,2}(:,1) = mean(npdspctrm{cond,1,2},2);
-    npdspctrm_out{cond,1,3}(:,1) = mean(npdspctrm{cond,1,3},2);
-    npdspctrm_out{cond,1,4}(:,1) = mean(npdspctrm{cond,1,4},2);
+    npdspctrm_out{cond,1,1,1} = mean([npdspctrm{cond,1,:,1}],2);
+    npdspctrm_out{cond,1,1,2} = mean([npdspctrm{cond,1,:,2}],2);
+    npdspctrm_out{cond,1,1,3} = mean([npdspctrm{cond,1,:,3}],2);
+    npdspctrm_out{cond,1,1,4} = mean([npdspctrm{cond,1,:,4}],2);
 end

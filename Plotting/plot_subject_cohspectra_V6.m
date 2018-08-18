@@ -4,7 +4,7 @@ if nargin<1
 end
 load([R.datapathr 'UPDRS_Scores'])
 for breg = 2:length(R.bregname)
-    for sub = 1:length(R.subname)
+    for sub = 1 %1:length(R.subname)
         for side = 1:2
             for cond = 1:length(R.condname)
                 load([R.datapathr R.subname{sub} '\ftdata\cleaned\V6_sources_clean_ROI_' R.condname{cond} '_' R.siden{side} '_' R.ipsicon  '_' R.bregname{breg}],'vc_clean')
@@ -25,10 +25,10 @@ for breg = 2:length(R.bregname)
                 %                 savefigure_v2([R.datapathr R.subname{sub} '\images\spectral\'],['NPD_STN_Source_analysis_' R.subname{sub} '_' R.siden{side} '_'  R.bregname{breg}],[1],[],[]);
                 %                 close all
                 for cond =1:2
-                    npdspctrm_group{cond,side,1}(:,sub) = npdspctrm{cond,1,1}(:,1);
-                    npdspctrm_group{cond,side,2}(:,sub) = npdspctrm{cond,1,2}(:,1);
-                    npdspctrm_group{cond,side,3}(:,sub) = npdspctrm{cond,1,3}(:,1);
-                    npdspctrm_group{cond,side,4}(:,sub) = npdspctrm{cond,1,4}(:,1);
+                    npdspctrm_group{cond,side,sub,1} = npdspctrm{cond,1,1}(:,1);
+                    npdspctrm_group{cond,side,sub,2} = npdspctrm{cond,1,2}(:,1);
+                    npdspctrm_group{cond,side,sub,3} = npdspctrm{cond,1,3}(:,1);
+                    npdspctrm_group{cond,side,sub,4} = npdspctrm{cond,1,4}(:,1);
                     x = npdspctrm{cond,1,4}(:,1);
                 end
                 figure('Name',[R.subname{sub} ' ' R.siden{side}])
@@ -44,18 +44,20 @@ for breg = 2:length(R.bregname)
                     %% ON
                     frq = vchansave_ON.specanaly.frq; powsubgrand{2,ch,side,sub} = ON(:,1);
                     ax(2) = plot((frq),(mean(ON,2)),'color',cmap(2,:));
+                    ax(2).LineWidth = 1.5;
                     %                     %                     ax(1) = boundedline(frq,mean(ON,2),std(ON,0,2)/sqrt(size(ON,2)),'cmap',cmap(1,:),'alpha','transparency',0.45);
-                    %                     %                     set(gca,'xscale','log'); set(gca,'yscale','log')
-                    xlim(([6 45]));%ylim([0.005 0.05])
+                    set(gca,'xscale','log'); set(gca,'yscale','log')
+                    xlim(([6 45])); ylim([0.01 0.1])
                     hold on
                     %                     %                             [xCalc,yCalc] = linregress(log10(frq)',log10(ON));
                     %                     %                             plot(xCalc(:,2),yCalc,'--','color',cmap(1,:),'linewidth',2);
                     %% OFF
                     frq =  vchansave_OFF.specanaly.frq; powsubgrand{1,ch,side,sub} = OFF(:,1);
                     ax(1) = plot((frq),(mean(OFF,2)),'color',cmap(1,:));
+                    ax(1).LineWidth = 1.5;
                     %                     ax(2) = boundedline(frq,mean(OFF,2),std(OFF,0,2)/sqrt(size(OFF,2)),'cmap',cmap(2,:),'alpha','transparency',0.45);
-                    %                     set(gca,'xscale','log'); set(gca,'yscale','log')
-                    xlim(([6 45]));%ylim([0.005 0.05]);
+                    set(gca,'xscale','log'); set(gca,'yscale','log')
+                    xlim(([6 45])); ylim([0.01 0.1])
                     if ch == 1; tit = [R.siden{side} ' ' R.bregname{breg}]; else tit = [R.siden{side} ' STN']; end
                     xlabel('Frequency (Hz)');ylabel('log Normalized Power'); title(tit)
                     legend(ax,R.condname);
@@ -72,6 +74,7 @@ for breg = 2:length(R.bregname)
                 %% Plot ON
                 frq = vchansave_ON.specanaly.frq'; frqsave =vchansave_ON.specanaly.frq';
                 ax(2) = plot(frq,mean(ON,2),'color',cmap(2,:));
+                ax(2).LineWidth = 1.5;
                 %             ax(1) = boundedline(frq,mean(ON,2),0,'cmap',cmap(1,:),'alpha','transparency',0.45);
                 xlim([4 45]);
                 hold on
@@ -80,6 +83,7 @@ for breg = 2:length(R.bregname)
                 %% Plot OFF
                 frq = vchansave_ON.specanaly.frq';
                 ax(1) = plot(frq,mean(OFF,2),'color',cmap(1,:));
+                ax(1).LineWidth = 1.5;
                 %             ax(2) = boundedline(frq,mean(OFF,2),std(OFF,0,2)/sqrt(size(OFF,2)),'cmap',cmap(2,:),'alpha','transparency',0.45);
                 xlim([6 45]); xlabel('Frequency (Hz)');ylabel('coherence'); title(['STN/' R.bregname{breg} ' coherence'])
                 legend(ax,R.condname)
@@ -92,16 +96,16 @@ for breg = 2:length(R.bregname)
             else
                 ON = NaN; OFF = NaN; frq = NaN;
                 for cond =1:2
-                    npdspctrm_group{cond,side,1}(:,sub) = nan(size(npdspctrm{cond,1,1}(:,1)));
-                    npdspctrm_group{cond,side,2}(:,sub) = nan(size(npdspctrm{cond,1,2}(:,1)));
-                    npdspctrm_group{cond,side,3}(:,sub) = nan(size(npdspctrm{cond,1,3}(:,1)));
-                    npdspctrm_group{cond,side,4}(:,sub) = nan(size(npdspctrm{cond,1,4}(:,1)));
+                    npdspctrm_group{cond,side,sub,1} = nan(size(npdspctrm{cond,1,1}(:,1)));
+                    npdspctrm_group{cond,side,sub,2} = nan(size(npdspctrm{cond,1,2}(:,1)));
+                    npdspctrm_group{cond,side,sub,3} = nan(size(npdspctrm{cond,1,3}(:,1)));
+                    npdspctrm_group{cond,side,sub,4} = nan(size(npdspctrm{cond,1,4}(:,1)));
                 end
             end
-%             % If testing NPD
-%             OFF = npdspctrm_group{1,side,3}(:,sub);  ON = npdspctrm_group{2,side,3}(:,sub);
-%             frq = Hz;
-
+            %             % If testing NPD
+            %             OFF = npdspctrm_group{1,side,3}(:,sub);  ON = npdspctrm_group{2,side,3}(:,sub);
+            %             frq = Hz;
+            
             pind = find(strcmp(R.subname{sub},patient));
             if side == 1; hemiI = 2; elseif side == 2; hemiI = 1; end
             updrsSave{1,side,sub} = eval([R.siden{hemiI}(1) '_akinesia_' R.condname{1} '(' num2str(pind) ')']);
@@ -116,18 +120,20 @@ for breg = 2:length(R.bregname)
             highbetacoh{3,side,sub} = maxcoh2 - maxcoh1;
             %             refidSave{side,sub} = refid;
             title(['OFF ' num2str(updrsSave{2,side,sub}) ' OFF-ON: ' num2str(updrsSave{3,side,sub})])
-                        savefigure_v2([R.datapathr '\images\spectral\' R.subname{sub} '\'],['STN_Source_Power_analysis_' R.subname{sub} '_' R.siden{side}  '_'  R.bregname{breg}],[1:2],[],'-r200');
+            %                         savefigure_v2([R.datapathr '\images\spectral\' R.subname{sub} '\'],['STN_Source_Power_analysis_' R.subname{sub} '_' R.siden{side}  '_'  R.bregname{breg}],[1:2],[],'-r200');
             close all
         end
     end
     
     % figure
     barplot_coh_groups(R.datapathr,highbetacoh)
-    savefigure_v2([R.datapathr 'results\spectral\'],['STN_Source_Power_analysis_GroupAverage_boxplots_'  R.bregname{breg}],[],[],'-r100'); close all
-    switch breg; case 1; ylimz = [0 0.05]; case 2; ylimz = [0 0.1]; end
-    plotNPD(Hz,npdspctrm_group,R,ylimz,1)
+    %     savefigure_v2([R.datapathr 'results\spectral\'],['STN_Source_Power_analysis_GroupAverage_boxplots_'  R.bregname{breg}],[],[],'-r100'); close all
     
-    spectralplots_groups(R,powsubgrand,cohsubgrand,frqsave,{R.bregname{breg},'STN'},1)
+    
+    switch breg; case 1; ylimz = [0 0.05]; case 2; ylimz = [0 0.6]; end
+    statflag = 0; % For individual example!
+    plotNPD(Hz,npdspctrm_group,R,ylimz,statflag)
+    spectralplots_groups(R,powsubgrand,cohsubgrand,frqsave,{R.bregname{breg},'STN'},0)
     close all
     save([R.datapathr 'results\spectral\UPDRS_Connect_groupdata.m'],'updrsSave','highbetacoh')
     
@@ -153,7 +159,7 @@ for breg = 2:length(R.bregname)
     b = vertcat(highbetacoh{3,:,:}); b = b(:,1);
     a(isnan(b)) = []; b(isnan(b)) = [];
     xlab = 'ON-OFF Hemi Aknesia Score'; ylab = ['ON-OFF ' R.bregname{breg} '/STN ' R.bandname{R.bregband{breg}} ' Coh.'];
-    figure; linplot(a,b,xlab,ylab,'bo');    
+    figure; linplot(a,b,xlab,ylab,'bo');
     
     savefigure_v2([R.datapathr 'results\spectral\'],['STN_WPLI_H_UPDRS_Corr_'  R.bregname{breg}],[],[],'-r100'); close all
 end

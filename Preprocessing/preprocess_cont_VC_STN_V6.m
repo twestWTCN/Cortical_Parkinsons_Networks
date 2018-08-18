@@ -21,7 +21,7 @@ for sub = 1:length(R.subname)
                     x = (x-mean(x));%./std(x);
                     x2data(i,:) = x;
                 end
-                x3data = ft_preproc_bandpassfilter(x2data, fsamp,R.pp.cont.thin.bp, [], 'but', 'twopass', 'reduce');
+                x3data = ft_preproc_bandpassfilter(x2data, fsamp,R.pp.cont.thin.bp, [], 'fir', 'twopass', 'reduce');
                 for i = 1:size(x3data,1)
                     x = x3data(i,:);
                     x = (x-mean(x)); %./std(x);

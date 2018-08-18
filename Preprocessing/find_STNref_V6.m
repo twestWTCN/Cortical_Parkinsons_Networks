@@ -33,10 +33,10 @@ for sub = 1:length(R.subname)
                 freq         = ft_freqanalysis(cfg, Xseg);
                 
                 tpx = squeeze(mean(abs(freq.fourierspctrm(:,:,:)),1));
-                % Normalisation
-                for i = 1:numel(Xseg.label)
-                    tpx(i,:) = tpx(i,:)./sum(tpx(i,freq.freq>4 & freq.freq<45));                   
-                end
+                % Normalisation DONT SO YOU CAN SEE POWER!
+%                 for i = 1:numel(Xseg.label)
+%                     tpx(i,:) = tpx(i,:)./sum(tpx(i,freq.freq>4 & freq.freq<45));                   
+%                 end
                 
                 figure(1)
                 %                 subplot(1,2,cond)
