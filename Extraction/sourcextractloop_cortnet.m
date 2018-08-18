@@ -3,18 +3,18 @@ cd('C:\Users\twest\Documents\Work\GitHub\Cortical_Parkinsons_Networks')
 if nargin<1
     R = makeHeader_SubCort_Cort_Networks();
 end
-FRESH = 0; %!!!
+FRESH = 1; %!!!
 for sub = 1:length(R.subname)
-    %     if FRESH ==1
-    %         eval(['! rmdir ' R.datapathr R.subname{sub} ' /s /q'])
-    %         mkdir([R.datapathr R.subname{sub}])
-    %     end
+        if FRESH ==1
+            eval(['! rmdir ' R.datapathr R.subname{sub} ' /s /q'])
+            mkdir([R.datapathr R.subname{sub}])
+        end
     for cond = 0:1
         for breg = 1:length(R.bregname)
             cd('C:\Users\twest\Documents\Work\GitHub\Cortical_Parkinsons_Networks')
-            %             if breg == 1
-            %                 dbs_meg_rest_extract_continuous_headmodel(R.subname{sub}, cond)
-            %             end
+            if breg == 1
+                dbs_meg_rest_extract_continuous_headmodel(R.subname{sub}, cond)
+            end
             for side = 1:2
                 ROItable = [{['ipsi_' R.siden{side}(1) R.ref_list{1}(1:3) '_' R.siden{side}(1) R.bregname{breg}]}...
                     {'all'},{R.bandef(R.bregband{breg},:)},{R.bregROI{breg}(side,:)}];

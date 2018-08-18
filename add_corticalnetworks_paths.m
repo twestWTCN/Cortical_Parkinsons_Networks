@@ -31,6 +31,8 @@ elseif strcmp(getenv('COMPUTERNAME'),'FREE')
     addpath(genpath('C:\Users\twest\Documents\Work\Github\Cortical_Parkinsons_Networks\Tools'))
     addpath(genpath('C:\Users\twest\Documents\Work\Github\Cortical_Parkinsons_Networks\Segregate_networks'))
     addpath(genpath('C:\Users\twest\Documents\Work\Github\DynPhaseConnectivity'))
+        addpath(genpath('C:\Users\twest\Documents\Work\Github\superbar'))
+
     addpath('C:\Users\twest\Documents\Work\MATLAB ADDONS\mvgc_v1.0')
     addpath('C:\shared')
     run startup.m

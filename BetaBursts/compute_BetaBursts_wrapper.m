@@ -4,9 +4,9 @@ if nargin<2
 end
 %%%
 close all
-for sub = 3:length(R.subname)
+for sub = 1:length(R.subname)
     for breg = 2:length(R.bregname)
-        for side = 2 %1:2
+        for side = 1:2
             AmpTime = [];
             for cond = 1:length(R.condname)
                 load([R.datapathr R.subname{sub} '\ftdata\cleaned\V6_sources_clean_ROI_' R.condname{cond} '_' R.siden{side} '_' R.ipsicon  '_' R.bregname{breg}],'vc_clean')
@@ -16,7 +16,7 @@ for sub = 3:length(R.subname)
             fsamp = vc_clean.fsample;
             R.fsamp = fsamp;
             T = linspace(0,length([AmpTime{:}])/fsamp,length([AmpTime{:}]));
-            eps = prctile([AmpTime{:}],65,2);
+            eps = prctile([AmpTime{:}],75,2);
             
             % Plot Bursting
             figure(4)

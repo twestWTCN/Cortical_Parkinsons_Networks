@@ -4,7 +4,7 @@ if nargin<1
 end
 load([R.datapathr 'UPDRS_Scores'])
 for breg = 2:length(R.bregname)
-    for sub = 1:length(R.subname)
+    for sub = 13:length(R.subname)
         for side = 1:2
             for cond = 1:length(R.condname)
                 load([R.datapathr R.subname{sub} '\ftdata\cleaned\V6_sources_clean_ROI_' R.condname{cond} '_' R.siden{side} '_' R.ipsicon  '_' R.bregname{breg}],'vc_clean')

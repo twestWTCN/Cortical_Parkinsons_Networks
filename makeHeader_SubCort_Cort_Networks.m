@@ -20,9 +20,9 @@ R.condnamelc = {'off','on'};
 
 R.siden = {'Left','Right'};
 R.titular = {'CTX','STN'}; % Possibly outdated
-R.bregname = {'STG','SMA'};
-R.bregband = {[1],[3]};
-R.bregROI = {[-46 -30 -2;46 -30 -2];[-18 -6 58; 18 -6 58]};
+R.bregname = {'SMA'};
+R.bregband = {[3]};
+R.bregROI = {[-18 -6 58; 18 -6 58]};
 % Virtual Channel Construction
 R.voi.radius = 15;
 R.voi.resolution = 5;

@@ -18,10 +18,13 @@ for sub = 1:length(R.subname)
                 cfg.length = R.specanaly.epochL;
                 Xseg = ft_redefinetrial(cfg,vc_clean);
                 
-                % cfg = [];
-                % cfg.viewmode = 'vertical';  % you can also specify 'butterfly'
-                % ft_databrowser(cfg, Xdata);
-                
+%                 cfg = [];
+%                 cfg.viewmode = 'vertical';  % you can also specify 'butterfly'
+%                 ft_databrowser(cfg, Xseg);
+                figure(3)
+                plot(vc_clean.time{1}',(vc_clean.trial{1}(2:end,:)+[0:10:20]')')
+                set(gcf,'Position',[723   271   560   420]); shg
+
                 cfg           = [];
                 cfg.method    = 'mtmfft';
                 cfg.taper     = 'hanning';
@@ -34,18 +37,18 @@ for sub = 1:length(R.subname)
                 
                 tpx = squeeze(mean(abs(freq.fourierspctrm(:,:,:)),1));
                 % Normalisation
-                for i = 1:numel(Xseg.label)
-                    tpx(i,:) = tpx(i,:)./sum(tpx(i,freq.freq>4 & freq.freq<45));                   
-                end
+%                 for i = 1:numel(Xseg.label)
+%                     tpx(i,:) = tpx(i,:)./sum(tpx(i,freq.freq>4 & freq.freq<45));                   
+%                 end
                 
                 figure(1)
                 %                 subplot(1,2,cond)
                 title(R.condname{cond})
                 xlabel('Freq'); ylabel('Norm. Power')
-                plot(freq.freq',tpx(1,:)','b')
-                hold on
+%                 plot(freq.freq',tpx(1,:)','b')
+%                 hold on
                 plot(repmat(freq.freq,3,1)',tpx(2:end,:)')
-                legend(vc_clean.label); grid on
+                legend(vc_clean.label{2:end}); grid on
                 set(gcf,'Position',[128   610   560   420])
                 
                 cfg           = [];
