@@ -8,7 +8,7 @@ elseif strcmp(getenv('COMPUTERNAME'),'FREE')
     R.datapathr = 'C:\Users\twest\Documents\Work\GitHub\Cortical_Parkinsons_Networks\Data\';
     R.resultspathr = 'C:\Users\twest\Documents\Work\GitHub\Cortical_Parkinsons_Networks\Results';
 end
-R.subname = {'DF','DP','DS','JA','JB','JN','LM','LN01','LN02','LN03','MC','MW','WB'};
+R.subname = {'DF','DP','DS','JB','JN','LM','LN02','LN03','MC','WB'}; % JA,,LN01: Bad Recordings - MW borderline - Rhs is ok
 % BAD SUBJS:
 % 'JP' - Issue with 'spm_cfg_eeg_inv_headmodel' - 'spm_eeg_artefact' is
 % marking all MEG channels bad. [~ 1 2 2] specifically

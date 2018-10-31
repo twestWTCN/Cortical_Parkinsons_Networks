@@ -10,7 +10,10 @@ if strcmp(getenv('COMPUTERNAME'),'SFLAP-2')
     addpath(genpath('C:\Users\Tim\Documents\Work\GIT\Cortical_Parkinsons_Networks\Tools'))
     addpath(genpath('C:\Users\Tim\Documents\Work\GIT\Cortical_Parkinsons_Networks\Segregate_Networks'))
         addpath(genpath('C:\Users\Tim\Documents\Work\GIT\superbar'))
-
+         addpath(genpath('C:\Users\Tim\Documents\Work\GIT\contourfcmap-pkg'))
+    addpath('C:\Users\Tim\Documents\Work\GIT\Cortical_Parkinsons_Networks\BetaBursts')
+    
+    addpath(genpath('C:\Users\Tim\Documents\Work\GIT\mvmdist'))
     addpath(genpath('C:\Users\twest\Documents\Work\GIT\DynPhaseConnectivity'))
     pathCell = regexp(path, pathsep, 'split'); onPath = any(strcmpi('C:\Users\Tim\Documents\MATLAB_ADDONS\mvgc_v1.0', pathCell));
     
@@ -18,7 +21,10 @@ if strcmp(getenv('COMPUTERNAME'),'SFLAP-2')
     if ~onPath; addpath('C:\Users\Tim\Documents\MATLAB_ADDONS\mvgc_v1.0'); run startup.m; end
     addpath('C:\Users\Tim\Documents\MATLAB_ADDONS\gramm-master\@gramm')
     addpath('C:\Users\Tim\Documents\MATLAB_ADDONS\distributionPlot')
-    
+    addpath('C:\Users\Tim\Documents\MATLAB_ADDONS\FMINSEARCHBND')
+        addpath('C:\Users\Tim\Documents\MATLAB_ADDONS\PEB_DFA')
+        addpath('C:\Users\Tim\Documents\MATLAB_ADDONS\\MLDFA')
+        
 elseif strcmp(getenv('COMPUTERNAME'),'FREE')
     addpath('C:\shared')
     addpath(genpath('C:\Users\twest\Documents\Work\Github\Cortical_Parkinsons_Networks\MRI_processing'))

@@ -13,7 +13,7 @@ function surrblk = phaseran(recblk,nsurr)
 % 
 % Output data
 % ---------------------
-% surrblk: 3D multidimensional array image block with the surrogate
+% surrblk: 3D multidimensional array image block with the surrogatequt
 % datasets along the third dimension
 % 
 % Example 1

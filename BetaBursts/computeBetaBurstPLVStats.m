@@ -1,42 +1,90 @@
 function BB = computeBetaBurstPLVStats(R,BB,F,plotop)
 cnt = 0;
-for cond = 1:2
-    for band = 2:size(R.bandef,1)
+for cond = 1:length(R.condname)
+    for band = 3; %2:size(R.bandef,1)
         % Segment PLV during Bursts
-        if isequal([band cond],[2 1]); BB.segPLV = []; BB.segRP = []; end
+        if isequal([band cond],[3 1])
+            BB.segPLV = {nan(1,size(R.bandef,1),2) nan(1,size(R.bandef,1),2)};
+            BB.segRP  = {nan(size(R.bandef,1),2) nan(size(R.bandef,1),2)};
+            BB.segRP = {nan(1) nan(1)};
+            BB.segPLV  = {nan(1) nan(1)};
+        end
         for ci = 1:size(BB.segA_save{cond},2)
             tind = BB.segTInds{cond}{ci};
+            dind  = BB.segInds{cond}{ci};
             swind = find(BB.SWTvec{cond} >= tind(1) & BB.SWTvec{cond} < tind(2));
-            BB.segPLV{cond}(:,band,ci) = mean(BB.PLV{cond}(band,swind));
-            BB.segRP{cond}(band,ci) = circ_mean(BB.RP{cond}(band,swind),[],2);
+            %             BB.segPLV{cond}(:,band,ci) = mean(BB.PLV{cond}(band,swind));
+            %             BB.segRP{cond}(band,ci) = circ_mean(BB.RP{cond}(band,swind),[],2);
+            if ~any(isnan(dind))
+                X = remnan(BB.RPdtime{cond}(dind));
+                BB.segRP{cond}(band,ci) = circ_mean(X,[],1);
+                %             BB.segPLV{cond}(:,band,ci) = bootstrapPLV(X,BB.period);
+                BB.segPLV{cond}(:,band,ci) = computePPC(BB.PhiTime{cond}(:,dind));
+                
+            end
+        end
+       
+        % Normalize the PPC
+        if numel(BB.segPLV{cond})>2
+            BB.segPLV{cond}(:,band,:) = (BB.segPLV{cond}(:,band,:)-median(BB.segPLV{cond}(:,band,:),3))./median(BB.segPLV{cond}(:,band,:),3)*100;
         end
         
+        % PS-DFA
+        X = unwrap(BB.RP{cond}(3,:));
+        X = diff(X);
+        X = remnan(X')';
+        DFAP = [];
+        DFAP(1) = BB.fsamp; DFAP(2) = 8/14;  DFAP(3) = 8;  DFAP(4) = 50;  DFAP(5) = 0;
+        [bmod win evi alpha] = peb_dfa_gen(X,DFAP,0);
+        BB.PSDFA(:,cond) = [alpha evi(2)];
+%         close all
         % Bin data by PLV and find Amplitude
         BB.binPLVEd = BB.range.PLV;
-        if isequal([band cond],[2 1]); BB.Amp_binPLV = []; end
+        if isequal([band cond],[3 1]); BB.Amp_binPLV = []; end
         for bs = 1:numel(BB.binPLVEd)-1
-            s = find(BB.segPLV{cond}(:,band,:)>=BB.binPLVEd(bs) & BB.segPLV{cond}(:,band,:)<BB.binPLVEd(bs+1));
+            if size(BB.segA_save{cond}(:),1)>1
+                s = find(BB.segPLV{cond}(:,band,:)>=BB.binPLVEd(bs) & BB.segPLV{cond}(:,band,:)<BB.binPLVEd(bs+1));
+            else
+                s = 1;
+            end
+            % Unnormalized
             x = nanmean(BB.segA_save{cond}(s));
             xv = nanstd(BB.segA_save{cond}(s))/sqrt(numel(s));
-            w = (numel(s)/numel(BB.segA_save{cond}));
+            w = (numel(s)/numel(BB.segAPrc_save{cond}));
+            %             if numel(s)<2; w = 0; end
+            
             BB.Amp_binPLV(bs,band,cond,1) = x*w;
             BB.Amp_binPLV(bs,band,cond,2) = xv*w;
+            BB.Amp_binPLV_data{cond}{bs} = BB.segA_save{cond}(s);
+            
+            % Percentage Deviation
+            x = nanmean(BB.segAPrc_save{cond}(s));
+            xv = nanstd(BB.segAPrc_save{cond}(s))/sqrt(numel(s));
+            w = (numel(s)/numel(BB.segAPrc_save{cond}));
+            %             if numel(s)<2; w = 0; end
+            
+            BB.AmpPrc_binPLV(bs,band,cond,1) = x*w;
+            BB.AmpPrc_binPLV(bs,band,cond,2) = xv*w;
+            BB.AmpPrc_binPLV_data{cond}{bs} = BB.segAPrc_save{cond}(s);
         end
         
         if plotop == 1
             figure(F(1))
-            subplot(3,2,band-1)
+            subplot(2,3,1)
             colormap(R.condcmap)
             h = rateHistogram(squeeze(BB.segPLV{cond}(:,band,:)),BB.range.PLV,diff(BB.DTvec{cond}([1 end]))/60); hold on
             h.FaceColor = R.condcmap(cond,:);
             h.FaceAlpha = 0.75;
-            legend(R.condname); ylabel('Frequency (min^{-1})'); xlabel('PLV');  box off; ylim([0 14]); xlim([0 1])
+            legend(R.condname); ylabel('Frequency (min^{-1})'); xlabel('PLV');  box off; %ylim([0 14]);
+            xlim(BB.plot.lims.PLV)
             title([R.bandinits{band} ' SMA/STN Phase Sync'])
             
-            subplot(3,2,(2)+(band-1))
+            subplot(2,3,2)
             s = scatter(BB.segPLV{cond}(:,band,:),BB.segA_save{cond},0.075*BB.segL_t_save{cond},R.condcmap(cond,:),'filled'); hold on
             s.MarkerFaceAlpha = 0.7;
-            ylabel('Amplitude'); xlabel('PLV'); ylim([0 BB.range.Amp(end)]); xlim([0 1]);
+            ylabel('Amplitude'); xlabel('PLV'); %ylim([0 BB.range.Amp(end)+5]);
+            xlim(BB.plot.lims.PLV);
+            ylim(BB.plot.lims.Amp)
             title([R.bandinits{band} ' PLV vs Burst ' R.bandinits{2} ' Amp.'])
             
             szvec = [200 400 600];
@@ -61,16 +109,31 @@ end
 
 cnt = 4;
 if plotop == 1
-    for band = 2:3
+    % Test for difference between conditions for each bin
+    pvec = pvec_bin_TTest(BB.AmpPrc_binPLV_data);
+    
+    for band = 3
         cnt = cnt + 1;
         figure(F(1))
-        subplot(3,2,cnt)
+        subplot(2,3,4)
         % Bar Chart
-        barplot160818(R,BB.binPLVEd,squeeze(BB.Amp_binPLV(:,band,:,:)))
+        barplot160818(R,BB.binPLVEd,squeeze(BB.AmpPrc_binPLV(:,band,:,:)),pvec,0)
         title('Burst Amp by PLV')
-        xlabel('PLV'); ylabel('Wghtd. Amplitude'); ylim([0 5]);
+        xlabel('PLV'); ylabel('Wghtd. % Amplitude'); ylim(BB.plot.lims.wAmpPrc);
     end
 end
+
+
+function PLVBS = bootstrapPLV(X,period)
+np = floor(size(X,1)/floor(period));
+npInd = randperm(size(X,1));
+npInd = reshape(npInd(1:np*floor(period)),np,floor(period));
+for i = 1:np
+    PLVBS(i)= abs(mean(exp(-1i*X(npInd(i,:))),1));
+end
+PLVBS = mean(PLVBS);
+
+
 
 %% script grave
 % %  COMPUTE NON-SEGMENTED SCATTERGRAMS

@@ -4,7 +4,7 @@ if nargin<2
 end
 %%%
 close all
-for sub = 1:length(R.subname)
+for sub = 1:3; %length(R.subname)
     for breg = 2:length(R.bregname)
         for side = 1:2
             AmpTime = [];

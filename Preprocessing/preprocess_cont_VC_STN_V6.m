@@ -2,7 +2,7 @@ function preprocess_cont_VC_STN_V6(R)
 if nargin<1
     R = makeHeader_SubCort_Cort_Networks();
 end
-for sub = 1:length(R.subname)
+for sub =1:length(R.subname)
     for cond = 1:length(R.condname)
         for breg = 1:length(R.bregname)
             for side = 1:2
@@ -17,24 +17,14 @@ for sub = 1:length(R.subname)
                 
                 xdata = VC_new.trial{1}([ctxlist reflist],:);
                 xdata = ft_preproc_bandpassfilter(xdata, fsamp,R.pp.cont.thin.bp, [], 'fir', 'twopass', 'reduce');
-                
+
                 xtdata = [];
                 for i = 1:size(xdata,1)
                     x = xdata(i,:);
                     x = x(floor(fsamp*0.75):end-floor(fsamp*0.75));
                     x = (x-mean(x));%./std(x);
-<<<<<<< HEAD
-                    x2data(i,:) = x;
-                end
-                x3data = ft_preproc_bandpassfilter(x2data, fsamp,R.pp.cont.thin.bp, [], 'fir', 'twopass', 'reduce');
-                for i = 1:size(x3data,1)
-                    x = x3data(i,:);
-                    x = (x-mean(x)); %./std(x);
-                    x4data(i,:) = x;
-=======
                     xtdata(i,:) = x;
->>>>>>> 1a6b2adb27e52fd8de1d0ad60b0c8179a05e9234
-                end
+                end                
                 
                 vc_clean.label = {VC_new.label{[ctxlist reflist]}};
                 vc_clean.fsample = VC_new.fsample;

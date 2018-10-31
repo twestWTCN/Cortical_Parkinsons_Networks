@@ -2,12 +2,14 @@ function [A stat] = linplot_PD(a,b,xlab,ylabl,cmapr)
 a(isnan(b)) = []; b(isnan(b)) = [];
 b(isnan(a)) = []; a(isnan(a)) = [];
 
-[r p] = corr(a,b,'Type','Spearman');
-A = scatter(a,b,15,'o','filled','MarkerFaceColor',cmapr,'MarkerFaceAlpha',0.4); hold on
-if p<0.05
-    [yCalc ba Rsq] = linregress(a,b);
+[R p] = corr(a,b,'Type','Pearson');
+A = scatter(a,b,30,'o','filled','MarkerFaceColor',cmapr); hold on
+[cof,stats] = robustfit(a,b);
+% R_rob = corr(b,cof(1)+cof(2)*a)
+if stats.p(2)<0.05
+    [xCalc yCalc ba Rsq] = linregress(a,b);
     %     [b1 stats] = robustfit(a,b)
-    hold on; plot(a,yCalc,'-','LineWidth',1,'color',cmapr)
+    hold on; plot(xCalc,yCalc,'-','LineWidth',1.5,'color',cmapr)
     %     annotation(gcf,'textbox',...
     %         [0.4100    0.7310    0.4810    0.1900],...
     %         'String',{sprintf('y = %0.3f + %0.3fx',ba),sprintf('R^2 = %0.2f',Rsq),sprintf('P = %0.3f',p(1))},...
@@ -26,7 +28,15 @@ end
     xlabel(xlab,'FontSize',13); ylabel(ylabl,'FontSize',16)
 
 stat.p = p;
-stat.Rcoeff = r;
+stat.Rcoeff = R;
+
+stat.p_rob = stats.p(2);
+sse = stats.dfe * stats.robust_s^2;
+phat = cof(1)+cof(2)*a;
+ssr = norm(phat-mean(phat))^2;
+stat.R_rob = sqrt(1- sse/(sse+ssr));
+
+
 stat.modcoef = ba;
 stat.Rsq = Rsq;
 
