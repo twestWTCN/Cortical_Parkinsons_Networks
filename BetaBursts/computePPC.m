@@ -1,5 +1,8 @@
 function h = computePPC(X)
-X = remnan(X')';
+% X = remnan(X');
+if size(X,1)>size(X,2)
+    X = X';
+end
 if size(X,1)<2 || isempty(X)
     h = NaN;
     return

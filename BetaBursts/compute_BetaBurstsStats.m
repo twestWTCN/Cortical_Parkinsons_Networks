@@ -153,11 +153,11 @@ for cond = 1:length(R.condname)
 end
 if plotop == 1
     subplot(3,3,1); legend(R.condname,'Location','East'); ylabel('Frequency (min^{-1})'); xlabel('Duration (ms)'); xlim([0 BB.range.segDur(end)]); %ylim([0 15]); box off
-    title('Burst Duration '); ylim([0 20])
+    title('Burst Duration '); ylim([0 40])
     BB.stats.DurCond  = statvec(BB.segL_t_save{1},BB.segL_t_save{2},1);
     
     subplot(3,3,2); legend(R.condname,'Location','East'); ylabel('Frequency (min^{-1})'); xlabel('Amplitude');  xlim([BB.range.Amp(1) BB.range.Amp(end)]); %ylim([0 15]); box off
-    title('Burst Amplitude '); ylim([0 25])
+    title('Burst Amplitude '); ylim([0 40])
     BB.stats.AmpCond = statvec(BB.segA_save{1},BB.segA_save{2},1);
     
     subplot(3,3,3); legend(sp,R.condname,'Location','NorthEast'); ylabel('Duration (ms)'); xlabel('Amplitude'); xlim([BB.range.Amp(1) BB.range.Amp(end)]); %ylim([0 BB.range.segDur(end)]); box off
@@ -168,14 +168,14 @@ if plotop == 1
     pvec = pvec_bin_TTest(Seg_binAmpDataLOC);
     barplot160818(R,BB.binAmp,squeeze(BB.Seg_binAmp(:,:,:)),pvec,0,1)
     title('Burst Duration by Amplitude')
-    xlabel('Mean Amplitude'); ylabel('Wghtd. Duration (ms)'); ylim([0 140]); % ylim([BB.range.Amp(1) BB.range.Amp(end)]);
+    xlabel('Mean Amplitude'); ylabel('Wghtd. Duration (ms)'); ylim([0 200]); % ylim([BB.range.Amp(1) BB.range.Amp(end)]);
     
     subplot(3,1,3);
     %     BB.Seg_binAmpStats
     pvec = pvec_bin_TTest(Amp_binDurDataLOC);
     barplot160818(R,BB.binDur,squeeze(BB.Amp_binDur(:,:,:)),pvec,0,1)
     title('Burst Amplitude by Duration')
-    xlabel('Duration (ms)'); ylabel('Wghtd. Amplitude'); ylim([0 7]); %ylim([BB.range.Amp(1) BB.range.Amp(end)]);
+    xlabel('Duration (ms)'); ylabel('Wghtd. Amplitude'); ylim([0 5]); %ylim([BB.range.Amp(1) BB.range.Amp(end)]);
 end
 
 % function binstats(XY)

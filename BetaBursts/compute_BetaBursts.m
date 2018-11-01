@@ -88,8 +88,8 @@ for band = 3 % Optionally can do across predefined bands
     for ci = 1:size(PhiTime,1); PhiTime(ci,:) = unwrap(PhiTime(ci,:)); end
     
     % Sliding Window
-    winsize = 1.5.*data.fsample; % Window Size
-    overlap = 0.99; %
+    winsize = 0.5.*data.fsample; % Window Size
+    overlap = 0.9; %
     RPdtime = diff(PhiTime,1,1)';
         [slide_dphi_12,sind] = slideWindow(RPdtime, floor(winsize), floor(winsize*overlap));
     if isequal(R.BB.PLmeth,'PLV')

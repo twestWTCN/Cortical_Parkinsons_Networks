@@ -9,6 +9,14 @@ for sub =1:length(R.subname)
                 load([R.datapathr R.subname{sub} '\ftdata\VC_new_ROI_' R.condname{cond} '_' R.siden{side} '_' R.ipsicon  '_' R.bregname{breg}],'VC_new')
                 %                 load([R.datapathr R.subname{sub} '\ftdata\cleaned\V6_sources_clean_ROI_' R.condname{cond} '_' R.siden{side} '_' R.ipsicon  '_' R.bregname{breg}],'vc_clean')
                 
+                % Rename LFP channels (shanghai)
+                nfl = strfind(VC_new.label,'LFP');
+                for i = 1:size(VC_new.label,2)
+                    if nfl{i} == 1
+                        VC_new.label{i} = ['STN_' R.siden{side}(1) VC_new.label{i}(end-1:end)];
+                    end
+                end                
+                
                 % find ipsi channels
                 reflist = find(strncmp(VC_new.label,['STN_' R.siden{side}(1)],5));
                 ctxlist = find(strncmp(VC_new.label,['ipsi'],4));

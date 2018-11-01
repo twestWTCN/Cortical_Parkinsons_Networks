@@ -11,7 +11,7 @@ if nargin<2
 end
 %%%
 close all
-plotop = 0;
+plotop = 1;
 R.BB.PLmeth = 'PPC';
 % surflag = 0;
 % For surrplotting
@@ -29,13 +29,14 @@ for surflag =0:1
         surrtag = 'org';
     end
     % example is sub 4 side 2
-    for sub = 4:length(R.subname)
+    for sub = 11%:length(R.subname)
         for breg = 1:length(R.bregname)
-            for side = 2
-                %                 Compute the Wavelet Decomposition
-%                 [BB flag] = BBCompute(R,shufftype,sub,side,breg);
-%                 save([R.datapathr R.subname{sub} '\ftdata\BetaBursts\preBB_' R.siden{side} '_' R.ipsicon  '_' R.bregname{breg} '_' surrtag],'BB','flag')
-                load([R.datapathr R.subname{sub} '\ftdata\BetaBursts\preBB_' R.siden{side} '_' R.ipsicon  '_' R.bregname{breg} '_' surrtag],'BB','flag')
+            for side = 1:2
+                % Compute the Wavelet Decomposition
+                [BB flag] = BBCompute(R,shufftype,sub,side,breg);
+                    mkdir([R.datapathr R.subname{sub} '\ftdata\BetaBursts'])
+                save([R.datapathr R.subname{sub} '\ftdata\BetaBursts\preBB_' R.siden{side} '_' R.ipsicon  '_' R.bregname{breg} '_' surrtag],'BB','flag')
+%                 load([R.datapathr R.subname{sub} '\ftdata\BetaBursts\preBB_' R.siden{side} '_' R.ipsicon  '_' R.bregname{breg} '_' surrtag],'BB','flag')
                 
                 if flag<1
                     F = []; % Empty Figure Handle
@@ -67,7 +68,7 @@ for surflag =0:1
                     % Amplitude Only
                     %                     BB.range.Amp = -100:5:100;
                     %                     BB.range.segDur = 3:150:1800;
-                    BB.range.Amp = linspace(0,120,12); %0:5:120; % Group: 0:3:120; single: 0:5:80
+                    BB.range.Amp = linspace(0,50,12); %0:5:120; % Group: 0:3:120; single: 0:5:80
                     BB.range.segDur = linspace(0,1800,12); %0:100:1800; % Group: 0:100:1800; single: 25:150:1800
                     BB.range.AmpPrc = 0:5:100;
                     
