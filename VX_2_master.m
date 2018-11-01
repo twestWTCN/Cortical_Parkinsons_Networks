@@ -18,17 +18,17 @@ add_corticalnetworks_paths()
 R = makeHeader_SubCort_Cort_Networks();
 
 % Extract Virtual Channels and STN Data
-sourcextractloop_cortnet(R)
-preprocess_cont_VC_STN_V6(R)
+% sourcextractloop_cortnet(R)
+% preprocess_cont_VC_STN_V6(R)
 
 % Find the coherent STNs
-find_STNref_V6(R)
+% find_STNref_V6(R)
 
 % Plot the subject coherences
 plot_subject_cohspectra_V6(R)
 
 % Compute Subject Level BetaBursts
-compute_BetaBursts_wrapper(R)
+compute_BetaBursts_SubjectLevel(R)
 
-
+compute_BetaBursts_GroupLevel_Surr(R)
 

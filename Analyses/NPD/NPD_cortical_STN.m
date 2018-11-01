@@ -25,7 +25,7 @@ for cond = 1:2
         %     subplot(1,4,3);plot(Hz,f13(:,11),'b'); hold on; xlim([2 48]); ylim([0 0.1]);
         %     subplot(1,4,4);plot(Hz,f13(:,12),'g'); hold on; xlim([2 48]); ylim([0 0.1]);
         %     end
-        kappa = 2;
+        kappa = 5.5;
         npdspctrm{cond,1,i,1} = kappa.*f13(:,10);
         npdspctrm{cond,1,i,2} = kappa.*f13(:,11);
         npdspctrm{cond,1,i,3} = kappa.*f13(:,12);

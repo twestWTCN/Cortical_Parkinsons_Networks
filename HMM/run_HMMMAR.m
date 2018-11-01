@@ -1,5 +1,5 @@
 %% LOAD IN 
-load('C:\Users\twest\Documents\Work\GitHub\Cortical_Parkinsons_Networks\HMM\6_state_save')
+% load('C:\Users\twest\Documents\Work\GitHub\Cortical_Parkinsons_Networks\HMM\6_state_save')
 %%%%%%%%%%%%%%%%%%%%%%%
 
 

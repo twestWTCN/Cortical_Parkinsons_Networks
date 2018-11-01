@@ -1,18 +1,24 @@
-function [] = plotNPD(Hz,npdspctrm,R,ylimz,statflag)
+function [] = plotNPD(Hz,npdspctrm,R,ylimz,statflag,subexamp)
 if nargin<4
-    ylimz = [0 0.1];
+    ylimz = [0 0.2];
 end
 if nargin<5
     statflag= 0;
 end
+if nargin<6
+    subexamp =0;
+end
 titlist = {'Zero','SMA \rightarrow STN','STN \rightarrow SMA','Sum Coherence'};
 figure('Name',['Group NPD Results'])
-set(gcf,'Position',[642   263   915   239])
+    set(gcf,'Position',[642   218   1100   284])
 for i = 1:3
     subplot(1,3,i);
     for cond = 1:size(npdspctrm,1)
         X = [npdspctrm{cond,:,:,i}];
-        ax(cond) = boundedline(Hz,nanmean(X,2),nanstd(X,0,2)/sqrt(size(X,2)),'cmap',R.condcmap(cond,:),'alpha','transparency',0.8);
+        [ax(cond) hp(cond)] = boundedline(Hz,nanmean(X,2),nanstd(X,0,2)/sqrt(size(X,2)),'cmap',R.condcmap(cond,:),'alpha','transparency',0.8);
+    end
+    if subexamp == 1
+        delete(hp)
     end
     ax(1).LineWidth = 1.5; ax(2).LineWidth = 1.5;
     

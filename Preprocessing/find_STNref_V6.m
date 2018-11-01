@@ -10,7 +10,7 @@ for sub = 1:length(R.subname)
                 load([R.datapathr R.subname{sub} '\ftdata\cleaned\V6_sources_clean_ROI_' R.condname{cond} '_' R.siden{side} '_' R.ipsicon  '_' R.bregname{breg}],'vc_clean')
                 gxl = [];
                 try
-                gxl = vc_clean.specanaly.gx_pick{1};
+                    gxl = vc_clean.specanaly.gx_pick{1};
                 catch
                     gxl = [];
                 end
@@ -18,13 +18,13 @@ for sub = 1:length(R.subname)
                 cfg.length = R.specanaly.epochL;
                 Xseg = ft_redefinetrial(cfg,vc_clean);
                 
-%                 cfg = [];
-%                 cfg.viewmode = 'vertical';  % you can also specify 'butterfly'
-%                 ft_databrowser(cfg, Xseg);
+                %                 cfg = [];
+                %                 cfg.viewmode = 'vertical';  % you can also specify 'butterfly'
+                %                 ft_databrowser(cfg, Xseg);
                 figure(3)
                 plot(vc_clean.time{1}',(vc_clean.trial{1}(2:end,:)+[0:10:20]')')
                 set(gcf,'Position',[723   271   560   420]); shg
-
+                
                 cfg           = [];
                 cfg.method    = 'mtmfft';
                 cfg.taper     = 'hanning';
@@ -36,21 +36,17 @@ for sub = 1:length(R.subname)
                 freq         = ft_freqanalysis(cfg, Xseg);
                 
                 tpx = squeeze(mean(abs(freq.fourierspctrm(:,:,:)),1));
-<<<<<<< HEAD
-                % Normalisation DONT SO YOU CAN SEE POWER!
-=======
-                % Normalisation
->>>>>>> 1a6b2adb27e52fd8de1d0ad60b0c8179a05e9234
-%                 for i = 1:numel(Xseg.label)
-%                     tpx(i,:) = tpx(i,:)./sum(tpx(i,freq.freq>4 & freq.freq<45));                   
-%                 end
+                
+                for i = 1:numel(Xseg.label)
+                    tpx(i,:) = tpx(i,:)./sum(tpx(i,freq.freq>4 & freq.freq<48));
+                end
                 
                 figure(1)
                 %                 subplot(1,2,cond)
                 title(R.condname{cond})
                 xlabel('Freq'); ylabel('Norm. Power')
-%                 plot(freq.freq',tpx(1,:)','b')
-%                 hold on
+                %                 plot(freq.freq',tpx(1,:)','b')
+                %                 hold on
                 plot(repmat(freq.freq,3,1)',tpx(2:end,:)')
                 legend(vc_clean.label{2:end}); grid on
                 set(gcf,'Position',[128   610   560   420])
@@ -62,21 +58,21 @@ for sub = 1:length(R.subname)
                 cfg.pad         =  'nextpow2';
                 freq         = ft_freqanalysis(cfg, Xseg);
                 cfg           = [];
-%                 cfg.method    = 'wpli';
+                %                 cfg.method    = 'wpli';
                 cfg.method    = 'coh';
                 %                 cfg.complex = 'absimag';
                 cohstruc           = ft_connectivityanalysis(cfg, freq);
                 coh = abs(squeeze(cohstruc.cohspctrm(2:end,1,:)));
-%                 icoh = abs(squeeze(coh.wplispctrm(2:end,1,:)));
+                %                 icoh = abs(squeeze(coh.wplispctrm(2:end,1,:)));
                 if size(coh,1)>size(coh,2); coh = coh'; end
                 
                 % Run PLV
                 cfg.method    = 'plv';
                 plvstruc           = ft_connectivityanalysis(cfg, freq);
                 plv = abs(squeeze(plvstruc.plvspctrm(2:end,1,:)));
-%                 icoh = abs(squeeze(coh.wplispctrm(2:end,1,:)));
+                %                 icoh = abs(squeeze(coh.wplispctrm(2:end,1,:)));
                 if size(plv,1)>size(plv,2); plv = plv'; end
-
+                
                 % ch x n
                 figure(2)
                 %                 subplot(1,2,cond)
@@ -86,6 +82,7 @@ for sub = 1:length(R.subname)
                 ylim([0 0.8]); xlim([2 65]); legend({'STN01','STN02','STN03'}); grid on
                 set(gcf,'Position',[1310         677         560         420])
                 figure(2); shg
+                disp([R.subname{sub} ' ' R.condname{cond}])
                 if isempty(gxl)
                     gx = newid(['Choose STN for ' R.bandname{R.bregband{breg}} ' band']);
                     gx = str2num(gx{1});
@@ -107,7 +104,7 @@ for sub = 1:length(R.subname)
                     frqc = R.bandef(3,1)+(fi.*min(diff(freq.freq)));
                     maxcoh = [maxcoha maxcohb maxcohc];
                     frqcoh = [frqa frqb frqc];
-
+                    
                     % MaxPLVs
                     % Alpha
                     [maxplva fi] = max(plv(gx,plvstruc.freq>=R.bandef(1,1) & plvstruc.freq<=R.bandef(1,2)));
@@ -128,14 +125,14 @@ for sub = 1:length(R.subname)
                     frqb = R.bandef(2,1)+(fi.*min(diff(freq.freq)));
                     [maxpowc fi] = max(tpx(1+gx,freq.freq> R.bandef(3,1) & freq.freq< R.bandef(3,2)));
                     frqc = R.bandef(3,1)+(fi.*min(diff(freq.freq)));
-                    maxpow = [maxpowa maxpowb maxcohc];
+                    maxpow = [maxpowa maxpowb maxpowc];
                     frqpow = [frqa frqb frqc];
                     
                     vc_clean.specanaly.coh = coh(gx,:);
                     vc_clean.specanaly.normpow = tpx([1 1+gx],:);
                     vc_clean.specanaly.frq = freq.freq;
                     vc_clean.specanaly.plvstats.frqplv = frqplv;
-                    vc_clean.specanaly.plvstats.maxplv = maxplv;                    
+                    vc_clean.specanaly.plvstats.maxplv = maxplv;
                     vc_clean.specanaly.cohstats.frqcoh = frqcoh;
                     vc_clean.specanaly.cohstats.maxcoh = maxcoh;
                     vc_clean.specanaly.powstats.frqpow = frqpow;

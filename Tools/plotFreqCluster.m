@@ -50,7 +50,7 @@ if sum(stat.mask)>0
             
             [figx figy] = dsxy2figxy(gca, freqcen-shift, (max(sigpow)*1.15));
             if ~isnan(figx)
-                h = annotation('textbox',[figx figy .01 .01],'String',{['(+) P = ' num2str(stat.negclusters(i).prob,'%.3f')]},'FitBoxToText','on','LineStyle','none','fontsize',8,'fontweight','bold');
+                h = annotation('textbox',[figx figy .01 .01],'String',{['(-) P = ' num2str(stat.negclusters(i).prob,'%.3f')]},'FitBoxToText','on','LineStyle','none','fontsize',8,'fontweight','bold');
                 clustat = [clustat; min(stat.freq(1,group)) max(stat.freq(1,group)) stat.negclusters(i).clusterstat stat.negclusters(i).prob];
             end
         end
