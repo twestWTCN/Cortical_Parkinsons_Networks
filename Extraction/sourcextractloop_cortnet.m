@@ -3,8 +3,8 @@ cd('C:\Users\twest\Documents\Work\GitHub\Cortical_Parkinsons_Networks')
 if nargin<1
     R = makeHeader_SubCort_Cort_Networks();
 end
-FRESH = 1; %!!!
-for sub = 1:length(R.subname)
+FRESH = 0; %!!!
+for sub = 14 %:length(R.subname)
         if FRESH ==1
             eval(['! rmdir ' R.datapathr R.subname{sub} ' /s /q'])
             mkdir([R.datapathr R.subname{sub}])

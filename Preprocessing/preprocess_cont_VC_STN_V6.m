@@ -9,6 +9,14 @@ for sub = 1:length(R.subname)
                 load([R.datapathr R.subname{sub} '\ftdata\VC_new_ROI_' R.condname{cond} '_' R.siden{side} '_' R.ipsicon  '_' R.bregname{breg}],'VC_new')
                 %                 load([R.datapathr R.subname{sub} '\ftdata\cleaned\V6_sources_clean_ROI_' R.condname{cond} '_' R.siden{side} '_' R.ipsicon  '_' R.bregname{breg}],'vc_clean')
                 
+                % Rename LFP channels (Shanghai)
+                nfl = strfind(VC_new.label,'LFP');
+                for i = 1:size(VC_new.label,2)
+                    if nfl{i} == 1
+                        VC_new.label{i} = ['STN_' R.siden{side}(1) VC_new.label{i}(end-1:end)];
+                    end
+                end
+                
                 % find ipsi channels
                 reflist = find(strncmp(VC_new.label,['STN_' R.siden{side}(1)],5));
                 ctxlist = find(strncmp(VC_new.label,['ipsi'],4));
@@ -23,7 +31,6 @@ for sub = 1:length(R.subname)
                     x = xdata(i,:);
                     x = x(floor(fsamp*0.75):end-floor(fsamp*0.75));
                     x = (x-mean(x));%./std(x);
-<<<<<<< HEAD
                     x2data(i,:) = x;
                 end
                 x3data = ft_preproc_bandpassfilter(x2data, fsamp,R.pp.cont.thin.bp, [], 'fir', 'twopass', 'reduce');
@@ -31,9 +38,7 @@ for sub = 1:length(R.subname)
                     x = x3data(i,:);
                     x = (x-mean(x)); %./std(x);
                     x4data(i,:) = x;
-=======
                     xtdata(i,:) = x;
->>>>>>> 1a6b2adb27e52fd8de1d0ad60b0c8179a05e9234
                 end
                 
                 vc_clean.label = {VC_new.label{[ctxlist reflist]}};
