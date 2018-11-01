@@ -20,6 +20,9 @@ catch
     %     D = dbs_meg_rest_prepare_spm12(initials, drug);
 end
 
+
+    
+
 % Interpolate Missing Data
 if siden == 'L'
     stnKO = find(strncmp(D.chanlabels,'STN_R',5));
@@ -31,6 +34,9 @@ chlist = setdiff(1:numel(D.chanlabels),stnKO);
 S = [];
 S.D = D;
 S.channels = D.chanlabels(chlist);
+if D.time(end)>180 % if longer than 180 seconds then truncate
+    S.timewin = [1*1e3 181*1e3];
+end
 D = spm_eeg_crop(S);
 
 % Missing Data
@@ -47,23 +53,23 @@ clear a
 
 % Jumps
 a = D(:,:,:);
-for x = 1:size(a,1)
+for x = selectchannels(D,{'MEG','LFP'})
     dat = a(x,:);
-    dat(abs(dat)>(6*std(dat))) = NaN;
-    dat= fillmissing(dat,'spline');
+    if any(dat(abs(dat)>(4*std(dat))))
+        dat(abs(dat)>(4*std(dat))) = NaN;
+        dat= fillmissing(dat,'linear');
+    end
     a(x,:) = dat;
 end
 D(:,:,:) = a;
 clear a
-
-
-
 
 % S = [];
 % S.D = D; S.fsample_new = 128;
 % D = spm_eeg_downsample(S);
 
 % cd(fullfile(root, 'SPMrest'));
+mkdir([R.datapathr initials]);
 cd([R.datapathr initials]);
 
 res = mkdir('BF');
@@ -145,7 +151,7 @@ save(Ds);
 % save(Ds);
 % end
 if isequal(roisum, 'keep')
-
+    
     
     S = [];
     S.D = Ds;

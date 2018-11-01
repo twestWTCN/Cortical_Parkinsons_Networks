@@ -13,33 +13,36 @@ catch
     return
 end
 
-%remove date from directory
-ind=strfind(root,'\');
-root=root(1:ind(end-1));
-
-%%
-if ~exist(root, 'dir')
-    if ismember(root(end), {'/', '\'})
-        root(end) = [];
-    end
-    [p, p1] = fileparts(root);
-    if ~exist(p, 'dir')
-        if ismember(p(end), {'/', '\'})
-            p(end) = [];
+if ~isequal(initials(1:4), 'OXSH')
+    %remove date from directory
+    ind=strfind(root,'\');
+    root=root(1:ind(end-1));
+    
+    %%
+    if ~exist(root, 'dir')
+        if ismember(root(end), {'/', '\'})
+            root(end) = [];
         end
-        [p2, p3] = fileparts(p);
-        if ~exist(p2, 'dir')
-            if ismember(p2(end), {'/', '\'})
-                p2(end) = [];
+        [p, p1] = fileparts(root);
+        if ~exist(p, 'dir')
+            if ismember(p(end), {'/', '\'})
+                p(end) = [];
             end
-            [p4, p5] = fileparts(p2);
-            res = mkdir(p4, p5);
+            [p2, p3] = fileparts(p);
+            if ~exist(p2, 'dir')
+                if ismember(p2(end), {'/', '\'})
+                    p2(end) = [];
+                end
+                [p4, p5] = fileparts(p2);
+                res = mkdir(p4, p5);
+            end
+            res = mkdir(p2, p3);
         end
-        res = mkdir(p2, p3);
+        res = mkdir(p, p1);
     end
-    res = mkdir(p, p1);
+else
+    mkdir(root)
 end
-
 cd(root);
 
 % if details.cont_head_loc
@@ -210,13 +213,17 @@ for f = 1:numel(files)
             a(x,:) = F;
         end
     end
+    if any(isnan(a(:)))
+        warning('Data Contains NaNs!')
+        break
+    end
     D(:,:,:) = a;
     clear a
     save(D);
     
     % Downsample =======================================================
     S = [];
-    S.D = D; S.fsample_new = 180;
+    S.D = D; S.fsample_new = 200;
     D = spm_eeg_downsample(S);
     
     % Artefact marking in MEG =========================================
@@ -384,7 +391,7 @@ for f = 1:numel(files)
     %%
     D.initials = initials;
     
-    if details.oxford
+    if details.neuromag
         fids = D.fiducials;
         [~, sel] = spm_match_str({'Nasion', 'LPA', 'RPA'}, fids.fid.label);
         fids.fid.pnt = fids.fid.pnt(sel, :);
