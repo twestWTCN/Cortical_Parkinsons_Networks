@@ -46,5 +46,4 @@ for cond = 1:2
     box off
     xlim([50 60])
     
-    
 end

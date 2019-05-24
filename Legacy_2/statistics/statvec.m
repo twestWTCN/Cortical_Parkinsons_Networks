@@ -13,15 +13,9 @@ elseif type == 2
     for i = 1:size(x,2)
         x1 = x{i};
         y1 = y{i};
-<<<<<<< HEAD
-        [x1 y1] = remnan(x1,y1)
-        [R P] = corr(x1',y1','type','Spearman')
-        [xCalc yCalc b Rsq] = linregress(x1',y1',1)
-=======
         [x1 y1] = remnan(x1,y1);
         [R P] = corr(x1',y1','type','Spearman');
         [xCalc yCalc b Rsq] = linregress(x1',y1',1);
->>>>>>> aedb41ed5fb04fd9973c4ee8d52526e4cb90f1df
         stvec(:,i) = [b Rsq R P];
     end
     
